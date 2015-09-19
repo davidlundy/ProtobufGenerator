@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A01CAD60-9808-4718-9C07-4E1417CBD220}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{6C5F4801-BEEE-41CE-A9B3-DE6233A78D7A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufGenerator.Tests", "test\ProtobufGenerator.Tests\ProtobufGenerator.Tests.csproj", "{E6D36801-9290-48E2-9473-2ACCC7868CE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufGenerator", "src\ProtobufGenerator\ProtobufGenerator.csproj", "{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6D36801-9290-48E2-9473-2ACCC7868CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6D36801-9290-48E2-9473-2ACCC7868CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6D36801-9290-48E2-9473-2ACCC7868CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6D36801-9290-48E2-9473-2ACCC7868CE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E6D36801-9290-48E2-9473-2ACCC7868CE3} = {A01CAD60-9808-4718-9C07-4E1417CBD220}
+		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21} = {FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}
+	EndGlobalSection
+EndGlobal
