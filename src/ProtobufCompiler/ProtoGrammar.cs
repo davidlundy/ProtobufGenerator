@@ -166,6 +166,109 @@ namespace ProtobufCompiler
             }
         }
 
+        /// <summary>
+        /// A <see cref="MessageType"/> is a field type declaration inside a Message/>
+        /// </summary>
+        protected internal virtual Parser<string> MessageType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="EnumType"/> is a field type declaration inside a Message/>
+        /// </summary>
+        protected internal virtual Parser<string> EnumType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="GroupName"/> is a field type declaration inside a Message/>
+        /// </summary>
+        protected internal virtual Parser<string> GroupName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="IntegerLiteral"/> is a literal integer string that may be integer, hex, or octal />
+        /// </summary>
+        /// <example>54, 09, 0X5F</example>
+        protected internal virtual Parser<string> IntegerLiteral
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="HexLiteral"/> is a representation of a Hexadecimal value />
+        /// </summary>
+        /// <example>0X5F</example>
+        protected internal virtual Parser<string> HexLiteral
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="Exponent"/> is a representation of scientific exponential notation />
+        /// </summary>
+        /// <example>e+12 in '1.23e+12'</example>
+        protected internal virtual Parser<string> Exponent
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="FloatLiteral"/> is a literal floating point value string />
+        /// </summary>
+        /// <example>12.345e-12</example>
+        protected internal virtual Parser<string> FloatLiteral
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="BooleanLiteral"/> is a string which is 'true' or 'false', in lower case />
+        /// </summary>
+        protected internal virtual Parser<string> BooleanLiteral
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="EmptyStatement"/> is simply a semicolon ';' />
+        /// </summary>
+        protected internal virtual Parser<string> EmptyStatement
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 
     }
 }
