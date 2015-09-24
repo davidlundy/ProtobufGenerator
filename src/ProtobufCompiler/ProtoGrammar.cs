@@ -219,7 +219,11 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from leadingZero in Parse.Char('0')
+                       from x in Parse.IgnoreCase('x')
+                       from firstDigit in HexDigit
+                       from restDigits in HexDigit.Many()
+                       select string.Format("{0}{1}{2}{3}", leadingZero, x, firstDigit, string.Join(string.Empty, restDigits));
             }
         }
 
@@ -254,7 +258,8 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from boolvalue in Parse.String("true").Or(Parse.String("false")).Text()
+                       select boolvalue;
             }
         }
 
@@ -265,7 +270,8 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from single in Parse.Char(';')
+                       select single.ToString();
             }
         }
 

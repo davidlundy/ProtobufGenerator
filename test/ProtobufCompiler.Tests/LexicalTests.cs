@@ -130,7 +130,7 @@ namespace ProtobufCompiler.Tests
         [TestCase("0x9", ExpectedResult = "0x9")]
         [TestCase("0X9", ExpectedResult = "0X9")]
         [TestCase("0x96FA", ExpectedResult = "0x96FA")]
-        [TestCase("0x96G", ExpectedException = typeof(ParseException))]
+        [TestCase("0x96G", ExpectedResult = "0x96")]
         [TestCase("0x", ExpectedException = typeof(ParseException))]
         // hexLit     = "0" ( "x" | "X" ) hexDigit { hexDigit } 
         public string Lexical_HexLiteral_is_0_XignoreCase_HexDigit_Then_ZeroOrMany_HexDigits(string input)
