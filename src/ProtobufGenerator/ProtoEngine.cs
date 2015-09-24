@@ -3,6 +3,7 @@ using System;
 using System.Xml.Schema;
 using ProtobufGenerator.JobParameters;
 using ProtobufGenerator.Extractors;
+using System.Collections.Generic;
 
 namespace ProtobufGenerator
 {
@@ -10,7 +11,10 @@ namespace ProtobufGenerator
     {
         private readonly XmlSchema _xmlSchema;
         private readonly XmlSchemaSet _xmlSchemaSet;
-        private readonly IXmlLoader _xmlLoader = new XmlLoader();
+        private readonly IXmlLoader _xmlLoader;
+
+        private readonly Dictionary<string, JobResult> _jobResults = new Dictionary<string, JobResult>();
+
         public Parameters Parameters { get; private set; }
 
         public ProtoEngine() 
@@ -20,7 +24,7 @@ namespace ProtobufGenerator
         }
 
         /// <summary>
-        /// Creates an instance of the ProtoEngine, extracts the Parameters.xsd schema 
+        /// Creates an instance of the <see cref="ProtoEngine"/>, extracts the Parameters.xsd schema 
         /// to the current AppDomain directory, and stores it for later validation. 
         /// </summary>
         public ProtoEngine(IXmlLoader xmlLoader)
@@ -49,25 +53,14 @@ namespace ProtobufGenerator
             Parameters = Parameters.FromXDocument(xmlDoc, _xmlSchema);
         }
 
-        /// <summary>
-        /// Start processing the loaded Parameters. 
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown when Parameters have not been loaded.</exception>
         public void ProcessProto()
         {
-            if (Parameters == null)
-                throw new InvalidOperationException("Please LoadParameters before calling ProcessProto");
-            ProcessProto(Parameters);
+            throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Process a set of pre-built Parameters
-        /// </summary>
-        /// <param name="parameters">Collection of Job descriptions</param>
         public void ProcessProto(Parameters parameters)
         {
             throw new NotImplementedException();
         }
-        
     }
 }

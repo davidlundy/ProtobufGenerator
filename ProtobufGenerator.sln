@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufGenerator.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufGenerator", "src\ProtobufGenerator\ProtobufGenerator.csproj", "{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufCompiler.Tests", "test\ProtobufCompiler.Tests\ProtobufCompiler.Tests.csproj", "{B03EDD91-D591-443B-8698-33D7FB2820A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufCompiler", "src\ProtobufCompiler\ProtobufCompiler.csproj", "{B863670A-6065-437A-A873-AA8E9C5D1B74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B03EDD91-D591-443B-8698-33D7FB2820A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B03EDD91-D591-443B-8698-33D7FB2820A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B03EDD91-D591-443B-8698-33D7FB2820A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B03EDD91-D591-443B-8698-33D7FB2820A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B863670A-6065-437A-A873-AA8E9C5D1B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B863670A-6065-437A-A873-AA8E9C5D1B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B863670A-6065-437A-A873-AA8E9C5D1B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B863670A-6065-437A-A873-AA8E9C5D1B74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,5 +46,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E6D36801-9290-48E2-9473-2ACCC7868CE3} = {A01CAD60-9808-4718-9C07-4E1417CBD220}
 		{A7B82BFA-3DE8-41EC-8926-9BBDEFE69A21} = {FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}
+		{B03EDD91-D591-443B-8698-33D7FB2820A6} = {A01CAD60-9808-4718-9C07-4E1417CBD220}
+		{B863670A-6065-437A-A873-AA8E9C5D1B74} = {FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}
 	EndGlobalSection
 EndGlobal

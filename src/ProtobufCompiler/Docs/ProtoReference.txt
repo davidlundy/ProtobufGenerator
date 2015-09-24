@@ -1,0 +1,82 @@
+﻿syntax = "proto3"  //ref This must be the first non-empty non-comment line of the file to set Proto3 syntax
+
+// Can Import Proto2 message types but not Proto2 enum types
+// value for Any is "google/protobuf/any.proto"
+import BLANK|public "myproject/other_protos.proto";
+
+package foo.bar; //ref this can later define message type of foo.bar.MessageType to prevent collisions
+
+option OPTION_NAME = "OPTION_VALUE";
+
+// Can be multiple message types defined in the same file
+// packed=true is only valid for REPEATED values
+// FIELD_TYPE when a nested MessageType can be of form Parent.Type
+message MSG_NAME {
+	BLANK|REPEATED FIELD_TYPE FIELD_NAME = FIELD_NUM BLANK;|[packed=true]|[deprecated=true]; // FIELD_COMMENT
+	map<key_type, value_Type> FIELD_NAMe = FIELD_NUM;
+	ENUM_DEFINITION
+	MSG_DEFINITION
+	ONEOF_DEFINITION
+}
+
+//key_type can be integral or string type, no floating
+//value_type can be any type
+//FIELD_TYPE can be listed below, another MessageType, EnumType 
+
+// ENUM_INDEX must be in the 32 bit integer range value
+// ENUM_VALUE can be of type MSG_NAME.ENUM_NAME
+enum ENUM_NAME {
+	EMPTY | option allow_alias = true;    //ref this allows non-unique ENUM_INDEXes.
+	ENUM_VALUE = ENUM_INDEX;
+}
+
+// Cannot use repeated fields
+oneof ONEOF_NAME {
+	FIELD_TYPE FIELD_NAME = FIELD_NUM;
+	FIELD_TYPE FIELD_NAME = FIELD_NUM;
+}
+
+service SERVICENAME {
+	rpc METHOD_NAME(INPUT_TYPE) returns (OUTPUT_TYPE);
+}
+
+.proto types
+
+double
+float
+int32
+int64
+uint32
+uint64
+sint32
+sint64
+fixed32
+fixed64
+sfixed32
+sfixed64
+bool
+string
+bytes
+
+default values
+string - empty string
+bytes - empty bytes
+bool - false
+numeric - zero
+enum - first defined enum value, which must be 0
+message - null
+
+OPTION_NAMES | OPTION_VALUES
+
+
+
+Style Guide
+
+use CamelCase for message names
+use UnderScore for field names
+
+use CamelCase for enum names
+use all caps underscore for field names
+
+
+
