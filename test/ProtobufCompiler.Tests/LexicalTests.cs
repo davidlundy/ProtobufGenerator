@@ -141,8 +141,8 @@ namespace ProtobufCompiler.Tests
         [TestCase("e+12", ExpectedResult = "e+12")]
         [TestCase("e-12", ExpectedResult = "e-12")]
         [TestCase("E+12", ExpectedResult = "E+12")]
-        [TestCase("e12", ExpectedResult = "e12")]
-        [TestCase("e-12a", ExpectedException = typeof(ParseException))]
+        [TestCase("e12", ExpectedResult = "e+12")]
+        [TestCase("e-a", ExpectedException = typeof(ParseException))]
         [TestCase("G+12", ExpectedException = typeof(ParseException))]
         // exponent  = ( "e" | "E" ) [ "+" | "-" ]decimals 
         public string Lexical_Exponent_is_EignoreCase_then_Optional_Plus_or_Minus_then_Decimals(string input)

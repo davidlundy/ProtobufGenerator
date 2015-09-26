@@ -235,7 +235,12 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from e in Parse.Char(t => (t == 'e' || t == 'E'), "Exponent Base").Once().Text()
+                       from plusminus in Parse.Char(t => (t == '+' || t == '-'), "Plus or Minus").Optional()
+                       from failonLetter in Parse.Not(Parse.Letter).Named("No Letters in Exponent")
+                       from exponent in Parse.Digit.Many().Text()
+                       select e + plusminus.GetOrElse('+').ToString() + exponent;
+
             }
         }
 
