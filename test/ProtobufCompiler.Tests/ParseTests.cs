@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using ProtobufCompiler.Types;
 using Sprache;
 
@@ -15,6 +16,10 @@ namespace ProtobufCompiler.Tests
             _sys = new ProtoGrammar();
         }
 
+        [TestCase("syntax = \"proto3\";","proto3")]
+        [TestCase("syntax = \"proto2\";", "proto2")]
+        [TestCase("syntax = \"proto\";", "willthrow", ExpectedException = typeof(ArgumentException))]
+        [TestCase("syntax \"proto\";", "willthrow", ExpectedException = typeof(ParseException))]
         // syntax = "syntax" "=" quote "proto3" quote ";"
         public void Parse_Syntax_Declaration(string input, string expected)
         {

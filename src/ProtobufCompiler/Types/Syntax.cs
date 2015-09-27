@@ -14,7 +14,7 @@ namespace ProtobufCompiler.Types
 
         internal Syntax(string name)
         {
-            Name = (SyntaxType)Enum.Parse(typeof(SyntaxType), name);
+            Name = (SyntaxType)Enum.Parse(typeof(SyntaxType), name, true);
         }
 
         public override bool Equals(object obj)

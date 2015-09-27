@@ -394,7 +394,7 @@ namespace ProtobufCompiler
             {
                 return from open in Quote
                     from literal in CharValue.Many()
-                    from close in Quote.End()
+                    from close in Quote
                     select string.Join(string.Empty, literal);
 
             }
@@ -414,11 +414,16 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="Syntax"/> is a.
         /// </summary>
+        /// <example>// syntax = "proto3"; </example>
         internal virtual Parser<Syntax> Syntax
         {
             get
             {
-                throw new NotImplementedException();
+                return from syntaxToken in Parse.String("syntax").Token()
+                    from equal in Parse.Char('=').Once().Token()
+                    from syntaxvalue in StringLiteral
+                    from terminator in Parse.Char(';').Once().End()
+                    select new Syntax(syntaxvalue);
             }
         }
 

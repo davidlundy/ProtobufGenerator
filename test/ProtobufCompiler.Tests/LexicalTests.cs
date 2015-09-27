@@ -215,7 +215,7 @@ namespace ProtobufCompiler.Tests
 
         [TestCase("\"astring\"", ExpectedResult = "astring")]
         [TestCase("'astring'", ExpectedResult = "astring")]
-        [TestCase("'astring'\"", ExpectedException = typeof(ParseException))]
+        [TestCase("'astring", ExpectedException = typeof(ParseException))]
         // strLit = ("`" { charValue } "`") |  (`"` { charValue } `"`)
         public string Lexical_StringLiteral_is_oneOrMore_CharValue_between_Double_or_Single_Quotes(string input)
         {

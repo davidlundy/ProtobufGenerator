@@ -16,7 +16,7 @@ namespace ProtobufCompiler.Types
 
         internal Import(string type, string clas)
         {
-            ImportType = (ImportType)Enum.Parse(ImportType.GetType(), type);
+            ImportType = (ImportType)Enum.Parse(ImportType.GetType(), type, true);
             ImportClass = clas;
         }
 
