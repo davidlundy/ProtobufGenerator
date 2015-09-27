@@ -159,7 +159,7 @@ namespace ProtobufCompiler
         /// A <seealso cref="FullIdentifier"/> is a group of <see cref="Identifier"/> separated by a '.'
         /// </summary>
         /// <example>
-        /// "Foo.Bar.Baz"
+        /// Foo.Bar.Baz
         /// </example>
         internal virtual Parser<string> FullIdentifier
         {
@@ -169,6 +169,21 @@ namespace ProtobufCompiler
                        from rest in DotSeparatedIdentifier.Many().Optional()
                        select start.First() + string.Join(string.Empty, rest.IsDefined ? rest.Get()
                                 : new string[] { });
+            }
+        }
+
+        /// <summary>
+        /// A <seealso cref="QuotedFullIdentifier"/> is a group of <see cref="Identifier"/> separated by a '.' and surrounded by Quote
+        /// </summary>
+        /// <example>
+        /// Foo.Bar.Baz from "Foo.Bar.Baz"
+        /// </example>
+        internal virtual Parser<string> QuotedFullIdentifier
+        {
+            get
+            {
+                return from value in FullIdentifier.Contained(Quote, Quote)
+                    select value;
             }
         }
 
@@ -422,7 +437,7 @@ namespace ProtobufCompiler
                 return from syntaxToken in Parse.String("syntax").Token()
                     from equal in Parse.Char('=').Once().Token()
                     from syntaxvalue in StringLiteral
-                    from terminator in Parse.Char(';').Once().End()
+                    from terminator in EmptyStatement.Once().End()
                     select new Syntax(syntaxvalue);
             }
         }
@@ -445,7 +460,11 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from pkgToken in Parse.String("package").Token()
+                    from value in FullIdentifier
+                    from terminator in EmptyStatement.End()
+                    select new Package(value);
+
             }
         }
 

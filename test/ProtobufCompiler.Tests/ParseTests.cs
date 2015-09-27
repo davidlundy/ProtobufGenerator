@@ -34,6 +34,7 @@ namespace ProtobufCompiler.Tests
             Assert.That(import, Is.EqualTo(new Import(expMod, expValue)));
         }
 
+        [TestCase("package Test.Proto.Classes;", "Test.Proto.Classes")]
         // package = "package" fullIdent ";"
         public void Parse_Package_Declaration(string input, string expected)
         {
