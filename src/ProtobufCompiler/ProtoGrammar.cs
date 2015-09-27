@@ -316,11 +316,12 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="Quote"/> is a character which may be used to delimit string literals.
         /// </summary>
-        internal virtual Parser<string> Quote
+        internal virtual Parser<char> Quote
         {
             get
             {
-                throw new NotImplementedException();
+                return from quote in Parse.Char('\'').Or(Parse.Char('"')).Once()
+                    select quote.Single();
             }
         }
 
@@ -331,7 +332,11 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from backslash in Parse.Char('\\').Once().Text()
+                    from sep in Parse.IgnoreCase('x').Once().Text()
+                    from hexone in HexDigit.Once().Text()
+                    from hextwo in HexDigit.Once().Text()
+                    select backslash + sep + hexone + hextwo;
             }
         }
 
@@ -342,7 +347,11 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from backslash in Parse.Char('\\').Once().Text()
+                    from octone in OctalDigit.Once().Text()
+                    from octtwo in OctalDigit.Once().Text()
+                    from octtre in OctalDigit.Once().Text()
+                    select backslash + octone + octtwo + octtre;
             }
         }
 
@@ -353,7 +362,14 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from backslash in Parse.Char('\\').Once().Text()
+                    from escChar in Parse.Chars("abfnrtv")
+                        .Or(Parse.Char('\''))
+                        .Or(Parse.Char('\\'))
+                        .Or(Parse.Char('\"'))
+                        .Once().Text()
+                    select backslash + escChar;
+
             }
         }
 
@@ -364,7 +380,8 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from ch in CharEscape.Or(HexEscape).Or(OctalEscape).Or(Parse.AnyChar.Except(Quote).Once().Text())
+                       select ch;
             }
         }
 
@@ -375,7 +392,11 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from open in Quote
+                    from literal in CharValue.Many()
+                    from close in Quote.End()
+                    select string.Join(string.Empty, literal);
+
             }
         }
 

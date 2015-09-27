@@ -162,36 +162,60 @@ namespace ProtobufCompiler.Tests
             return _sys.EmptyStatement.Parse(input);
         }
 
+        [TestCase(";", ExpectedException = typeof(ParseException))]
+        [TestCase("'", ExpectedResult = '\'')]
+        [TestCase("\"", ExpectedResult = '\"')]
         // Quote = '"' or "'"
-        public string Lexical_Quote_is_Single_Or_Double_Quote(string input)
+        public char Lexical_Quote_is_Single_Or_Double_Quote(string input)
         {
             return _sys.Quote.Parse(input);
         }
 
+        [TestCase("\\x09", ExpectedResult = "\\x09")]
+        [TestCase("\\x0F", ExpectedResult = "\\x0F")]
+        [TestCase("\\X0F", ExpectedResult = "\\X0F")]
+        [TestCase("X0F", ExpectedException = typeof(ParseException))]
         // hexEscape = `\` ("x" | "X") hexDigit hexDigit
         public string Lexical_HexEscape_is_Backslash_XignoreCase_Two_HexDigits(string input)
         {
             return _sys.HexEscape.Parse(input);
         }
 
+        [TestCase("\\435", ExpectedResult = "\\435")]
+        [TestCase("435", ExpectedException = typeof(ParseException))]
+        [TestCase("\\439", ExpectedException = typeof(ParseException))]
+        [TestCase("\\43A", ExpectedException = typeof(ParseException))]
         // octEscape = `\` octalDigit octalDigit octalDigit
         public string Lexical_OctEscape_is_Backslash_Three_OctalDigits(string input)
         {
             return _sys.OctalEscape.Parse(input);
         }
 
+        [TestCase("\\a", ExpectedResult = "\\a")]
+        [TestCase("\\\\", ExpectedResult = "\\\\")]
+        [TestCase("\\\"", ExpectedResult = "\\\"")]
+        [TestCase("a\\", ExpectedException = typeof(ParseException))]
         // charEscape = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` )
         public string Lexical_CharEscape_is_Backslash_abfnrtw_backslash_or_single_or_double_Quote(string input)
         {
             return _sys.CharEscape.Parse(input);
         }
 
+        [TestCase("\\a", ExpectedResult = "\\a")]
+        [TestCase("\\\\", ExpectedResult = "\\\\")]
+        [TestCase("\\\"", ExpectedResult = "\\\"")]
+        [TestCase("\\435", ExpectedResult = "\\435")]
+        [TestCase("\\x09", ExpectedResult = "\\x09")]
+        [TestCase("a", ExpectedResult = "a")]
         // charValue = hexEscape | octEscape | charEscape | /[^\0\n\\]/
         public string Lexical_CharValue_is_Either_HexEscape_OctEscape_CharEscape_OrStringFirstChar(string input)
         {
             return _sys.CharValue.Parse(input);
         }
 
+        [TestCase("\"astring\"", ExpectedResult = "astring")]
+        [TestCase("'astring'", ExpectedResult = "astring")]
+        [TestCase("'astring'\"", ExpectedException = typeof(ParseException))]
         // strLit = ("`" { charValue } "`") |  (`"` { charValue } `"`)
         public string Lexical_StringLiteral_is_oneOrMore_CharValue_between_Double_or_Single_Quotes(string input)
         {
