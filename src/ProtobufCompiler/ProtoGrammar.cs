@@ -39,6 +39,17 @@ namespace ProtobufCompiler
             }
         }
 
+        /// <summary>
+        /// A <see cref="CapitalizedIdentifier"/> is an <see cref="Identifier"/> which must start with an upper case letter. 
+        /// </summary>
+        protected internal virtual Parser<string> CapitalizedIdentifier
+        {
+            get
+            {
+                return Parse.Identifier(Parse.Upper, Parse.Char(t => (char.IsLetterOrDigit(t) || t == '_'), "Letter, Digit, or Underscore"));
+            }
+        }
+
         #region Identifier Definitions
         /// <summary>
         /// A <see cref="MessageName"/> is defined as an <see cref="Identifier"/>
@@ -163,22 +174,28 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="MessageType"/> is a field type declaration inside a Message
         /// </summary>
+        /// <example>IdentA.IdentB.MessageName</example>
         protected internal virtual Parser<string> MessageType
         {
             get
             {
-                throw new NotImplementedException();
+                return from optionalDot in Parse.Char('.').Once().Text().Optional()
+                       from id in FullIdentifier.End()
+                       select optionalDot.GetOrElse(string.Empty) + id;
             }
         }
 
         /// <summary>
         /// A <see cref="EnumType"/> is a field type declaration inside a Message
         /// </summary>
+        /// <example>IdentA.IdentB.EnumType</example>
         protected internal virtual Parser<string> EnumType
         {
             get
             {
-                throw new NotImplementedException();
+                return from optionalDot in Parse.Char('.').Once().Text().Optional()
+                       from id in FullIdentifier.End()
+                       select optionalDot.GetOrElse(string.Empty) + id;
             }
         }
 
@@ -189,7 +206,8 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from groupName in CapitalizedIdentifier
+                       select groupName;
             }
         }
 

@@ -42,22 +42,6 @@ namespace ProtobufCompiler.Tests
             Assert.AreEqual(input[0], output);
         }
 
-        /*
-            ident = letter { letter | unicodeDigit | "_" }
-            fullIdent = ident {"." ident}
-            messageName = ident
-            enumName = ident
-            fieldName = ident
-            oneofName = ident
-            mapName = ident
-            serviceName = ident
-            rpcName = ident
-            streamName = ident
-            messageType = ["."] {ident "."} messageName
-            enumType = ["."] {ident "."} enumName
-            groupName = capital { letter | unicodeDigit | "_" }
-        */
-
         [TestCase("Aab_z34 ", ExpectedResult = "Aab_z34")]
         [TestCase("A ", ExpectedResult = "A")]
         [TestCase("A asdf", ExpectedResult = "A")]
