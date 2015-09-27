@@ -17,6 +17,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufCompiler", "src\Pro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufCompiler.Tests", "test\ProtobufCompiler.Tests\ProtobufCompiler.Tests.csproj", "{B03EDD91-D591-443B-8698-33D7FB2820A6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{945E3090-38F7-44F7-A613-94F3C3A03330}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Proto3Specification.txt = docs\Proto3Specification.txt
+		docs\ProtoReference.txt = docs\ProtoReference.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
