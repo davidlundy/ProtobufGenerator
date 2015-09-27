@@ -152,7 +152,7 @@ namespace ProtobufCompiler.Tests
 
         [TestCase("1.2", ExpectedResult = "1.2")]
         [TestCase("1.2e+10", ExpectedResult = "1.2e+10")]
-        [TestCase("1.2e10", ExpectedResult = "1.2e10")]
+        [TestCase("1.2e10", ExpectedResult = "1.2e+10")]
         // decimals "." [ decimals ] [ exponent ] | decimals exponent | "."decimals [exponent ]
         public string Lexical_FloatLiteral_is_Digits_dot_OptionalDigits_OptionalExp_or_Decimals_and_Exp_or_dot_and_decimals_and_ExponentOpt(string input)
         {

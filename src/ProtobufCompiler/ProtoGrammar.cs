@@ -250,7 +250,9 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                return from dec in Parse.Decimal
+                       from exp in Exponent.Optional()
+                       select dec + exp.GetOrElse(string.Empty);
             }
         }
 
