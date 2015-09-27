@@ -163,6 +163,57 @@ namespace ProtobufCompiler.Tests
             return _sys.EmptyStatement.Parse(input);
         }
 
+        // Quote = '"' or "'"
+        public string Lexical_Quote_is_Single_Or_Double_Quote(string input)
+        {
+            return _sys.Quote.Parse(input);
+        }
+
+        // hexEscape = `\` ("x" | "X") hexDigit hexDigit
+        public string Lexical_HexEscape_is_Backslash_XignoreCase_Two_HexDigits(string input)
+        {
+            return _sys.HexEscape.Parse(input);
+        }
+
+        // octEscape = `\` octalDigit octalDigit octalDigit
+        public string Lexical_OctEscape_is_Backslash_Three_OctalDigits(string input)
+        {
+            return _sys.OctalEscape.Parse(input);
+        }
+
+        // charEscape = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` )
+        public string Lexical_CharEscape_is_Backslash_abfnrtw_backslash_or_single_or_double_Quote(string input)
+        {
+            return _sys.CharEscape.Parse(input);
+        }
+
+        // charValue = hexEscape | octEscape | charEscape | /[^\0\n\\]/
+        public string Lexical_CharValue_is_Either_HexEscape_OctEscape_CharEscape_OrStringFirstChar(string input)
+        {
+            return _sys.CharValue.Parse(input);
+        }
+
+        // strLit = ("`" { charValue } "`") |  (`"` { charValue } `"`)
+        public string Lexical_StringLiteral_is_oneOrMore_CharValue_between_Double_or_Single_Quotes(string input)
+        {
+            return _sys.StringLiteral.Parse(input);
+        }
+
+        // optionName = (ident | "(" fullIdent ")") {"." ident}
+        // example : "com.example.foo"
+        public string Lexical_OptionName_is_FullIdentifier(string input)
+        {
+            return _sys.OptionName.Parse(input);
+        }
+
+        // option = "option" optionName  "=" constant ";"
+        public string Lexical_Option_is_OptionLiteral_Equals_QuotedName_OptionName_Equals_Identifier(string input)
+        {
+            return _sys.OptionName.Parse(input);
+        }
+
+
+
 
     }
 }
