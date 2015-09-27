@@ -1,10 +1,6 @@
 ﻿using Sprache;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProtobufCompiler
 {
@@ -165,7 +161,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="MessageType"/> is a field type declaration inside a Message/>
+        /// A <see cref="MessageType"/> is a field type declaration inside a Message
         /// </summary>
         protected internal virtual Parser<string> MessageType
         {
@@ -176,7 +172,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="EnumType"/> is a field type declaration inside a Message/>
+        /// A <see cref="EnumType"/> is a field type declaration inside a Message
         /// </summary>
         protected internal virtual Parser<string> EnumType
         {
@@ -187,7 +183,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="GroupName"/> is a field type declaration inside a Message/>
+        /// A <see cref="GroupName"/> is a field type declaration inside a Message
         /// </summary>
         protected internal virtual Parser<string> GroupName
         {
@@ -198,9 +194,9 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="IntegerLiteral"/> is a literal integer string that may be integer, hex, or octal />
+        /// A <see cref="IntegerLiteral"/> is a literal integer string that may be integer, hex, or octal
         /// </summary>
-        /// <example>54, 09, 0X5F</example>
+        /// <example>54, 07, 0X5F</example>
         protected internal virtual Parser<string> IntegerLiteral
         {
             get
@@ -213,6 +209,10 @@ namespace ProtobufCompiler
             }
         }
 
+        /// <summary>
+        /// A <see cref="OctalLiteral"/> is a representation of an integer literal in octal notation. 
+        /// </summary>
+        /// <example>07</example>
         protected internal virtual Parser<string> OctalLiteral
         {
             get
@@ -223,7 +223,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="HexLiteral"/> is a representation of a Hexadecimal value />
+        /// A <see cref="HexLiteral"/> is a representation of a Hexadecimal value
         /// </summary>
         /// <example>0X5F</example>
         protected internal virtual Parser<string> HexLiteral
@@ -256,7 +256,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="FloatLiteral"/> is a literal floating point value string />
+        /// A <see cref="FloatLiteral"/> is a literal floating point value string
         /// </summary>
         /// <example>12.345e-12</example>
         protected internal virtual Parser<string> FloatLiteral
@@ -271,7 +271,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="BooleanLiteral"/> is a string which is 'true' or 'false', in lower case />
+        /// A <see cref="BooleanLiteral"/> is a string which is 'true' or 'false', in lower case
         /// </summary>
         protected internal virtual Parser<string> BooleanLiteral
         {
@@ -283,7 +283,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="EmptyStatement"/> is simply a semicolon ';' />
+        /// A <see cref="EmptyStatement"/> is simply a semicolon ';'
         /// </summary>
         protected internal virtual Parser<string> EmptyStatement
         {
