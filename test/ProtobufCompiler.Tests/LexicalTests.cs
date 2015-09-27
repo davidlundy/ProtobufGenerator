@@ -130,7 +130,7 @@ namespace ProtobufCompiler.Tests
         [TestCase("0x9", ExpectedResult = "0x9")]
         [TestCase("0X9", ExpectedResult = "0X9")]
         [TestCase("0x96FA", ExpectedResult = "0x96FA")]
-        [TestCase("0x96G", ExpectedResult = "0x96")]
+        [TestCase("0x96G", ExpectedException = typeof(ParseException))]
         [TestCase("0x", ExpectedException = typeof(ParseException))]
         // hexLit     = "0" ( "x" | "X" ) hexDigit { hexDigit } 
         public string Lexical_HexLiteral_is_0_XignoreCase_HexDigit_Then_ZeroOrMany_HexDigits(string input)
@@ -153,6 +153,7 @@ namespace ProtobufCompiler.Tests
         [TestCase("1.2", ExpectedResult = "1.2")]
         [TestCase("1.2e+10", ExpectedResult = "1.2e+10")]
         [TestCase("1.2e10", ExpectedResult = "1.2e+10")]
+        [TestCase("1.2e10g", ExpectedException = typeof(ParseException))]
         // decimals "." [ decimals ] [ exponent ] | decimals exponent | "."decimals [exponent ]
         public string Lexical_FloatLiteral_is_Digits_dot_OptionalDigits_OptionalExp_or_Decimals_and_Exp_or_dot_and_decimals_and_ExponentOpt(string input)
         {

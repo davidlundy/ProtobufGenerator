@@ -205,7 +205,20 @@ namespace ProtobufCompiler
         {
             get
             {
-                throw new NotImplementedException();
+                var normal = Parse.Digit.Many().End().Text();
+                var octal = OctalDigit.Many().End().Text();
+                var hex = HexLiteral;
+
+                return normal.Or(octal.Or(hex));
+            }
+        }
+
+        protected internal virtual Parser<string> OctalLiteral
+        {
+            get
+            {
+                return from octal in OctalDigit.Many().End().Text()
+                       select octal;
             }
         }
 
@@ -217,16 +230,16 @@ namespace ProtobufCompiler
         {
             get
             {
-                return from leadingZero in Parse.Char('0')
-                       from x in Parse.IgnoreCase('x')
-                       from firstDigit in HexDigit
-                       from restDigits in HexDigit.Many()
-                       select string.Format("{0}{1}{2}{3}", leadingZero, x, firstDigit, string.Join(string.Empty, restDigits));
+                return from leadingZero in Parse.Char('0').Once().Text()
+                       from x in Parse.IgnoreCase('x').Once().Text()
+                       from restDigits in HexDigit.AtLeastOnce().Text().End()
+                       select leadingZero + x+ restDigits;
             }
         }
 
         /// <summary>
-        /// A <see cref="Exponent"/> is a representation of scientific exponential notation />
+        /// A <see cref="Exponent"/> is a representation of scientific exponential notation, and 
+        /// must be the final component of a floating point literal. 
         /// </summary>
         /// <example>e+12 in '1.23e+12'</example>
         protected internal virtual Parser<string> Exponent
@@ -252,6 +265,7 @@ namespace ProtobufCompiler
             {
                 return from dec in Parse.Decimal
                        from exp in Exponent.Optional()
+                       from notrailer in Parse.Not(Parse.AnyChar)
                        select dec + exp.GetOrElse(string.Empty);
             }
         }
