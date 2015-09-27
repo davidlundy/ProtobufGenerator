@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Sprache;
 
 namespace ProtobufCompiler.Tests
@@ -205,15 +204,5 @@ namespace ProtobufCompiler.Tests
         {
             return _sys.OptionName.Parse(input);
         }
-
-        // option = "option" optionName  "=" constant ";"
-        public string Lexical_Option_is_OptionLiteral_Equals_QuotedName_OptionName_Equals_Identifier(string input)
-        {
-            return _sys.OptionName.Parse(input);
-        }
-
-
-
-
     }
 }

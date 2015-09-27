@@ -1,15 +1,16 @@
-﻿using Sprache;
+﻿using ProtobufCompiler.Types;
+using Sprache;
 using System;
 using System.Linq;
 
 namespace ProtobufCompiler
 {
-    public class ProtoGrammar
+    internal class ProtoGrammar
     {
         /// <summary>
         /// A <see cref="HexDigit"/> has a range from 0-9 and from A-F (case insensitive)
         /// </summary>
-        protected internal virtual Parser<char> HexDigit
+        internal virtual Parser<char> HexDigit
         {
             get
             {
@@ -20,7 +21,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="OctalDigit"/> has a range from 0 to 7
         /// </summary>
-        protected internal virtual Parser<char> OctalDigit
+        internal virtual Parser<char> OctalDigit
         {
             get
             {
@@ -31,7 +32,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="Identifier"/> is a string of Letters, Digits, and Underscores that begin with a Letter.
         /// </summary>
-        protected internal virtual Parser<string> Identifier
+        internal virtual Parser<string> Identifier
         {
             get
             {
@@ -42,7 +43,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="CapitalizedIdentifier"/> is an <see cref="Identifier"/> which must start with an upper case letter. 
         /// </summary>
-        protected internal virtual Parser<string> CapitalizedIdentifier
+        internal virtual Parser<string> CapitalizedIdentifier
         {
             get
             {
@@ -54,7 +55,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="MessageName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> MessageName
+        internal virtual Parser<string> MessageName
         {
             get
             {
@@ -65,7 +66,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="EnumName"/>is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> EnumName
+        internal virtual Parser<string> EnumName
         {
             get
             {
@@ -76,7 +77,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="FieldName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> FieldName
+        internal virtual Parser<string> FieldName
         {
             get
             {
@@ -87,7 +88,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="OneOfName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> OneOfName
+        internal virtual Parser<string> OneOfName
         {
             get
             {
@@ -98,7 +99,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="MapName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> MapName
+        internal virtual Parser<string> MapName
         {
             get
             {
@@ -109,7 +110,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="ServiceName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> ServiceName
+        internal virtual Parser<string> ServiceName
         {
             get
             {
@@ -120,7 +121,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="RpcName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> RpcName
+        internal virtual Parser<string> RpcName
         {
             get
             {
@@ -131,7 +132,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="StreamName"/> is defined as an <see cref="Identifier"/>
         /// </summary>
-        protected internal virtual Parser<string> StreamName
+        internal virtual Parser<string> StreamName
         {
             get
             {
@@ -144,7 +145,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="DotSeparatedIdentifier"/> is an <see cref="Identifier"/> preceded immediately by a '.'
         /// </summary>
-        protected internal virtual Parser<string> DotSeparatedIdentifier
+        internal virtual Parser<string> DotSeparatedIdentifier
         {
             get
             {
@@ -160,13 +161,13 @@ namespace ProtobufCompiler
         /// <example>
         /// "Foo.Bar.Baz"
         /// </example>
-        protected internal virtual Parser<string> FullIdentifier
+        internal virtual Parser<string> FullIdentifier
         {
             get
             {
                 return from start in Identifier.Once()
                        from rest in DotSeparatedIdentifier.Many().Optional()
-                       select start.First() + string.Join(string.Empty, rest.IsDefined ? rest.Get() 
+                       select start.First() + string.Join(string.Empty, rest.IsDefined ? rest.Get()
                                 : new string[] { });
             }
         }
@@ -175,7 +176,7 @@ namespace ProtobufCompiler
         /// A <see cref="MessageType"/> is a field type declaration inside a Message
         /// </summary>
         /// <example>IdentA.IdentB.MessageName</example>
-        protected internal virtual Parser<string> MessageType
+        internal virtual Parser<string> MessageType
         {
             get
             {
@@ -189,7 +190,7 @@ namespace ProtobufCompiler
         /// A <see cref="EnumType"/> is a field type declaration inside a Message
         /// </summary>
         /// <example>IdentA.IdentB.EnumType</example>
-        protected internal virtual Parser<string> EnumType
+        internal virtual Parser<string> EnumType
         {
             get
             {
@@ -202,7 +203,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="GroupName"/> is a field type declaration inside a Message
         /// </summary>
-        protected internal virtual Parser<string> GroupName
+        internal virtual Parser<string> GroupName
         {
             get
             {
@@ -215,7 +216,7 @@ namespace ProtobufCompiler
         /// A <see cref="IntegerLiteral"/> is a literal integer string that may be integer, hex, or octal
         /// </summary>
         /// <example>54, 07, 0X5F</example>
-        protected internal virtual Parser<string> IntegerLiteral
+        internal virtual Parser<string> IntegerLiteral
         {
             get
             {
@@ -231,7 +232,7 @@ namespace ProtobufCompiler
         /// A <see cref="OctalLiteral"/> is a representation of an integer literal in octal notation. 
         /// </summary>
         /// <example>07</example>
-        protected internal virtual Parser<string> OctalLiteral
+        internal virtual Parser<string> OctalLiteral
         {
             get
             {
@@ -244,14 +245,14 @@ namespace ProtobufCompiler
         /// A <see cref="HexLiteral"/> is a representation of a Hexadecimal value
         /// </summary>
         /// <example>0X5F</example>
-        protected internal virtual Parser<string> HexLiteral
+        internal virtual Parser<string> HexLiteral
         {
             get
             {
                 return from leadingZero in Parse.Char('0').Once().Text()
                        from x in Parse.IgnoreCase('x').Once().Text()
                        from restDigits in HexDigit.AtLeastOnce().Text().End()
-                       select leadingZero + x+ restDigits;
+                       select leadingZero + x + restDigits;
             }
         }
 
@@ -260,13 +261,13 @@ namespace ProtobufCompiler
         /// must be the final component of a floating point literal. 
         /// </summary>
         /// <example>e+12 in '1.23e+12'</example>
-        protected internal virtual Parser<string> Exponent
+        internal virtual Parser<string> Exponent
         {
             get
             {
                 return from e in Parse.Char(t => (t == 'e' || t == 'E'), "Exponent Base").Once().Text()
                        from plusminus in Parse.Char(t => (t == '+' || t == '-'), "Plus or Minus").Optional()
-                       from failonLetter in Parse.Not(Parse.Letter).Named("No Letters in Exponent")
+                       from failonLetter in Parse.Letter.Not().Named("No Letters in Exponent")
                        from exponent in Parse.Digit.Many().Text()
                        select e + plusminus.GetOrElse('+').ToString() + exponent;
 
@@ -277,13 +278,13 @@ namespace ProtobufCompiler
         /// A <see cref="FloatLiteral"/> is a literal floating point value string
         /// </summary>
         /// <example>12.345e-12</example>
-        protected internal virtual Parser<string> FloatLiteral
+        internal virtual Parser<string> FloatLiteral
         {
             get
             {
                 return from dec in Parse.Decimal
                        from exp in Exponent.Optional()
-                       from notrailer in Parse.Not(Parse.AnyChar)
+                       from notrailer in Parse.AnyChar.Not()
                        select dec + exp.GetOrElse(string.Empty);
             }
         }
@@ -291,7 +292,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="BooleanLiteral"/> is a string which is 'true' or 'false', in lower case
         /// </summary>
-        protected internal virtual Parser<string> BooleanLiteral
+        internal virtual Parser<string> BooleanLiteral
         {
             get
             {
@@ -303,7 +304,7 @@ namespace ProtobufCompiler
         /// <summary>
         /// A <see cref="EmptyStatement"/> is simply a semicolon ';'
         /// </summary>
-        protected internal virtual Parser<string> EmptyStatement
+        internal virtual Parser<string> EmptyStatement
         {
             get
             {
@@ -311,6 +312,129 @@ namespace ProtobufCompiler
                        select single.ToString();
             }
         }
+
+        /// <summary>
+        /// A <see cref="Quote"/> is a character which may be used to delimit string literals.
+        /// </summary>
+        internal virtual Parser<string> Quote
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="HexEscape"/> is an escape sequence to use hex in string literals.
+        /// </summary>
+        internal virtual Parser<string> HexEscape
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="OctalEscape"/> is a.
+        /// </summary>
+        internal virtual Parser<string> OctalEscape
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="CharEscape"/> is a.
+        /// </summary>
+        internal virtual Parser<string> CharEscape
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="CharValue"/> is a.
+        /// </summary>
+        internal virtual Parser<string> CharValue
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="StringLiteral"/> is a.
+        /// </summary>
+        internal virtual Parser<string> StringLiteral
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="OptionName"/> is a.
+        /// </summary>
+        internal virtual Parser<string> OptionName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="Syntax"/> is a.
+        /// </summary>
+        internal virtual Parser<Syntax> Syntax
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="Import"/> is a.
+        /// </summary>
+        internal virtual Parser<Import> Import
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="Package"/> is a.
+        /// </summary>
+        internal virtual Parser<Package> Package
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// A <see cref="Option"/> is a.
+        /// </summary>
+        internal virtual Parser<Option> Option
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
 
 
     }

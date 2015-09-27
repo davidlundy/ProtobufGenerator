@@ -91,6 +91,8 @@ For examples:
 
 option java_package = "com.example.foo";
 
+TODO : START HERE
+
 Fields
 
 Fields are the basic elements of a protocol buffer message. Fields can be normal fields, oneof fields, or map fields. A field has a type and field number.

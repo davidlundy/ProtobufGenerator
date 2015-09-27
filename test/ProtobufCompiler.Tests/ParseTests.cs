@@ -1,9 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ProtobufCompiler.Types;
+using Sprache;
 
 namespace ProtobufCompiler.Tests
 {
@@ -19,10 +16,10 @@ namespace ProtobufCompiler.Tests
         }
 
         // syntax = "syntax" "=" quote "proto3" quote ";"
-        public string Parse_Syntax_Declaration(string input)
+        public void Parse_Syntax_Declaration(string input, string expected)
         {
             var syntax = _sys.Syntax.Parse(input);
-            return syntax.Name;
+            Assert.That(syntax, Is.EqualTo(new Syntax(expected)));
         }
 
         // import = "import" [ "weak" | “public”] strLit ";" 
@@ -33,10 +30,10 @@ namespace ProtobufCompiler.Tests
         }
 
         // package = "package" fullIdent ";"
-        public string Parse_Package_Declaration(string input)
+        public void Parse_Package_Declaration(string input, string expected)
         {
             var package = _sys.Package.Parse(input);
-            return package.Name;
+            Assert.That(package, Is.EqualTo(new Package(expected)));
         }
 
         // option = "option" optionName  "=" constant ";"

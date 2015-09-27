@@ -22,7 +22,7 @@ namespace ProtobufGenerator.JobParameters
         /// </summary>
         public string SolutionDirectory { get; set; }
 
-        /// <summar>y
+        /// <summary>
         /// Parse a valid Parameters object from an XDocument, validating with a provided schema
         /// </summary>
         /// <param name="document">The XDocument instance representing the Parameters object</param>
@@ -42,7 +42,11 @@ namespace ProtobufGenerator.JobParameters
 
             var customAnnotations = new Dictionary<string, IList<string>>();
             foreach (var annotation in jobElements.Select(job => job.SafeElement("CustomAnnotations")
-                .Elements("CustomAnnotation")).SelectMany(ann => ann))
+                .Elements("CustomAnnotation")).SelectMany(ann =>
+                {
+                    var xElements = ann as IList<XElement> ?? ann.ToList();
+                    return xElements;
+                }))
             {
                 if (customAnnotations.ContainsKey(annotation.Attribute("codeElement").Value))
                 {

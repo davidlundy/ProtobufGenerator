@@ -1,5 +1,4 @@
 ﻿using ProtobufGenerator.JobParameters;
-using System;
 
 namespace ProtobufGenerator.Interfaces
 {
