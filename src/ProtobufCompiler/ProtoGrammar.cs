@@ -39,9 +39,7 @@ namespace ProtobufCompiler
         {
             get
             {
-                return from first in Parse.Letter.Once()
-                       from rest in Parse.Char(t => (char.IsLetterOrDigit(t) || t == '_'), "Letter, Digit, or Underscore").Many().Text().Optional()
-                       select first.Single().ToString() + (rest.IsDefined ? rest.Get() : string.Empty);
+                return Parse.Identifier(Parse.Letter, Parse.Char(t => (char.IsLetterOrDigit(t) || t == '_'), "Letter, Digit, or Underscore"));
             }
         }
 
