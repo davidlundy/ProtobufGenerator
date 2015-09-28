@@ -1,0 +1,20 @@
+﻿{
+    "version": "1.0.0-alpha",
+    "description": "",
+    "authors": [ "David Lundy", "Martin Björkström" ],
+    "owners": [ "David Lundy" ],
+    "summary": "",
+    "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
+    "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
+    "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
+
+    "dependencies": {
+      "NUnit": "2.6.4",
+      "ProtobufCompiler": "1.0.0-alpha"
+    },
+
+    "frameworks": {
+        "dnx451": {
+        }
+    }
+}
