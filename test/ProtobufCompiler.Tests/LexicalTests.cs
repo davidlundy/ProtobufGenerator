@@ -19,39 +19,58 @@ namespace ProtobufCompiler.Tests
         [InlineData("F")]
         [InlineData("a")]
         [InlineData("f")]
-        //[TestCase("G", ExpectedException = typeof(ParseException))]
-        //[TestCase("h", ExpectedException = typeof(ParseException))]
-        //[TestCase("*", ExpectedException = typeof(ParseException))]
         // hexDigit     = "0" … "9" | "A" … "F" | "a" … "f"
         public void Lexical_HexDigit_is_0to9_and_AtoF_CaseInsensitive(string input)
         {
             var output = _sys.HexDigit.Parse(input);
             Assert.Equal(input[0], output);
         }
+        
+        [Theory]
+        [InlineData("G")]
+        [InlineData("h")]
+        [InlineData("*")]
+        public void Lexical_HexDigit_is_0to9_and_AtoF_CaseInsensitive_Throws(string input)
+        {
+            Assert.Throws<ParseException>(() => _sys.HexDigit.Parse(input));
+        }
 
         [Theory]
         [InlineData("0")]
         [InlineData("7")]
-        //[TestCase("8", ExpectedException = typeof(ParseException))]
-        //[TestCase("A", ExpectedException = typeof(ParseException))]
         // octalDigit   = "0" … "7"
         public void Lexical_OctalDigit_is_0to7(string input)
         {
             var output = _sys.OctalDigit.Parse(input);
             Assert.Equal(input[0], output);
         }
+        
+        [Theory]
+        [InlineData("8")]
+        [InlineData("A")]
+        public void Lexical_OctalDigit_is_0to7_Throws(string input)
+        {
+            Assert.Throws<ParseException>(() => _sys.OctalDigit.Parse(input));
+        }
 
-        //[TestCase("Aab_z34 ", ExpectedResult = "Aab_z34")]
-        //[TestCase("A ", ExpectedResult = "A")]
-        //[TestCase("A asdf", ExpectedResult = "A")]
-        //[TestCase("3ab_z34 ", ExpectedException = typeof(ParseException))]
-        //[TestCase("Aab%z34 ", ExpectedResult = "Aab")]
-        //[TestCase("*ab%z34 ", ExpectedException = typeof(ParseException))]
-        //// ident = letter { letter | unicodeDigit | "_" }
-        //public string Lexical_Identifier_is_Letter_Then_LetterNumberOrUnderscore(string input)
-        //{
-        //    return _sys.Identifier.Parse(input);
-        //}
+        [Theory]
+        [InlineData("Aab_z34 ", "Aab_z34")]
+        [InlineData("A ", "A")]
+        [InlineData("A asdf", "A")]
+        [InlineData("Aab%z34 ", "Aab")]
+        // ident = letter { letter | unicodeDigit | "_" }
+        public void Lexical_Identifier_is_Letter_Then_LetterNumberOrUnderscore(string input, string expectedResult)
+        {
+            Assert.Equal(expectedResult, _sys.Identifier.Parse(input));
+        }
+        
+        [Theory]
+        [InlineData("3ab_z34 ")]
+        [InlineData ("*ab%z34 ")]
+        public void Lexical_Identifier_is_Letter_Then_LetterNumberOrUnderscore_Throws(string input)
+        {
+            Assert.Throws<ParseException>(() => _sys.Identifier.Parse(input));
+        }
 
         //[TestCase(".Aab_z34", ExpectedResult = ".Aab_z34")]
         //[TestCase(".A", ExpectedResult = ".A")]
