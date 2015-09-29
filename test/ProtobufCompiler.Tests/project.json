@@ -9,8 +9,12 @@
     "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
     "dependencies": {
-      "NUnit": "2.6.4",
+      "xunit": "2.1.0-*",
+      "xunit.runner.dnx": "2.1.0-*",
       "ProtobufCompiler": "1.0.0-alpha"
+    },
+    "commands": {
+        "test": "xunit.runner.dnx"
     },
 
     "frameworks": {
