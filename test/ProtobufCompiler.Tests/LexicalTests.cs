@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using Xunit;
+﻿using Xunit;
 using Sprache;
 
 namespace ProtobufCompiler.Tests
