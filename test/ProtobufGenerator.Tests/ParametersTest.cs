@@ -12,7 +12,6 @@ namespace ProtobufGenerator.Tests
         /// This is the happy case. We'll test unhappiness later. 
         /// </summary>
         [Fact]
-        //[DeploymentItem("TestFiles\\TestParameters.xml")]
         public void CanLoadParametersFromRealFile()
         {
             var engine = new ProtoEngine();
@@ -28,15 +27,12 @@ namespace ProtobufGenerator.Tests
         /// expected exception.
         /// </summary>
         [Fact]
-        //[DeploymentItem("TestFiles\\WontValidate.xml")]
-        //[ExpectedException(typeof(XmlSchemaValidationException))]
         public void ThrowsWhenFailsValidation()
         {
             var engine = new ProtoEngine();
             const string testXml = @"TestFiles\WontValidate.xml";
             Assert.True(File.Exists(testXml));
             Assert.Throws<XmlSchemaValidationException>(() => engine.LoadParameters(testXml));
-            //Assert.NotNull(engine.Parameters);
         }
     }
 }
