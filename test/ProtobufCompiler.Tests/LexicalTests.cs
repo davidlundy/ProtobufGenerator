@@ -351,11 +351,13 @@ namespace ProtobufCompiler.Tests
             Assert.Throws<ParseException>(() => _sys.StringLiteral.Parse(input));
         }
 
-        // optionName = (ident | "(" fullIdent ")") {"." ident}
-        // example : "com.example.foo"
-        public void Lexical_OptionName_is_FullIdentifier(string input, string expected)
+        [Theory]
+        [InlineData("32", 32)]
+        [InlineData("0", 0)]
+        // fieldNumber = intLit
+        public void Lexical_FieldNumber_is_IntegerLiteral(string input, int expected)
         {
-            Assert.Equal(expected, _sys.OptionName.Parse(input));
+            Assert.Equal(expected, _sys.FieldNumber.Parse(input));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 using ProtobufCompiler.Types;
 using Sprache;
@@ -25,22 +26,39 @@ namespace ProtobufCompiler.Tests
         }
 
         [Theory]
-        [InlineData("syntax = \"proto\";")]
         [InlineData("syntax \"proto\";")]
         // syntax = "syntax" "=" quote "proto3" quote ";"
-        public void Parse_Syntax_Declaration_Throws_on_BadGrammar(string input)
+        public void Parse_Syntax_Declaration_Throws_Parse_on_BadGrammar(string input)
+        {
+            Assert.Throws<ParseException>(() => _sys.Syntax.Parse(input));
+        }
+
+        [Theory]
+        [InlineData("syntax = \"proto\";")]
+        // syntax = "syntax" "=" quote "proto3" quote ";"
+        public void Parse_Syntax_Declaration_Throws_Argument_on_BadSyntax(string input)
         {
             Assert.Throws<ArgumentException>(() => _sys.Syntax.Parse(input));
         }
 
         [Theory]
-        [InlineData("import public Test.Proto.OtherClass", "public", "Test.Proto.OtherClass")]
-        [InlineData("import public Test.Proto.OtherClass", "", "Test.Proto.OtherClass")]
-        [InlineData("import public Test.Proto.OtherClass", "None", "Test.Proto.OtherClass")]
+        [InlineData("import public \"Test.Proto.OtherClass\";", "public", "Test.Proto.OtherClass")]
+        [InlineData("import \"Test.Proto.OtherClass\";", "", "Test.Proto.OtherClass")]
+        [InlineData("import \"Test.Proto.OtherClass\";", "None", "Test.Proto.OtherClass")]
+        [InlineData("import weak \"Test.Proto.OtherClass\";", "Weak", "Test.Proto.OtherClass")]
         //import = "import" [ "weak" | “public”] strLit ";" 
         public void Parse_Import_Declaration(string input, string expMod, string expValue)
         {
             Assert.Equal(new Import(expMod, expValue), _sys.Import.Parse(input));
+        }
+
+        [Theory]
+        [InlineData("import weak Test.Proto.OtherClass;")]
+        [InlineData("import strong Test.Proto.OtherClass;")]
+        //import = "import" [ "weak" | “public”] strLit ";" 
+        public void Parse_Import_Declaration_ThrowsParse_when_NotQuoted_or_BadMod(string input)
+        {
+            Assert.Throws<ParseException>(() => _sys.Import.Parse(input));
         }
 
         [Theory]
@@ -53,11 +71,38 @@ namespace ProtobufCompiler.Tests
 
         [Theory]
         [InlineData("option SOME_KEY = SOME_VALUE;", "SOME_KEY", "SOME_VALUE")]
+        [InlineData("option SOME_KEY = \"SOME_VALUE.SOME_VALUE\";", "SOME_KEY", "SOME_VALUE.SOME_VALUE")]
         // option = "option" optionName  "=" constant ";"
         // optionName = (ident | "(" fullIdent ")") {"." ident}
         public void Parse_Option_Declaration(string input, string expKey, string expValue)
         {
             Assert.Equal(new Option(expKey, expValue), _sys.Option.Parse(input));
+        }
+
+        [Theory, MemberData("Fields")]
+        internal void Parse_Field_Declaration(string input, Field field)
+        {
+            Assert.Equal(field, _sys.Field.Parse(input));
+        }
+
+        public static IEnumerable<object[]> Fields
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        "foo.bar nested_message = 2;",
+                        new Field("foo.bar", "nested_message", 2, new List<Option>(), false)
+                    },
+                    new object[]
+                    {
+                        "repeated int32 samples = 4;",
+                        new Field("int32", "samples", 4, new List<Option>(), true)
+                    }
+                };
+            }
         }
     }
 }

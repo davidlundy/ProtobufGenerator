@@ -1,6 +1,6 @@
 ﻿using ProtobufCompiler.Types;
 using Sprache;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProtobufCompiler
@@ -196,7 +196,7 @@ namespace ProtobufCompiler
             get
             {
                 return from optionalDot in Parse.Char('.').Once().Text().Optional()
-                       from id in FullIdentifier.End()
+                       from id in FullIdentifier
                        select optionalDot.GetOrElse(string.Empty) + id;
             }
         }
@@ -210,7 +210,7 @@ namespace ProtobufCompiler
             get
             {
                 return from optionalDot in Parse.Char('.').Once().Text().Optional()
-                       from id in FullIdentifier.End()
+                       from id in FullIdentifier
                        select optionalDot.GetOrElse(string.Empty) + id;
             }
         }
@@ -235,11 +235,18 @@ namespace ProtobufCompiler
         {
             get
             {
-                var normal = Parse.Digit.Many().End().Text();
-                var octal = OctalDigit.Many().End().Text();
-                var hex = HexLiteral;
+                return NumLiteral.Token()
+                    .Or(OctalLiteral.Token().Or(HexLiteral.Token())).Text();
+            }
+        }
 
-                return normal.Or(octal.Or(hex));
+        internal virtual Parser<string> NumLiteral
+        {
+            get
+            {
+                return from num in Parse.Number
+                       from noHex in Parse.IgnoreCase('x').Not()
+                    select num;
             }
         }
 
@@ -251,7 +258,8 @@ namespace ProtobufCompiler
         {
             get
             {
-                return from octal in OctalDigit.Many().End().Text()
+                return from octal in OctalDigit.Many().Text()
+                       from noHex in Parse.IgnoreCase('x').Not()
                        select octal;
             }
         }
@@ -356,7 +364,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="OctalEscape"/> is a.
+        /// A <see cref="OctalEscape"/> is a representation of a character in Octal format. 
         /// </summary>
         internal virtual Parser<string> OctalEscape
         {
@@ -371,7 +379,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="CharEscape"/> is a.
+        /// A <see cref="CharEscape"/> is a character escape
         /// </summary>
         internal virtual Parser<string> CharEscape
         {
@@ -389,7 +397,7 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="CharValue"/> is a.
+        /// A <see cref="CharValue"/> is any character value. 
         /// </summary>
         internal virtual Parser<string> CharValue
         {
@@ -401,33 +409,20 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="StringLiteral"/> is a.
+        /// A <see cref="StringLiteral"/> is a sequence of character values in between two <see cref="Quote"/>
         /// </summary>
         internal virtual Parser<string> StringLiteral
         {
             get
             {
-                return from open in Quote
-                    from literal in CharValue.Many()
-                    from close in Quote
+                return from literal in CharValue.Many().Contained(Quote, Quote)
                     select string.Join(string.Empty, literal);
 
             }
         }
 
         /// <summary>
-        /// A <see cref="OptionName"/> is a.
-        /// </summary>
-        internal virtual Parser<string> OptionName
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// A <see cref="Syntax"/> is a.
+        /// A <see cref="Syntax"/> is a Syntax declaration of proto2 or proto3
         /// </summary>
         /// <example>// syntax = "proto3"; </example>
         internal virtual Parser<Syntax> Syntax
@@ -443,18 +438,23 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="Import"/> is a.
+        /// A <see cref="Import"/> is an import of another proto defined type
         /// </summary>
+        /// <example>import public SomeClass.Subclass; </example>
         internal virtual Parser<Import> Import
         {
             get
             {
-                throw new NotImplementedException();
+                return from importStr in Parse.String("import").Token()
+                    from mod in Parse.String("public").Or(Parse.String("weak")).Text().Optional().Token()
+                    from impValue in StringLiteral
+                    from terminator in EmptyStatement.End()
+                    select new Import(mod.GetOrElse(null), impValue);
             }
         }
 
         /// <summary>
-        /// A <see cref="Package"/> is a.
+        /// A <see cref="Package"/> is a package definition for the proto file
         /// </summary>
         internal virtual Parser<Package> Package
         {
@@ -469,17 +469,60 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
-        /// A <see cref="Option"/> is a.
+        /// A <see cref="Option"/> is a generic option value, can be used on the file, 
+        /// field, or message level. 
         /// </summary>
+        /// <example>option java_package = "com.example.foo";</example>
         internal virtual Parser<Option> Option
         {
             get
             {
-                throw new NotImplementedException();
+                return from optionStr in Parse.String("option").Token()
+                    from name in Identifier.Token()
+                    from equal in Parse.Char('=').Once().Token()
+                    from optValue in StringLiteral.Or(Identifier)
+                    from terminator in EmptyStatement.Once().End()
+                    select new Option(name, optValue);
             }
         }
 
+        /// <summary>
+        /// A <see cref="SimpleFieldType"/> is a definition of a type like double, int, string, or bool
+        /// </summary>
+        internal virtual Parser<string> SimpleFieldType
+        {
+            get
+            {
+                return from type in Parse.Regex("double|float|(u|s)*?int(32|64)|s*?fixed(32|64)|bool|string|bytes")
+                    select type;
+            }
+        }
 
+        /// <summary>
+        /// A <see cref="FieldNumber"/> is just a name for an <see cref="IntegerLiteral"/>'s int value
+        /// </summary>
+        internal virtual Parser<int> FieldNumber
+        {
+            get
+            {
+                return from intgr in IntegerLiteral
+                    select int.Parse(intgr);
+            }
+        }
+
+        internal virtual Parser<Field> Field
+        {
+            get
+            {
+                return from rep in Parse.String("repeated").Optional().Token()
+                    from type in MessageType.Or(EnumType.Or(SimpleFieldType)).Token()
+                    from name in Identifier.Token()
+                    from equal in Parse.Char('=').Once().Token()
+                    from num in FieldNumber
+                    from term in EmptyStatement.End()
+                    select new Field(type, name, num, new List<Option>(), rep.IsDefined);
+            }
+        }
 
 
     }
