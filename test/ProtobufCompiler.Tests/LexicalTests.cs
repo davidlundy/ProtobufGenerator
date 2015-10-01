@@ -20,7 +20,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("a")]
         [InlineData("f")]
         // hexDigit     = "0" … "9" | "A" … "F" | "a" … "f"
-        public void Lexical_HexDigit_is_0to9_and_AtoF_CaseInsensitive(string input)
+        public void HexDigit_is_0to9_and_AtoF_CaseInsensitive(string input)
         {
             var output = _sys.HexDigit.Parse(input);
             Assert.Equal(input[0], output);
@@ -30,7 +30,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("G")]
         [InlineData("h")]
         [InlineData("*")]
-        public void Lexical_HexDigit_is_0to9_and_AtoF_CaseInsensitive_Throws(string input)
+        public void HexDigit_is_0to9_and_AtoF_CaseInsensitive_Throws(string input)
         {
             Assert.Throws<ParseException>(() => _sys.HexDigit.Parse(input));
         }
@@ -39,7 +39,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("0")]
         [InlineData("7")]
         // octalDigit   = "0" … "7"
-        public void Lexical_OctalDigit_is_0to7(string input)
+        public void OctalDigit_is_0to7(string input)
         {
             var output = _sys.OctalDigit.Parse(input);
             Assert.Equal(input[0], output);
@@ -48,7 +48,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("8")]
         [InlineData("A")]
-        public void Lexical_OctalDigit_is_0to7_Throws(string input)
+        public void OctalDigit_is_0to7_Throws(string input)
         {
             Assert.Throws<ParseException>(() => _sys.OctalDigit.Parse(input));
         }
@@ -59,7 +59,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("A asdf", "A")]
         [InlineData("Aab%z34 ", "Aab")]
         // ident = letter { letter | unicodeDigit | "_" }
-        public void Lexical_Identifier_is_Letter_Then_LetterNumberOrUnderscore(string input, string expectedResult)
+        public void Identifier_is_Letter_Then_LetterNumberOrUnderscore(string input, string expectedResult)
         {
             Assert.Equal(expectedResult, _sys.Identifier.Parse(input));
         }
@@ -67,7 +67,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("3ab_z34 ")]
         [InlineData("*ab%z34 ")]
-        public void Lexical_Identifier_is_Letter_Then_LetterNumberOrUnderscore_Throws(string input)
+        public void Identifier_is_Letter_Then_LetterNumberOrUnderscore_Throws(string input)
         {
             Assert.Throws<ParseException>(() => _sys.Identifier.Parse(input));
         }
@@ -76,7 +76,7 @@ namespace ProtobufCompiler.Tests
         [InlineData(".Aab_z34", ".Aab_z34")]
         [InlineData(".A", ".A")]
         // fullIdent = ident {"." ident}
-        public void Lexical_DotSeparatedIdentifier_is_Dot_and_Identifier(string input, string expected)
+        public void DotSeparatedIdentifier_is_Dot_and_Identifier(string input, string expected)
         {
             Assert.Equal(expected, _sys.DotSeparatedIdentifier.Parse(input));
         }
@@ -86,7 +86,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("Aab_z34.E4_2", "Aab_z34.E4_2")]
         [InlineData("Foo.Bar.Baz", "Foo.Bar.Baz")]
         // fullIdent = ident {"." ident}
-        public void Lexical_FullIdentifier_is_Identifier_Plus_Multiple_DotSeperated_Identifiers(string input, string expected)
+        public void FullIdentifier_is_Identifier_Plus_Multiple_DotSeperated_Identifiers(string input, string expected)
         {
             Assert.Equal(expected, _sys.FullIdentifier.Parse(input));
         }
@@ -97,7 +97,7 @@ namespace ProtobufCompiler.Tests
         [InlineData(".MessageName", ".MessageName")]
         [InlineData("MessageName", "MessageName")]
         // messageType = ["."] {ident "."} messageName
-        public void Lexical_MessageType_is_OptionalDot_Repeated_DotSeperatedIdentifier_and_Identifier(string input, string expected)
+        public void MessageType_is_OptionalDot_Repeated_DotSeperatedIdentifier_and_Identifier(string input, string expected)
         {
             Assert.Equal(expected, _sys.MessageType.Parse(input));
         }
@@ -105,7 +105,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData(".")]
         // messageType = ["."] {ident "."} messageName
-        public void Lexical_MessageType_Throws_when_MissingIdentifier(string input)
+        public void MessageType_Throws_when_MissingIdentifier(string input)
         {
             Assert.Throws<ParseException>(() => _sys.MessageType.Parse(input));
 
@@ -117,7 +117,7 @@ namespace ProtobufCompiler.Tests
         [InlineData(".EnumName", ".EnumName")]
         [InlineData("EnumName", "EnumName")]
         // enumType = ["."] {ident "."} enumName
-        public void Lexical_EnumType_is_OptionalDot_Repeated_DotSeperatedIdentifier_and_Identifier(string input, string expected)
+        public void EnumType_is_OptionalDot_Repeated_DotSeperatedIdentifier_and_Identifier(string input, string expected)
         {
             Assert.Equal(expected, _sys.EnumType.Parse(input));
         }
@@ -125,7 +125,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData(".")]
         // enumType = ["."] {ident "."} enumName
-        public void Lexical_EnumType_Throws_when_noIdentifier(string input)
+        public void EnumType_Throws_when_noIdentifier(string input)
         {
             Assert.Throws<ParseException>(() => _sys.EnumType.Parse(input));
         }
@@ -133,7 +133,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("Aab_z34 ", "Aab_z34")]
         // groupName = capital { letter | unicodeDigit | "_" }
-        public void Lexical_GroupName_is_CapLetter_then_OptionalSeries_of_Letter_Digit_Underscore(string input, string expected)
+        public void GroupName_is_CapLetter_then_OptionalSeries_of_Letter_Digit_Underscore(string input, string expected)
         {
             Assert.Equal(expected, _sys.GroupName.Parse(input));
         }
@@ -141,7 +141,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("aab_z34 ")]
         // groupName = capital { letter | unicodeDigit | "_" }
-        public void Lexical_GroupName_Throws_when_noStartingUpperCase(string input)
+        public void GroupName_Throws_when_noStartingUpperCase(string input)
         {
             Assert.Throws<ParseException>(() => _sys.GroupName.Parse(input));
         }
@@ -152,7 +152,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("07", "07")]
         [InlineData("0x9", "0x9")]
         // intLit     = decimalLit | octalLit | hexLit
-        public void Lexical_IntegerLiteral_is_Decimal_Octal_or_Hex_Literal(string input, string expected)
+        public void IntegerLiteral_is_Decimal_Octal_or_Hex_Literal(string input, string expected)
         {
             Assert.Equal(expected, _sys.IntegerLiteral.Parse(input));
         }
@@ -162,7 +162,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("0X9", "0X9")]
         [InlineData("0x96FA", "0x96FA")]
         // hexLit     = "0" ( "x" | "X" ) hexDigit { hexDigit } 
-        public void Lexical_HexLiteral_is_0_XignoreCase_HexDigit_Then_ZeroOrMany_HexDigits(string input, string expected)
+        public void HexLiteral_is_0_XignoreCase_HexDigit_Then_ZeroOrMany_HexDigits(string input, string expected)
         {
             Assert.Equal(expected, _sys.HexLiteral.Parse(input));
         }
@@ -171,7 +171,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("0x96G")]
         [InlineData("0x")]
         // hexLit     = "0" ( "x" | "X" ) hexDigit { hexDigit } 
-        public void Lexical_HexLiteral_ThrowsOn_NonHexChar_or_NoHexChar(string input)
+        public void HexLiteral_ThrowsOn_NonHexChar_or_NoHexChar(string input)
         {
             Assert.Throws<ParseException>(() => _sys.HexLiteral.Parse(input));
         }
@@ -182,7 +182,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("E+12", "E+12")]
         [InlineData("e12", "e+12")]
         // exponent  = ( "e" | "E" ) [ "+" | "-" ]decimals 
-        public void Lexical_Exponent_is_EignoreCase_then_Optional_Plus_or_Minus_then_Decimals(string input, string expected)
+        public void Exponent_is_EignoreCase_then_Optional_Plus_or_Minus_then_Decimals(string input, string expected)
         {
             Assert.Equal(expected, _sys.Exponent.Parse(input));
         }
@@ -191,7 +191,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("e-a")]
         [InlineData("G+12")]
         // exponent  = ( "e" | "E" ) [ "+" | "-" ]decimals 
-        public void Lexical_Exponent_Throws_on_NonNumericExp_or_NonEBase(string input)
+        public void Exponent_Throws_on_NonNumericExp_or_NonEBase(string input)
         {
             Assert.Throws<ParseException>(() => _sys.Exponent.Parse(input));
         }
@@ -201,7 +201,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("1.2e+10", "1.2e+10")]
         [InlineData("1.2e10", "1.2e+10")]
         // decimals "." [ decimals ] [ exponent ] | decimals exponent | "."decimals [exponent ]
-        public void Lexical_FloatLiteral_is_Digits_dot_OptionalDigits_OptionalExp_or_Decimals_and_Exp_or_dot_and_decimals_and_ExponentOpt(string input, string expected)
+        public void FloatLiteral_is_Digits_dot_OptionalDigits_OptionalExp_or_Decimals_and_Exp_or_dot_and_decimals_and_ExponentOpt(string input, string expected)
         {
             Assert.Equal(expected, _sys.FloatLiteral.Parse(input));
         }
@@ -209,7 +209,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("1.2e10g")]
         // decimals "." [ decimals ] [ exponent ] | decimals exponent | "."decimals [exponent ]
-        public void Lexical_FloatLiteral_Throws_on_LetterInNumeric(string input)
+        public void FloatLiteral_Throws_on_LetterInNumeric(string input)
         {
             Assert.Throws<ParseException>(() => _sys.FloatLiteral.Parse(input));
         }
@@ -218,7 +218,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("true", "true")]
         [InlineData("false", "false")]
         // boolLit = "true" | "false"
-        public void Lexical_BooleanLiteral_can_be_True_or_False(string input, string expected)
+        public void BooleanLiteral_can_be_True_or_False(string input, string expected)
         {
             Assert.Equal(expected, _sys.BooleanLiteral.Parse(input));
         }
@@ -228,7 +228,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("True")]
         [InlineData("treu")]
         // boolLit = "true" | "false"
-        public void Lexical_BooleanLiteral_Throws_on_Bad_Casing_or_Spelling(string input)
+        public void BooleanLiteral_Throws_on_Bad_Casing_or_Spelling(string input)
         {
             Assert.Throws<ParseException>(() => _sys.BooleanLiteral.Parse(input));
         }
@@ -236,7 +236,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData(";", ";")]
         // emptyStatement = ";"
-        public void Lexical_EmptyStatement_is_a_SemiColon(string input, string expected)
+        public void EmptyStatement_is_a_SemiColon(string input, string expected)
         {
             Assert.Equal(expected, _sys.EmptyStatement.Parse(input));
         }
@@ -244,7 +244,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("")]
         // emptyStatement = ";"
-        public void Lexical_EmptyStatement_isnt_Empty_Rly(string input)
+        public void EmptyStatement_isnt_Empty_Rly(string input)
         {
             Assert.Throws<ParseException>(() => _sys.EmptyStatement.Parse(input));
         }
@@ -253,7 +253,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("'", '\'')]
         [InlineData("\"", '\"')]
         // Quote = '"' or "'"
-        public void Lexical_Quote_is_Single_Or_Double_Quote(string input, char expected)
+        public void Quote_is_Single_Or_Double_Quote(string input, char expected)
         {
             Assert.Equal(expected, _sys.Quote.Parse(input));
         }
@@ -261,7 +261,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData(";")]
         // Quote = '"' or "'"
-        public void Lexical_Quote_Throws_on_NonQuote(string input)
+        public void Quote_Throws_on_NonQuote(string input)
         {
             Assert.Throws<ParseException>(() => _sys.Quote.Parse(input));
         }
@@ -271,7 +271,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("\\x0F", "\\x0F")]
         [InlineData("\\X0F", "\\X0F")]
         // hexEscape = `\` ("x" | "X") hexDigit hexDigit
-        public void Lexical_HexEscape_is_Backslash_XignoreCase_Two_HexDigits(string input, string expected)
+        public void HexEscape_is_Backslash_XignoreCase_Two_HexDigits(string input, string expected)
         {
             Assert.Equal(expected, _sys.HexEscape.Parse(input));
         }
@@ -279,7 +279,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("X0F")]
         // hexEscape = `\` ("x" | "X") hexDigit hexDigit
-        public void Lexical_HexEscape_Throws_when_NotEscaped(string input)
+        public void HexEscape_Throws_when_NotEscaped(string input)
         {
             Assert.Throws<ParseException>(() => _sys.HexEscape.Parse(input));
         }
@@ -287,7 +287,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("\\435", "\\435")]
         // octEscape = `\` octalDigit octalDigit octalDigit
-        public void Lexical_OctEscape_is_Backslash_Three_OctalDigits(string input, string expected)
+        public void OctEscape_is_Backslash_Three_OctalDigits(string input, string expected)
         {
             Assert.Equal(expected, _sys.OctalEscape.Parse(input));
         }
@@ -297,7 +297,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("\\439")]
         [InlineData("\\43A")]
         // octEscape = `\` octalDigit octalDigit octalDigit
-        public void Lexical_OctEscape_Throws_when_InvalidOctal_or_NotEscaped(string input)
+        public void OctEscape_Throws_when_InvalidOctal_or_NotEscaped(string input)
         {
             Assert.Throws<ParseException>(() => _sys.OctalEscape.Parse(input));
         }
@@ -307,7 +307,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("\\\\", "\\\\")]
         [InlineData("\\\"", "\\\"")]
         // charEscape = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` )
-        public void Lexical_CharEscape_is_Backslash_abfnrtw_backslash_or_single_or_double_Quote(string input, string expected)
+        public void CharEscape_is_Backslash_abfnrtw_backslash_or_single_or_double_Quote(string input, string expected)
         {
             Assert.Equal(expected, _sys.CharEscape.Parse(input));
         }
@@ -315,7 +315,7 @@ namespace ProtobufCompiler.Tests
         [Theory]
         [InlineData("a\\")]
         // charEscape = `\` ( "a" | "b" | "f" | "n" | "r" | "t" | "v" | `\` | "'" | `"` )
-        public void Lexical_CharEscape_Throws_on_NonEscaped(string input)
+        public void CharEscape_Throws_on_NonEscaped(string input)
         {
             Assert.Throws<ParseException>(() => _sys.CharEscape.Parse(input));
         }
@@ -328,7 +328,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("\\x09", "\\x09")]
         [InlineData("a", "a")]
         // charValue = hexEscape | octEscape | charEscape | /[^\0\n\\]/
-        public void Lexical_CharValue_is_Either_HexEscape_OctEscape_CharEscape_OrStringFirstChar(string input, string expected)
+        public void CharValue_is_Either_HexEscape_OctEscape_CharEscape_OrStringFirstChar(string input, string expected)
         {
             Assert.Equal(expected, _sys.CharValue.Parse(input));
         }
@@ -337,7 +337,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("\"astring\"", "astring")]
         [InlineData("'astring'", "astring")]
         // strLit = ("`" { charValue } "`") |  (`"` { charValue } `"`)
-        public void Lexical_StringLiteral_is_oneOrMore_CharValue_between_Double_or_Single_Quotes(string input, string expected)
+        public void StringLiteral_is_oneOrMore_CharValue_between_Double_or_Single_Quotes(string input, string expected)
         {
             Assert.Equal(expected, _sys.StringLiteral.Parse(input));
         }
@@ -346,7 +346,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("'astring")]
         [InlineData("astring'")]
         // strLit = ("`" { charValue } "`") |  (`"` { charValue } `"`)
-        public void Lexical_StringLiteral_Throws_when_MissingQuote(string input)
+        public void StringLiteral_Throws_when_MissingQuote(string input)
         {
             Assert.Throws<ParseException>(() => _sys.StringLiteral.Parse(input));
         }
@@ -355,7 +355,7 @@ namespace ProtobufCompiler.Tests
         [InlineData("32", 32)]
         [InlineData("0", 0)]
         // fieldNumber = intLit
-        public void Lexical_FieldNumber_is_IntegerLiteral(string input, int expected)
+        public void FieldNumber_is_IntegerLiteral(string input, int expected)
         {
             Assert.Equal(expected, _sys.FieldNumber.Parse(input));
         }
