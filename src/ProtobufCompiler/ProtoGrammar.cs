@@ -499,6 +499,19 @@ namespace ProtobufCompiler
         }
 
         /// <summary>
+        /// A <see cref="MapKeyType"/> is a definition of a type like int, string, or bool that can be used in the key
+        /// of a <see cref="Map"/>
+        /// </summary>
+        internal virtual Parser<string> MapKeyType
+        {
+            get
+            {
+                return from type in Parse.Regex("(u|s)*?int(32|64)|s*?fixed(32|64)|bool|string")
+                       select type;
+            }
+        }
+
+        /// <summary>
         /// A <see cref="FieldNumber"/> is just a name for an <see cref="IntegerLiteral"/>'s int value
         /// </summary>
         internal virtual Parser<int> FieldNumber
@@ -510,12 +523,21 @@ namespace ProtobufCompiler
             }
         }
 
+        internal virtual Parser<string> FieldType
+        {
+            get
+            {
+                return from type in MessageType.Or(EnumType.Or(SimpleFieldType))
+                    select type;
+            }
+        }
+
         internal virtual Parser<Field> Field
         {
             get
             {
                 return from rep in Parse.String("repeated").Optional().Token()
-                    from type in MessageType.Or(EnumType.Or(SimpleFieldType)).Token()
+                    from type in FieldType.Token()
                     from name in Identifier.Token()
                     from equal in Parse.Char('=').Once().Token()
                     from num in FieldNumber
@@ -557,7 +579,25 @@ namespace ProtobufCompiler
                         .Contained(Bracket, Bracket)
                     select new OneOf(name, fields);
             }
-        } 
+        }
+
+        internal virtual Parser<Map> Map
+        {
+            get
+            {
+                return from map in Parse.String("map")
+                    from open in Parse.Char('<').Once()
+                    from key in MapKeyType.Token()
+                    from sep in Parse.Char(',').Once().Token()
+                    from val in FieldType.Token()
+                    from close in Parse.Char('>').Once()
+                    from name in MapName.Token()
+                    from eq in Parse.Char('=').Once().Token()
+                    from num in FieldNumber
+                    from term in EmptyStatement
+                    select new Map(name, num, key, val);
+            }
+        }
 
 
     }

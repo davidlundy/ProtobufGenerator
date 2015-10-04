@@ -166,5 +166,26 @@ namespace ProtobufCompiler.Tests
                 };
             }
         }
+
+        [Theory, MemberData("MapData")]
+        internal void Map_Declaration(string input, Map map)
+        {
+            Assert.Equal(map, _sys.Map.Parse(input));
+        }
+
+        public static IEnumerable<object[]> MapData
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        @"map<string, Project> projects = 3;",
+                        new Map("projects", 3, "string", "Project")
+                    }
+                };
+            }
+        }
     }
 }
