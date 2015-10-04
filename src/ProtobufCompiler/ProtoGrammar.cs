@@ -519,10 +519,45 @@ namespace ProtobufCompiler
                     from name in Identifier.Token()
                     from equal in Parse.Char('=').Once().Token()
                     from num in FieldNumber
-                    from term in EmptyStatement.End()
+                    from term in EmptyStatement
                     select new Field(type, name, num, new List<Option>(), rep.IsDefined);
             }
         }
+
+        internal virtual Parser<OneOfField> OneOfField
+        {
+            get
+            {
+                return from type in MessageType.Or(EnumType.Or(SimpleFieldType)).Token()
+                       from name in Identifier.Token()
+                       from equal in Parse.Char('=').Once().Token()
+                       from num in FieldNumber
+                       from term in EmptyStatement
+                       select new OneOfField(type, name, num, new List<Option>());
+            }
+        }
+
+        internal virtual Parser<string> Bracket
+        {
+            get
+            {
+                return from bracket in Parse.Char('{').Or(Parse.Char('}')).Once().Text().Token()
+                    from term in Parse.LineEnd.Optional()
+                    select bracket;
+            }
+        }
+
+        internal virtual Parser<OneOf> OneOf
+        {
+            get
+            {
+                return from id in Parse.String("oneof").Token()
+                    from name in OneOfName.Token()
+                    from fields in OneOfField.DelimitedBy(Parse.LineEnd)
+                        .Contained(Bracket, Bracket)
+                    select new OneOf(name, fields);
+            }
+        } 
 
 
     }

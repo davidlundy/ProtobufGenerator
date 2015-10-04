@@ -104,5 +104,67 @@ namespace ProtobufCompiler.Tests
                 };
             }
         }
+
+        [Theory, MemberData("OneOfFields")]
+        internal void OneOfField_Declaration(string input, OneOfField field)
+        {
+            if (input.Contains("repeated"))
+            {
+                Assert.Throws<ParseException>(() => _sys.OneOfField.Parse(input));
+            }
+            else
+            {
+                Assert.Equal(field, _sys.OneOfField.Parse(input));
+            }
+        }
+
+        public static IEnumerable<object[]> OneOfFields
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        "foo.bar nested_message = 2;",
+                        new OneOfField("foo.bar", "nested_message", 2, new List<Option>())
+                    },
+                    new object[]
+                    {
+                        "repeated int32 samples = 4;",
+                        new OneOfField("int32", "samples", 4, new List<Option>())
+                    }
+                };
+            }
+        }
+            
+            
+        [Theory, MemberData("OneOf")]
+        internal void OneOf_Declaration(string input, OneOf oneOf)
+        {
+            Assert.Equal(oneOf, _sys.OneOf.Parse(input));
+        }
+
+        public static IEnumerable<object[]> OneOf
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        @"oneof foo {
+                            string name = 4;
+                            SomeType some_type = 9;
+                          }",
+                        new OneOf("foo", new[]
+                        {
+                            new OneOfField("string", "name", 4, new List<Option>()),
+                            new OneOfField("SomeType", "some_type", 9, new List<Option>())
+                        })
+                    }
+                };
+            }
+        }
     }
 }
