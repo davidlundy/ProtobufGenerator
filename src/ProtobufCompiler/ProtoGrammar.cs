@@ -284,7 +284,8 @@ namespace ProtobufCompiler
             {
                 return from leadingZero in Parse.Char('0').Once().Text()
                        from x in Parse.IgnoreCase('x').Once().Text()
-                       from restDigits in HexDigit.AtLeastOnce().Text().End()
+                       from restDigits in HexDigit.AtLeastOnce().Text()
+                       from noTrailingText in Parse.Letter.Not()
                        select leadingZero + x + restDigits;
             }
         }
@@ -442,7 +443,7 @@ namespace ProtobufCompiler
                 return from syntaxToken in Parse.String("syntax").Token()
                     from equal in Parse.Char('=').Once().Token()
                     from syntaxvalue in StringLiteral
-                    from terminator in EmptyStatement.Once().End()
+                    from terminator in EmptyStatement.Once()
                     select new Syntax(syntaxvalue);
             }
         }
@@ -458,7 +459,7 @@ namespace ProtobufCompiler
                 return from importStr in Parse.String("import").Token()
                     from mod in Parse.String("public").Or(Parse.String("weak")).Text().Optional().Token()
                     from impValue in StringLiteral
-                    from terminator in EmptyStatement.End()
+                    from terminator in EmptyStatement
                     select new Import(mod.GetOrElse(null), impValue);
             }
         }
@@ -472,7 +473,7 @@ namespace ProtobufCompiler
             {
                 return from pkgToken in Parse.String("package").Token()
                     from value in FullIdentifier
-                    from terminator in EmptyStatement.End()
+                    from terminator in EmptyStatement
                     select new Package(value);
 
             }
@@ -491,7 +492,7 @@ namespace ProtobufCompiler
                     from name in Identifier.Token()
                     from equal in Parse.Char('=').Once().Token()
                     from optValue in StringLiteral.Or(Identifier)
-                    from terminator in EmptyStatement.Once().End()
+                    from terminator in EmptyStatement.Once()
                     select new Option(name, optValue);
             }
         }
@@ -661,6 +662,49 @@ namespace ProtobufCompiler
                     from range in Range
                     from end in EmptyStatement
                     select range;
+            }
+        }
+
+        internal virtual Parser<Option> EnumValueOption
+        {
+            get
+            {
+                return from optionName in Identifier.Contained(Parse.Char('('), Parse.Char(')')).Token()
+                    from eq in Parse.Char('=').Once().Token()
+                    from optionValue in StringLiteral
+                    select new Option(optionName, optionValue);
+            }
+        }
+
+        internal virtual Parser<EnumField> EnumField
+        {
+            get
+            {
+                return from id in Identifier
+                    from eq in Parse.Char('=').Once().Token()
+                    from fieldnum in IntegerLiteral.Token()
+                    from opt in EnumValueOption.Contained(Parse.Char('['), Parse.Char(']')).Optional().Token()
+                    from end in EmptyStatement
+                    select new EnumField(id, int.Parse(fieldnum), opt.IsDefined ? opt.Get() : null);
+
+            }
+        }
+
+        internal virtual Parser<EnumDefinition> EnumDefinition
+        {
+            get
+            {
+                return from enumhead in Parse.String("enum").Token()
+                    from name in EnumName.Token()
+                    from open in Parse.Char('{').Once()
+                    from nlo in Parse.LineEnd.Optional()
+                    from option in Option.Optional().Token()
+                    from nle in Parse.LineEnd.Optional()
+                    from fields in EnumField.DelimitedBy(Parse.LineEnd)
+                    from nlf in Parse.LineEnd.Optional()
+                    from close in Parse.Char('}').Once()
+                    select new EnumDefinition(name, option.GetOrElse(null), fields);
+
             }
         }
 

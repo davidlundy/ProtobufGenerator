@@ -19,7 +19,7 @@ namespace ProtobufCompiler.Types
             if (other == null) return false;
 
             return Name.Equals(other.Name, StringComparison.InvariantCultureIgnoreCase) &&
-                Value.Equals(other.Value, StringComparison.InvariantCultureIgnoreCase);
+                   Value.Equals(other.Value, StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override int GetHashCode()
