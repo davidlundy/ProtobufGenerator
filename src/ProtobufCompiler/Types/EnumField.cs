@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProtobufCompiler.Types
 {
@@ -9,30 +8,22 @@ namespace ProtobufCompiler.Types
     {
         internal string Name { get; }
         internal int FieldNumber { get; }
-        internal Option FieldOption { get; }
+        internal IEnumerable<Option> FieldOptions { get; }
 
-        internal EnumField(string name, int fieldNum, Option option)
+        internal EnumField(string name, int fieldNum, IEnumerable<Option> option)
         {
             if(name == null) throw new ArgumentNullException(nameof(name));
             Name = name;
             FieldNumber = fieldNum;
-            FieldOption = option;
+            FieldOptions = option ?? new List<Option>();
         }
 
         public bool Equals(EnumField other)
         {
             if (other == null) return false;
-            if (!Name.Equals(other.Name)) return false;
-            if (!FieldNumber.Equals(other.FieldNumber)) return false;
-            if (FieldOption == null)
-            {
-                if (other.FieldOption != null) return false;
-            }
-            else
-            {
-                return FieldOption.Equals(other.FieldOption);
-            }
-            return true;
+            return Name.Equals(other.Name, StringComparison.InvariantCultureIgnoreCase) &&
+                   FieldNumber.Equals(other.FieldNumber) &&
+                   FieldOptions.SequenceEqual(other.FieldOptions);
         }
 
         public override bool Equals(object obj)
@@ -47,7 +38,7 @@ namespace ProtobufCompiler.Types
             var hash = 13;
             hash = (hash * 7) + Name.GetHashCode();
             hash = (hash * 7) + FieldNumber.GetHashCode();
-            if(FieldOption != null) hash = (hash * 7) + FieldOption.GetHashCode();
+            hash = (hash * 7) + FieldOptions.GetHashCode();
             return hash;
         }
     }

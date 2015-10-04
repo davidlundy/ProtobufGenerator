@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ProtobufCompiler.Types;
 using Sprache;
 using Xunit;
@@ -38,13 +36,48 @@ namespace ProtobufCompiler.Tests
                             @"RUNNING = 2 [(custom_option) = ""hello world""];"+Environment.NewLine+
                         @"}",
                         new EnumDefinition("EnumAllowingAlias", 
-                            new Option("allow_alias", "true"),
+                            new List<Option> {new Option("allow_alias", "true")},
                             new List<EnumField>()
                             {
                                 new EnumField("UNKNOWN", 0, null),
                                 new EnumField("STARTED", 1, null),
-                                new EnumField("RUNNING", 2, new Option("custom_option", "hello world"))
+                                new EnumField("RUNNING", 2, new List<Option> { new Option("custom_option", "hello world")} )
                             })
+                    }
+                };
+            }
+        }
+
+        [Theory, MemberData("ServiceData")]
+        internal void Service_Definition_Test(string input, ServiceDefinition def)
+        {
+            Assert.Equal(def, _sys.ServiceDefinition.Parse(input));
+        }
+
+        public static IEnumerable<object[]> ServiceData
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        @"service SearchService {"+Environment.NewLine+
+                            @"option allow_alias = true;"+Environment.NewLine+
+                            @"rpc Search ([streaming] SearchRequest) returns ([streaming] SearchResponse);"+Environment.NewLine+
+                        @"}",
+                        new ServiceDefinition("SearchService", 
+                            new List<ServiceMethod>
+                            {
+                                new ServiceMethod("Search", 
+                                    new ParameterType("SearchRequest", true),
+                                    new ParameterType("SearchResponse", true))
+                            },
+                            new List<Option>
+                            {
+                                new Option("allow_alias", "true")
+                            }
+                        ), 
                     }
                 };
             }

@@ -1,30 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProtobufCompiler.Types
 {
-    internal class EnumDefinition
+    internal class EnumDefinition : IEquatable<EnumDefinition>
     {
         internal string Name { get; }
-        internal Option EnumOption { get; }
+        internal IEnumerable<Option> EnumOption { get; }
         internal IEnumerable<EnumField> EnumFields { get; }
 
-        internal EnumDefinition(string name, Option option, IEnumerable<EnumField> fields)
+        internal EnumDefinition(string name, IEnumerable<Option> option, IEnumerable<EnumField> fields)
         {
+            if(name == null) throw new ArgumentNullException(nameof(name));
+
             Name = name;
-            EnumOption = option;
-            EnumFields = fields;
+            EnumOption = option ?? new List<Option>();
+            EnumFields = fields ?? new List<EnumField>();
         }
 
         public bool Equals(EnumDefinition other)
         {
             if (other == null) return false;
             return Name.Equals(other.Name) &&
-                   EnumOption.Equals(other.EnumOption) &&
+                   EnumOption.SequenceEqual(other.EnumOption) &&
                    EnumFields.SequenceEqual(other.EnumFields);
-
         }
 
         public override bool Equals(object obj)
@@ -38,8 +38,8 @@ namespace ProtobufCompiler.Types
         {
             var hash = 13;
             hash = (hash * 7) + Name.GetHashCode();
-            hash = (hash * 7) + EnumOption.GetHashCode();
             hash = (hash * 7) + EnumFields.GetHashCode();
+            hash = (hash * 7) + EnumOption.GetHashCode();
             return hash;
         }
     }

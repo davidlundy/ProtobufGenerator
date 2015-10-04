@@ -1,5 +1,4 @@
-﻿using System;
-using ProtobufCompiler.Types;
+﻿using ProtobufCompiler.Types;
 using Sprache;
 using System.Collections.Generic;
 using System.Linq;
@@ -685,7 +684,7 @@ namespace ProtobufCompiler
                     from fieldnum in IntegerLiteral.Token()
                     from opt in EnumValueOption.Contained(Parse.Char('['), Parse.Char(']')).Optional().Token()
                     from end in EmptyStatement
-                    select new EnumField(id, int.Parse(fieldnum), opt.IsDefined ? opt.Get() : null);
+                    select new EnumField(id, int.Parse(fieldnum), opt.IsDefined ? new List<Option> {opt.Get()} : null);
 
             }
         }
@@ -703,8 +702,50 @@ namespace ProtobufCompiler
                     from fields in EnumField.DelimitedBy(Parse.LineEnd)
                     from nlf in Parse.LineEnd.Optional()
                     from close in Parse.Char('}').Once()
-                    select new EnumDefinition(name, option.GetOrElse(null), fields);
+                    select new EnumDefinition(name, option.IsDefined ? new List<Option> {option.Get()} : null, fields);
 
+            }
+        }
+
+        internal virtual Parser<ParameterType> ParameterType
+        {
+            get
+            {
+                return
+                    from stream in Parse.String("streaming").Contained(Parse.Char('['), Parse.Char(']')).Optional().Token()
+                    from type in MessageType.Token()
+                    select new ParameterType(type, stream.IsDefined);
+            }
+        }
+
+        internal virtual Parser<ServiceMethod> ServiceMethod
+        {
+            get
+            {
+                return from rpc in Parse.String("rpc").Token()
+                    from name in RpcName.Token()
+                    from input in ParameterType.Contained(Parse.Char('('), Parse.Char(')')).Token()
+                    from ret in Parse.String("returns").Token()
+                    from output in ParameterType.Contained(Parse.Char('('), Parse.Char(')')).Token()
+                    from end in EmptyStatement.Token()
+                    select new ServiceMethod(name, input, output);
+            }
+        }
+
+        internal virtual Parser<ServiceDefinition> ServiceDefinition
+        {
+            get
+            {
+                return from head in Parse.String("service").Token()
+                    from name in ServiceName.Token()
+                    from open in Parse.Char('{').Once()
+                    from nlo in Parse.LineEnd.Optional()
+                    from option in Option.Optional().Token()
+                    from nle in Parse.LineEnd.Optional()
+                    from rpcs in ServiceMethod.DelimitedBy(Parse.LineEnd)
+                    from nlf in Parse.LineEnd.Optional()
+                    from close in Parse.Char('}').Once()
+                    select new ServiceDefinition(name, rpcs, option.IsDefined ? new List<Option> {option.Get()} : null);
             }
         }
 
