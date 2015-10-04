@@ -187,5 +187,52 @@ namespace ProtobufCompiler.Tests
                 };
             }
         }
+
+        [Theory, MemberData("NameReservations")]
+        internal void ReserveNames_Declaration(string input, IEnumerable<string> res)
+        {
+            Assert.Equal(res, _sys.NameReservation.Parse(input));
+        }
+
+        public static IEnumerable<object[]> NameReservations
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        "reserved \"foo\", \"bar\";",
+                        new List<string> {"foo", "bar" }
+                    }
+                };
+            }
+        }
+
+        [Theory, MemberData("NumberReservations")]
+        internal void ReserveNumber_Declaration(string input, IEnumerable<int> res)
+        {
+            Assert.Equal(res, _sys.NumberReservation.Parse(input));
+        }
+
+        public static IEnumerable<object[]> NumberReservations
+        {
+            get
+            {
+                return new[]
+                {
+                    new object[]
+                    {
+                        "reserved 2, 15, 9 to 11;",
+                        new List<int> {2, 15, 9, 10, 11 }
+                    },
+                    new object[]
+                    {
+                        "reserved 17 to 20, 2, 15, 9 to 11;",
+                        new List<int> {17, 18, 19, 20, 2, 15, 9, 10, 11 }
+                    }
+                };
+            }
+        }
     }
 }

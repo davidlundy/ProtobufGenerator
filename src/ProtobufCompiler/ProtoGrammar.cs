@@ -1,4 +1,5 @@
-﻿using ProtobufCompiler.Types;
+﻿using System;
+using ProtobufCompiler.Types;
 using Sprache;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,15 @@ namespace ProtobufCompiler
             get
             {
                 return from text in Identifier select text;
+            }
+        }
+
+        internal virtual Parser<string> QuotedFieldName
+        {
+            get
+            {
+                return from text in Identifier.Contained(Quote, Quote)
+                    select text;
             }
         }
 
@@ -596,6 +606,61 @@ namespace ProtobufCompiler
                     from num in FieldNumber
                     from term in EmptyStatement
                     select new Map(name, num, key, val);
+            }
+        }
+
+        internal virtual Parser<IEnumerable<string>> NameReservation
+        {
+            get
+            {
+                return from reserved in Parse.String("reserved").Token()
+                    from ids in QuotedFieldName.DelimitedBy(Parse.Char(',').Token())
+                    from end in EmptyStatement.Token()
+                    select ids;
+            }
+        }
+
+        internal virtual Parser<IEnumerable<int>> ToRange
+        {
+            get
+            {
+                return from leading in Parse.Digit.Many().Text()
+                    from to in Parse.String("to").Token()
+                    from ending in Parse.Digit.Many().Text()
+                    select Enumerable.Range(int.Parse(leading), int.Parse(ending) - int.Parse(leading) + 1);
+            }
+        }
+
+        internal virtual Parser<IEnumerable<int>> SingleNumberRange
+        {
+            get
+            {
+                return from leading in Parse.Digit.Many().Text()
+                    select new List<int> {int.Parse(leading)};
+            }
+        }
+
+        internal virtual Parser<IEnumerable<int>> Range
+        {
+            get
+            {
+                return from range in (ToRange.Or(SingleNumberRange)).DelimitedBy(Parse.Char(',').Token())
+                    select range.SelectMany(t =>
+                    {
+                        var enumerable = t as IList<int> ?? t.ToList();
+                        return enumerable;
+                    });
+            }
+        }
+
+        internal virtual Parser<IEnumerable<int>> NumberReservation
+        {
+            get
+            {
+                return from reserved in Parse.String("reserved").Token()
+                    from range in Range
+                    from end in EmptyStatement
+                    select range;
             }
         }
 
