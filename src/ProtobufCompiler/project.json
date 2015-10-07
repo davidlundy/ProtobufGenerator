@@ -9,7 +9,6 @@
     "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
     "dependencies": {
-      "Sprache": "2.0.0.47"
     },
 
     "frameworks": {
