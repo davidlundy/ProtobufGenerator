@@ -11,6 +11,7 @@
   "dependencies": {
     "xunit": "2.1.0-*",
     "xunit.runner.dnx": "2.1.0-*",
+    "FluentAssertions": "4.0.0",
     "ProtobufCompiler": "1.0.0-alpha"
   },
   "commands": {
@@ -19,9 +20,11 @@
 
   "frameworks": {
     "dnx451": {
+
     },
     "dnxcore50": {
       "dependencies": {
+        "System.Collections": "4.0.10",
         "System.Runtime": "4.0.21-beta-23323"
       }
     }
