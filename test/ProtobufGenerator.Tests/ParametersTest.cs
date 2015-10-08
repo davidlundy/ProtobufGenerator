@@ -24,15 +24,18 @@ namespace ProtobufGenerator.Tests
 
         /// <summary>
         /// Verifies that the loaded XML file will fail validation and throw the 
-        /// expected exception.
+        /// expected exception. Only valid for .NET Framework full platform until
+        /// DNXCore50 supports XmlSchema validation.
         /// </summary>
         [Fact]
         public void ThrowsWhenFailsValidation()
         {
+#if DNX451
             var engine = new ProtoEngine();
             const string testXml = @"TestFiles\WontValidate.xml";
             Assert.True(File.Exists(testXml));
             Assert.Throws<XmlSchemaValidationException>(() => engine.LoadParameters(testXml));
+#endif
         }
     }
 }

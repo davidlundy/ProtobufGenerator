@@ -1,24 +1,29 @@
 ﻿{
-    "version": "1.0.0-alpha",
-    "description": "",
-    "authors": [ "David Lundy", "Martin Björkström" ],
-    "owners": [ "David Lundy" ],
-    "summary": "",
-    "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
-    "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
-    "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
+  "version": "1.0.0-alpha",
+  "description": "",
+  "authors": [ "David Lundy", "Martin Björkström" ],
+  "owners": [ "David Lundy" ],
+  "summary": "",
+  "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
+  "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
+  "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
-    "dependencies": {
-      "xunit": "2.1.0-*",
-      "xunit.runner.dnx": "2.1.0-*",
-      "ProtobufGenerator": "1.0.0-alpha"
-    },
-    "commands": {
-        "test": "xunit.runner.dnx"
-    },
+  "dependencies": {
+    "xunit": "2.1.0-*",
+    "xunit.runner.dnx": "2.1.0-*",
+    "ProtobufGenerator": "1.0.0-alpha"
+  },
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
 
-    "frameworks": {
-        "dnx451": {
-        }
+  "frameworks": {
+    "dnx451": {
+    },
+    "dnxcore50": {
+      "dependencies": {
+        "System.Runtime": "4.0.21-beta-23323"
+      }
     }
+  }
 }
