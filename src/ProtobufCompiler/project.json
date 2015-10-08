@@ -1,7 +1,7 @@
 ﻿{
   "version": "1.0.0-alpha",
   "description": "",
-  "authors": [ "David Lundy", "Martin Björkström" ],
+  "authors": [ "David Lundy" ],
   "owners": [ "David Lundy" ],
   "summary": "",
   "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
@@ -17,12 +17,12 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "System.Globalization": "4.0.11-beta-23323",
-        "System.Globalization.Extensions": "4.0.0-beta-23109",
-        "System.Collections": "4.0.11-beta-23323",
-        "System.Linq": "4.0.1-beta-23225",
-        "System.Runtime": "4.0.21-beta-23323",
-        "Microsoft.CSharp": "4.0.0-beta-23109"
+        "System.Globalization": "4.0.11-beta-*",
+        "System.Globalization.Extensions": "4.0.0-beta-*",
+        "System.Collections": "4.0.11-beta-*",
+        "System.Linq": "4.0.1-beta-*",
+        "System.Runtime": "4.0.21-beta-*",
+        "Microsoft.CSharp": "4.0.0-beta-*"
       }
     }
   }

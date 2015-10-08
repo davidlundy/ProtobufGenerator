@@ -1,0 +1,44 @@
+var VERSION="0.1"
+var FULL_VERSION="0.1"
+var AUTHORS="David Lundy"
+
+use namespace="System.Linq"
+use import="Environment"
+use import="Files"
+use-standard-lifecycle
+
+default BASE_DIR='${Directory.GetCurrentDirectory()}'
+default TARGET_DIR='${Path.Combine(BASE_DIR, "artifacts")}'
+
+var DNU=""
+var DNX_CLR=""
+var DNX_CORECLR=""
+@{
+    if (IsLinux)
+    {
+        DNU         = "packages/dnx-mono/bin/dnu";
+        DNX_CLR     = "packages/dnx-mono/bin/dnx";
+        DNX_CORECLR = "packages/dnx-coreclr-linux-x64/bin/dnx";
+    }
+    else
+    {
+        DNU         = "packages/dnx-clr-win-x64/bin/dnu";
+        DNX_CLR     = "packages/dnx-clr-win-x64/bin/dnx";
+        DNX_CORECLR = "packages/dnx-coreclr-win-x64/bin/dnx";
+    }
+}
+
+#build-clean target="clean"
+    directory delete="${TARGET_DIR}"
+
+#build-restore target="initialize"
+    exec program="${DNU}" commandline="restore --quiet"
+
+#build-compile target="compile"
+    for each="var projectFile in Files.Include('src/**/project.json')"
+        exec program="${DNU}" commandline="pack ${projectFile} --quiet --out ${TARGET_DIR} --configuration Release"
+
+#build-test target="test"
+    for each="var projectFile in Files.Include('test/**/project.json')"
+        exec program="${DNX_CLR}" commandline="-p ${projectFile} test"
+        exec program="${DNX_CORECLR}" commandline="-p ${projectFile} test"
