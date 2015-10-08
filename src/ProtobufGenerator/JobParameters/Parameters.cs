@@ -30,11 +30,12 @@ namespace ProtobufGenerator.JobParameters
         /// <returns></returns>
         internal static Parameters FromXDocument(XDocument document, XmlSchema schema)
         {
+#if DNX451  // DNXCore50 doesn't yet have capability to validate XML Schema, cross fingers and pray. 
             // Validate the XDocument
             var schemaSet = new XmlSchemaSet();
             schemaSet.Add(schema);
             document.Validate(schemaSet, null);
-
+#endif
             // Preparse elements needed to process other elements and those difficult to process inline.
             var solutionDirectory = document.Descendants("SolutionDirectory").Single().Value;
 

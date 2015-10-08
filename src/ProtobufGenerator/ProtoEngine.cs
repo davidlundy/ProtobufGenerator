@@ -1,16 +1,19 @@
 ﻿using ProtobufGenerator.Interfaces;
 using System;
-using System.Xml.Schema;
 using ProtobufGenerator.JobParameters;
 using ProtobufGenerator.Extractors;
 using System.Collections.Generic;
+using System.Xml.Schema;
+
 
 namespace ProtobufGenerator
 {
     public class ProtoEngine : IGenerateProto
     {
         private readonly XmlSchema _xmlSchema;
+#if DNX451
         private readonly XmlSchemaSet _xmlSchemaSet;
+#endif
         private readonly IXmlLoader _xmlLoader;
 
         private readonly Dictionary<string, JobResult> _jobResults = new Dictionary<string, JobResult>();
@@ -30,9 +33,11 @@ namespace ProtobufGenerator
         public ProtoEngine(IXmlLoader xmlLoader)
         {
             _xmlLoader = xmlLoader;
+#if DNX451
             _xmlSchema = ResourceExtractor.ExtractSchema("Parameters.xsd");
             _xmlSchemaSet = new XmlSchemaSet();
             _xmlSchemaSet.Add(_xmlSchema);
+#endif
         }
 
         /// <summary>
@@ -43,13 +48,13 @@ namespace ProtobufGenerator
         /// <exception cref="ArgumentNullException">Thrown when the input path is null</exception>
         public void LoadParameters(string path)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException("xmlpath");
-            }
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             var xmlDoc = _xmlLoader.Load(path);
+
+#if DNX451  // Currently DNXCore50 doesn't offer XML Schema validation.
             xmlDoc.Validate(_xmlSchemaSet, null);
+#endif
             Parameters = Parameters.FromXDocument(xmlDoc, _xmlSchema);
         }
 
