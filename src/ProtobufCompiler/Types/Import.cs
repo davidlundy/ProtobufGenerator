@@ -1,5 +1,7 @@
 ﻿using System;
-
+#if DNXCORE50
+using System.Globalization;
+#endif
 namespace ProtobufCompiler.Types
 {
     internal enum ImportType
@@ -9,11 +11,16 @@ namespace ProtobufCompiler.Types
         Public
     }
 
-    internal class Import
+    internal class Import : IEquatable<Import>
     {
         internal ImportType ImportType { get; }
         internal string ImportClass { get; }
 
+#if DNXCORE50
+        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
+#else
+        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
+#endif
         internal Import(string type, string clas)
         {
             ImportType = string.IsNullOrWhiteSpace(type) ? 
@@ -22,12 +29,17 @@ namespace ProtobufCompiler.Types
             ImportClass = clas;
         }
 
+        public bool Equals(Import other)
+        {
+            if (other == null) return false;
+            return ImportType.Equals(other.ImportType) && InvCultIc.Equals(ImportClass, other.ImportClass);
+        }
+
         public override bool Equals(object obj)
         {
-            var other = obj as Import;
-            if (other == null) return false;
-
-            return (ImportType.Equals(other.ImportType) && ImportClass.Equals(other.ImportClass, StringComparison.InvariantCultureIgnoreCase));
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals(obj as Import);
         }
 
         public override int GetHashCode()

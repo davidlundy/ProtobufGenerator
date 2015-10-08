@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if DNXCORE50
+using System.Globalization;
+#endif
 
 namespace ProtobufCompiler.Types
 {
@@ -9,6 +12,11 @@ namespace ProtobufCompiler.Types
         internal string Name { get; }
         internal IEnumerable<Option> EnumOption { get; }
         internal IEnumerable<EnumField> EnumFields { get; }
+#if DNXCORE50
+        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
+#else
+        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
+#endif
 
         internal EnumDefinition(string name, IEnumerable<Option> option, IEnumerable<EnumField> fields)
         {
@@ -22,7 +30,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(EnumDefinition other)
         {
             if (other == null) return false;
-            return Name.Equals(other.Name) &&
+            return InvCultIc.Equals(Name, other.Name) &&
                    EnumOption.SequenceEqual(other.EnumOption) &&
                    EnumFields.SequenceEqual(other.EnumFields);
         }

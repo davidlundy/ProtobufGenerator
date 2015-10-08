@@ -1,4 +1,7 @@
 ﻿using System;
+#if DNXCORE50
+using System.Globalization;
+#endif
 
 namespace ProtobufCompiler.Types
 {
@@ -6,6 +9,11 @@ namespace ProtobufCompiler.Types
     {
         internal string Name { get; }
         internal bool Streaming { get; }
+#if DNXCORE50
+        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
+#else
+        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
+#endif
 
         internal ParameterType(string name, bool streaming)
         {
@@ -16,7 +24,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(ParameterType other)
         {
             if (other == null) return false;
-            return Name.Equals(other.Name) &&
+            return InvCultIc.Equals(Name, other.Name) &&
                    Streaming.Equals(other.Streaming);
         }
 

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if DNXCORE50
+using System.Globalization;
+#endif
 
 namespace ProtobufCompiler.Types
 {
@@ -8,6 +11,11 @@ namespace ProtobufCompiler.Types
     {
         internal string Name { get; }
         internal IEnumerable<OneOfField> Fields { get; }
+#if DNXCORE50
+        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
+#else
+        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
+#endif
 
         internal OneOf(string name, IEnumerable<OneOfField> fields)
         {
@@ -18,7 +26,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(OneOf other)
         {
             if (other == null) return false;
-            return Name.Equals(other.Name) &&
+            return InvCultIc.Equals(Name, other.Name) &&
                    Fields.SequenceEqual(other.Fields);
         }
 
@@ -32,8 +40,8 @@ namespace ProtobufCompiler.Types
         public override int GetHashCode()
         {
             var hash = 13;
-            hash = hash*7 + Name.GetHashCode();
-            hash = hash*7 + Fields.GetHashCode();
+            hash = (hash*7) + Name.GetHashCode();
+            hash = (hash*7) + Fields.GetHashCode();
             return hash;
         }
     }
