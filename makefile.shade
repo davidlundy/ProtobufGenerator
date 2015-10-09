@@ -9,6 +9,7 @@ use-standard-lifecycle
 
 default BASE_DIR='${Directory.GetCurrentDirectory()}'
 default TARGET_DIR='${Path.Combine(BASE_DIR, "artifacts")}'
+default PACKAGES_DIR='${Path.Combine(BASE_DIR, "packages")}'
 
 var DNU=""
 var DNX_CLR=""
@@ -16,15 +17,15 @@ var DNX_CORECLR=""
 @{
     if (IsLinux)
     {
-        DNU         = "packages/dnx-mono/bin/dnu";
-        DNX_CLR     = "packages/dnx-mono/bin/dnx";
-        DNX_CORECLR = "packages/dnx-coreclr-linux-x64/bin/dnx";
+        DNU = Path.Combine(PACKAGES_DIR, "dnx-mono", "bin", "dnu");
+        DNX_CLR = Path.Combine(PACKAGES_DIR, "dnx-mono", "bin", "dnx");
+        DNX_CORECLR = Path.Combine(PACKAGES_DIR, "dnx-coreclr-linux-x64", "bin", "dnx");
     }
     else
     {
-        DNU         = "packages/dnx-clr-win-x64/bin/dnu";
-        DNX_CLR     = "packages/dnx-clr-win-x64/bin/dnx";
-        DNX_CORECLR = "packages/dnx-coreclr-win-x64/bin/dnx";
+        DNU = Path.Combine(PACKAGES_DIR, "dnx-clr-win-x64", "bin", "dnu.cmd");
+        DNX_CLR = Path.Combine(PACKAGES_DIR, "dnx-clr-win-x64", "bin", "dnx.exe");
+        DNX_CORECLR = Path.Combine(PACKAGES_DIR, "dnx-coreclr-win-x64", "bin", "dnx.exe");
     }
 }
 

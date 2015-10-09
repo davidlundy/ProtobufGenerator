@@ -45,4 +45,4 @@ if [ ! -d packages/dnx-coreclr-linux-x64 ]; then
     chmod a+x packages/dnx-coreclr-linux-x64/bin/dnx
 fi
 
-mono packages/Sake/tools/Sake.exe -I ./build -f makefile.shade "$@"
+mono packages/Sake/tools/Sake.exe -f makefile.shade "$@"
