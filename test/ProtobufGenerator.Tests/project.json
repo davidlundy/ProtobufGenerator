@@ -14,7 +14,7 @@
     "ProtobufGenerator": "1.0.0-alpha"
   },
   "commands": {
-    "test": "xunit.runner.dnx -parallell none"
+    "test": "xunit.runner.dnx -parallel none"
   },
 
   "frameworks": {
