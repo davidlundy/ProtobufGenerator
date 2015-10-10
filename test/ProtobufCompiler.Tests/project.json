@@ -24,8 +24,7 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "System.Collections": "4.0.10",
-        "System.Runtime": "4.0.21-beta-23323"
+        "System.Collections": "4.0.11-beta-23323"
       }
     }
   }
