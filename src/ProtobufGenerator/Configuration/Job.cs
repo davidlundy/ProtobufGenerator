@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ProtobufGenerator.JobParameters
+namespace ProtobufGenerator.Configuration
 {
     /// <summary>
     /// Represents a processing Job, which defines a directory of proto schema with generation parameters.
