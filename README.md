@@ -2,7 +2,9 @@
 
 Configurable tooling that can process .proto definition files into C# class files compatible with [Protobuf-Net].
 
-Travis : [![Build Status](https://travis-ci.org/draylundy/ProtobufGenerator.svg?branch=master)](https://travis-ci.org/draylundy/ProtobufGenerator)
+  Travis [Ubuntu 12.04 LTS Server Edition 64]: [![Build Status](https://travis-ci.org/draylundy/ProtobufGenerator.svg?branch=master)](https://travis-ci.org/draylundy/ProtobufGenerator)
+  
+Appveyor [Windows Server 2012] : [![Build status](https://ci.appveyor.com/api/projects/status/3jol7ax44xrm9eg6?svg=true)](https://ci.appveyor.com/project/draylundy/protobufgenerator) 
 
 ### Project Goals
 
