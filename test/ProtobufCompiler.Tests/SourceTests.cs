@@ -21,21 +21,21 @@ namespace ProtobufCompiler.Tests
 
         [Fact]
         // The first 'Next' will get the first character in stream at Column 1
-        public void Source_Should_Start_at_Line_1_Column_0()
+        public void SourceShouldStartatLine1Column0()
         {
             _sys.Line.Should().Be(1, "There is no Line 0");
             _sys.Column.Should().Be(0, "The first 'Next' will be Column 1");
         }
 
         [Fact]
-        public void Should_Next_Characters()
+        public void ShouldNextCharacters()
         {
             _sys.Next().ShouldBeEquivalentTo('L', "Because it is the 1st character.");
             _sys.Next().ShouldBeEquivalentTo('1', "Because it is the 2nd character.");
         }
 
         [Fact]
-        public void Next_Should_Increment_Column_Count()
+        public void NextShouldIncrementColumnCount()
         {
             _sys.Next();
             _sys.Column.Should().Be(1, "Because this is the first character read.");
@@ -44,7 +44,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void Should_Increment_Line_And_Reset_Column_on_Windows()
+        public void ShouldIncrementLineAndResetColumnonWindows()
         {
             char output;
             do
@@ -57,7 +57,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void Should_Increment_Line_And_Reset_Column_on_Mac()
+        public void ShouldIncrementLineAndResetColumnonMac()
         {
             char output;
             do
@@ -70,7 +70,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void Should_Increment_Line_And_Reset_Column_on_Linux()
+        public void ShouldIncrementLineAndResetColumnonLinux()
         {
             char output;
             do
@@ -83,7 +83,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void Should_Read_To_End()
+        public void ShouldReadToEnd()
         {
             while (!_sys.EndStream)
             {

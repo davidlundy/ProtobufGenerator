@@ -13,8 +13,7 @@ namespace ProtobufCompiler.Compiler
 
         public bool EndStream => _streamReader.EndOfStream;
 
-        private const char LineFeed = '\n';
-        private const char CarriageReturn = '\r';
+
         private const int PeekEndFile = -1;
 
         internal Source(StreamReader streamReader)
@@ -41,10 +40,10 @@ namespace ProtobufCompiler.Compiler
             Column++;
 
             // Windows - Dump the extraneous LineFeed
-            if (next.Equals(CarriageReturn) && lookahead.Equals(LineFeed)) _streamReader.Read();
+            if (next.Equals(ProtoGrammar.CarriageReturn) && lookahead.Equals(ProtoGrammar.LineFeed)) _streamReader.Read();
 
             // All Platforms -> Increase the Line Count and reset Column to 1
-            if (next.Equals(CarriageReturn) /* Mac or Win */ || next.Equals(LineFeed) /* Unix */)
+            if (next.Equals(ProtoGrammar.CarriageReturn) /* Mac or Win */ || next.Equals(ProtoGrammar.LineFeed) /* Unix */)
             {
                 Line++;
                 // Next call to 'Next' will have first character in the line returned as Column 1
