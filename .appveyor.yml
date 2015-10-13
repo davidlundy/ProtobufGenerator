@@ -1,0 +1,8 @@
+init:
+  - git config --global core.autocrlf true
+build_script:
+  - build.cmd
+clone_depth: 1
+os: Windows Server 2012
+test: off
+deploy: off
