@@ -1,6 +1,8 @@
-# ProtobufGenerator
+# ProtobufGenerator  
 
-Configurable tooling that can process .proto definition files into C# class files compatible with [Protobuf-Net]. 
+Configurable tooling that can process .proto definition files into C# class files compatible with [Protobuf-Net].
+
+Travis : [![Build Status](https://travis-ci.org/draylundy/ProtobufGenerator.svg?branch=master)](https://travis-ci.org/draylundy/ProtobufGenerator)
 
 ### Project Goals
 
