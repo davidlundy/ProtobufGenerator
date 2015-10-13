@@ -35,12 +35,49 @@ namespace ProtobufCompiler.Compiler
         internal static readonly IList<string> IdTable = new List<string>
         {
             "syntax",
+            "import",
             "package",
             "option",
             "enum",
             "message",
             "oneof",
             "map"
+        };
+
+        internal static readonly IList<string> BlockDefinitions = new List<string>
+        {
+            "enum",
+            "message",
+            "service",
+            "/*"
+        };
+
+        internal static readonly IList<string> LineDefinitions = new List<string>
+        {
+            "syntax",
+            "import",
+            "package",
+            "option",
+            "//"
+        };
+
+        internal static readonly IList<string> FieldDefinitions = new List<string>
+        {
+            "double",
+            "float",
+            "int32",
+            "int64",
+            "uint32",
+            "uint64",
+            "sint32",
+            "sint64",
+            "fixed32",
+            "fixed64",
+            "sfixed32",
+            "sfixed64",
+            "bool",
+            "string",
+            "bytes"
         };
 
         internal static TokenType GetType(string lexeme)
