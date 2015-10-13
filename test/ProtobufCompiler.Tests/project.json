@@ -1,7 +1,7 @@
 ﻿{
   "version": "1.0.0-alpha",
   "description": "",
-  "authors": [ "David Lundy", "Martin Björkström" ],
+  "authors": [ "David Lundy" ],
   "owners": [ "David Lundy" ],
   "summary": "",
   "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
@@ -24,7 +24,7 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "System.Collections": "4.0.11-beta-23323"
+        "System.Collections": "4.0.11-beta-*"
       }
     }
   }
