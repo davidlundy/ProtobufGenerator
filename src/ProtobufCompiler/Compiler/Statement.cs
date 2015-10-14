@@ -18,11 +18,12 @@ namespace ProtobufCompiler.Compiler
         public Statement(StatementType type, IEnumerable<Token> list)
         {
             StatementType = type;
-            TokenList = list;
+            TokenList = list ?? new List<Token>();
         }
         public bool Equals(Statement other)
         {
-            throw new NotImplementedException();
+            if (other == null) return false;
+            return StatementType.Equals(other.StatementType) && TokenList.SequenceEqual(other.TokenList);
         }
 
         public override bool Equals(object obj)

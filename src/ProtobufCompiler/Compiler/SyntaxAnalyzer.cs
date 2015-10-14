@@ -7,17 +7,18 @@ namespace ProtobufCompiler.Compiler
 {
     internal class SyntaxAnalyzer : ISyntaxAnalyzer
     {
-        public Queue<Statement> Statements => new Queue<Statement>(_statements);
         private readonly Queue<Token> _tokens;
         private readonly IList<Token> _buffer;
-        private readonly List<Statement> _statements;
 
+        public Queue<Statement> Statements { get; }
+        public IList<ParseError> Errors { get; }
 
         internal SyntaxAnalyzer(Queue<Token> tokens)
         {
             _tokens = tokens;
             _buffer = new List<Token>();
-            _statements = new List<Statement>();
+            Statements = new Queue<Statement>();
+            Errors = new List<ParseError>();
         }
 
         public void Analyze()
@@ -29,13 +30,24 @@ namespace ProtobufCompiler.Compiler
                 {
                     CreateLineStatement();
                 }
-                if (ProtoGrammar.BlockDefinitions.Contains(token.Lexeme))
+                else if (ProtoGrammar.BlockDefinitions.Contains(token.Lexeme))
                 {
                     CreateBlockStatement();
                 }
-                if (ProtoGrammar.BlockComment.Contains(token.Lexeme))
+                else if (ProtoGrammar.BlockComment.Contains(token.Lexeme))
                 {
                     CreateBlockComment();
+                }
+                else
+                {
+                    Errors.Add(new ParseError(token, "Line starts with invalid token"));
+                    var currentLine = token.Line;
+                    int nextLine;
+                    do
+                    {
+                        var next = _tokens.Dequeue();
+                        nextLine = next.Line;
+                    } while (currentLine == nextLine);
                 }
             }
         }
@@ -52,7 +64,7 @@ namespace ProtobufCompiler.Compiler
             if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
                 _tokens.Dequeue(); // Dump the trailing EOL
             
-            _statements.Add(new Statement(StatementType.Line, new List<Token>(_buffer)));
+            Statements.Enqueue(new Statement(StatementType.Line, new List<Token>(_buffer)));
             _buffer.Clear();
         }
 
@@ -69,7 +81,7 @@ namespace ProtobufCompiler.Compiler
             if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
                 _tokens.Dequeue(); // Dump the trailing EOL
 
-            _statements.Add(new Statement(StatementType.Block, new List<Token>(_buffer)));
+            Statements.Enqueue(new Statement(StatementType.Block, new List<Token>(_buffer)));
             _buffer.Clear();
         }
 
@@ -111,7 +123,7 @@ namespace ProtobufCompiler.Compiler
             if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
                 _tokens.Dequeue(); // Dump the trailing EOL
 
-            _statements.Add(new Statement(StatementType.Block, new List<Token>(_buffer)));
+            Statements.Enqueue(new Statement(StatementType.Block, new List<Token>(_buffer)));
             _buffer.Clear();
         }
     }

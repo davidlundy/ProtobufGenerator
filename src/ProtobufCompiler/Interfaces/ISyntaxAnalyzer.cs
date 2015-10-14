@@ -10,5 +10,7 @@ namespace ProtobufCompiler.Interfaces
 
         Queue<Statement> Statements { get; }
 
+        IList<ParseError> Errors { get; }
+
     }
 }

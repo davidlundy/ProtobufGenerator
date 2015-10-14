@@ -28,7 +28,8 @@ namespace ProtobufCompiler.Tests
                                         "package Google.ProtocolBuffer.Test;" + Environment.NewLine +
                                         "message Data {" + Environment.NewLine +
                                         "int32 test = 1;" + Environment.NewLine +
-                                        "}";
+                                        "}" + Environment.NewLine+ 
+                                        "This is a new line that is invalid" + Environment.NewLine;
 
         public StatementTests()
         {
@@ -45,6 +46,15 @@ namespace ProtobufCompiler.Tests
         {
             _sys.Analyze();
             _sys.Statements.Count.Should().Be(8, "because there are only eight statements in this .proto definition. ");
+        }
+
+        [Fact]
+        internal void ShouldFindOneParseError()
+        {
+            _sys.Analyze();
+            _sys.Errors.Count.Should()
+                .Be(1, "because there is an invalid top level statement in the .proto definition. ");
+            // Note: We should not expect a throw. Keep parsing and find all necessary errors. 
         }
     }
 }
