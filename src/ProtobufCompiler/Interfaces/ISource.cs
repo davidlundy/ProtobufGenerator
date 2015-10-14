@@ -17,6 +17,12 @@
         char Next();
 
         /// <summary>
+        /// Look at the next character in the stream without consuming it. 
+        /// </summary>
+        /// <returns></returns>
+        char Peek();
+
+        /// <summary>
         /// Get the current line of the input. Increments when a
         /// newline character is found in the stream.
         /// </summary>

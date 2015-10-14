@@ -12,7 +12,8 @@ namespace ProtobufCompiler.Compiler
         String,
         Numeric,
         Control,
-        EndLine
+        EndLine,
+        Comment
     }
 
     internal class Token : IEquatable<Token>

@@ -62,6 +62,32 @@ namespace ProtobufCompiler.Compiler
                     continue;
                 }
 
+                // Catches // or /* opening comment
+                if (ProtoGrammar.Comment[0].Equals(character))
+                {
+                    var next = _source.Peek();
+                    if (ProtoGrammar.Comment.Contains(next)) // Should handle opening single line or block comment even against preceding text.
+                    {
+                        FlushBuffer();
+                        _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new [] {character, next})));
+                        _source.Next(); // Remove what we peeked. 
+                        continue;
+                    }
+                }
+
+                // Catches */ end comment. 
+                if (ProtoGrammar.Comment[1].Equals(character))
+                {
+                    var next = _source.Peek();
+                    if (ProtoGrammar.Comment[0].Equals(next))
+                    {
+                        FlushBuffer();
+                        _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
+                        _source.Next(); // Remove what we peeked.
+                        continue;
+                    }
+                }
+
                 _buffer.Add(character);
             }
         }

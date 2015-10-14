@@ -24,6 +24,12 @@ namespace ProtobufCompiler.Compiler
             Column = 0;
         }
 
+        public char Peek()
+        {
+            if(EndStream) throw new EndOfStreamException("End of Stream Reached.");
+            return Convert.ToChar(_streamReader.Peek());
+        }
+
         public char Next()
         {
             if(EndStream) throw new EndOfStreamException("End of Stream Reached.");

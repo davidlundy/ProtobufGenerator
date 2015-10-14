@@ -24,6 +24,11 @@ namespace ProtobufCompiler.Compiler
         internal static readonly IList<char> InlineTokens = new List<char>{ ';', '{', '}', '=', ',', '<', '>', '[', ']', '(', ')' };
 
         /// <summary>
+        /// Characters which will invoke a look behind to delimit the start or end of a comment. 
+        /// </summary>
+        internal static readonly char[] Comment = {'/', '*'};
+
+        /// <summary>
         /// Identify Numeric Tokens
         /// </summary>
         internal static readonly Regex IsNumeric = new Regex("^(" +
