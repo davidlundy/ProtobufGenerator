@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler
@@ -26,7 +25,6 @@ namespace ProtobufCompiler.Compiler
             while (_tokens.Any())
             {
                 var token = _tokens.Peek();
-                if(!TokenType.Id.Equals(token.Type)) throw new ArgumentException("Top level statement invalid");
                 if (ProtoGrammar.LineDefinitions.Contains(token.Lexeme))
                 {
                     CreateLineStatement();
@@ -35,12 +33,16 @@ namespace ProtobufCompiler.Compiler
                 {
                     CreateBlockStatement();
                 }
+                if (ProtoGrammar.BlockComment.Contains(token.Lexeme))
+                {
+                    CreateBlockComment();
+                }
             }
         }
 
         private void CreateLineStatement()
         {
-            Token token = null;
+            Token token;
             do
             {
                 token = _tokens.Dequeue();
@@ -51,6 +53,23 @@ namespace ProtobufCompiler.Compiler
                 _tokens.Dequeue(); // Dump the trailing EOL
             
             _statements.Add(new Statement(StatementType.Line, new List<Token>(_buffer)));
+            _buffer.Clear();
+        }
+
+        private void CreateBlockComment()
+        {
+            var foundClosing = false;
+            do
+            {
+                var token = _tokens.Dequeue();
+                _buffer.Add(token);
+                if (token.Lexeme.Equals("*/")) foundClosing = true;
+            } while (!foundClosing);
+
+            if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
+                _tokens.Dequeue(); // Dump the trailing EOL
+
+            _statements.Add(new Statement(StatementType.Block, new List<Token>(_buffer)));
             _buffer.Clear();
         }
 

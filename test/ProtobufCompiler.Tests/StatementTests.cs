@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using ProtobufCompiler.Compiler;
 using ProtobufCompiler.Interfaces;
@@ -15,7 +12,12 @@ namespace ProtobufCompiler.Tests
     {
         private readonly ISyntaxAnalyzer _sys;
 
-        private readonly string _data = @"message Outer {" + Environment.NewLine +
+        private readonly string _data = "syntax = \"proto3\";" + Environment.NewLine+
+                                        "import public \"other.proto\";"+Environment.NewLine+
+                                        "option java_package = \"com.example.foo\";" + Environment.NewLine +
+                                        "/*Let's have a block comment for"+Environment.NewLine+
+                                        " the message*/"+Environment.NewLine+
+                                        "message Outer {" + Environment.NewLine +
                                         "option my_option = true; // some comment" + Environment.NewLine +
                                         "message Inner {" + Environment.NewLine +
                                         "int64 ival = 1;" + Environment.NewLine +
@@ -39,10 +41,10 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        internal void ShouldFindFourTopLevelStatements()
+        internal void ShouldFindEightTopLevelStatements()
         {
             _sys.Analyze();
-            _sys.Statements.Count.Should().Be(4, "because there are only four statements in this .proto definition. ");
+            _sys.Statements.Count.Should().Be(8, "because there are only eight statements in this .proto definition. ");
         }
     }
 }

@@ -53,7 +53,11 @@ namespace ProtobufCompiler.Compiler
         {
             "enum",
             "message",
-            "service",
+            "service"
+        };
+
+        internal static readonly IList<string> BlockComment = new List<string>
+        {
             "/*"
         };
 
