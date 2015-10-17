@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ProtobufCompiler.Interfaces;
 
@@ -11,6 +10,7 @@ namespace ProtobufCompiler.Compiler
         private readonly IList<Token> _buffer;
 
         public Queue<Statement> Statements { get; }
+        private Stack<Statement> Comments { get; }
         public IList<ParseError> Errors { get; }
 
         internal SyntaxAnalyzer(Queue<Token> tokens)
@@ -19,6 +19,7 @@ namespace ProtobufCompiler.Compiler
             _buffer = new List<Token>();
             Statements = new Queue<Statement>();
             Errors = new List<ParseError>();
+            Comments = new Stack<Statement>();
         }
 
         public void Analyze()
@@ -30,6 +31,10 @@ namespace ProtobufCompiler.Compiler
                 {
                     CreateLineStatement();
                 }
+                else if (ProtoGrammar.LineComment.Contains(token.Lexeme))
+                {
+                    CreateLineComment();
+                }
                 else if (ProtoGrammar.BlockDefinitions.Contains(token.Lexeme))
                 {
                     CreateBlockStatement();
@@ -40,16 +45,37 @@ namespace ProtobufCompiler.Compiler
                 }
                 else
                 {
-                    Errors.Add(new ParseError(token, "Line starts with invalid token"));
-                    var currentLine = token.Line;
-                    int nextLine;
-                    do
-                    {
-                        var next = _tokens.Dequeue();
-                        nextLine = next.Line;
-                    } while (currentLine == nextLine);
+                    Errors.Add(new ParseError("Line starts with invalid token", token));
+                    DumpLineFrom(token);
                 }
             }
+        }
+
+        private void DumpLineFrom(Token token)
+        {
+            var currentLine = token.Line;
+            int nextLine;
+            do
+            {
+                var next = _tokens.Dequeue();
+                nextLine = next.Line;
+            } while (currentLine == nextLine);
+        }
+
+        private void CreateLineComment()
+        {
+            Token token;
+            do
+            {
+                token = _tokens.Dequeue();
+                _buffer.Add(token);
+            } while (!token.Type.Equals(TokenType.EndLine));
+
+            if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
+                _tokens.Dequeue(); // Dump the trailing EOL
+
+            Statements.Enqueue(new Statement(StatementType.Comment, new List<Token>(_buffer)));
+            _buffer.Clear();
         }
 
         private void CreateLineStatement()
@@ -81,7 +107,7 @@ namespace ProtobufCompiler.Compiler
             if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
                 _tokens.Dequeue(); // Dump the trailing EOL
 
-            Statements.Enqueue(new Statement(StatementType.Block, new List<Token>(_buffer)));
+            Statements.Enqueue(new Statement(StatementType.Comment, new List<Token>(_buffer)));
             _buffer.Clear();
         }
 
@@ -97,7 +123,7 @@ namespace ProtobufCompiler.Compiler
             {
                 var token = _tokens.Dequeue();
                 if(token.Type.Equals(TokenType.EndLine) && !hasFoundOpenBlock)
-                    throw new Exception("Found EOL before open brace for block statement");
+                    Errors.Add(new ParseError("Found EOL before open brace for block statement", token));
 
                 if (token.Lexeme.Equals("{"))
                 {
@@ -126,5 +152,6 @@ namespace ProtobufCompiler.Compiler
             Statements.Enqueue(new Statement(StatementType.Block, new List<Token>(_buffer)));
             _buffer.Clear();
         }
+
     }
 }

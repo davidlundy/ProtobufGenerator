@@ -7,7 +7,8 @@ namespace ProtobufCompiler.Compiler
     internal enum StatementType
     {
         Line, 
-        Block
+        Block,
+        Comment
     }
 
     internal class Statement : IEquatable<Statement>
@@ -43,7 +44,7 @@ namespace ProtobufCompiler.Compiler
 
         public override string ToString()
         {
-            return string.Format("{0} statement : {1}", StatementType, string.Join(" ", TokenList.Select(t => t.Lexeme)));
+            return $"{StatementType} statement : {string.Join(" ", TokenList.Select(t => t.Lexeme))}";
         }
     }
 }

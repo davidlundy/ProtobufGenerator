@@ -16,7 +16,7 @@ namespace ProtobufCompiler.Compiler
         internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
 #endif
 
-        public ParseError(Token token, string message)
+        public ParseError(string message, Token token = null)
         {
             Token = token;
             Message = message;
@@ -24,7 +24,7 @@ namespace ProtobufCompiler.Compiler
 
         public override string ToString()
         {
-            return string.Format("{0} : @ {1}", Message, Token);
+            return Token == null ? $"{Message}" : $"{Message} : @ {Token}";
         }
 
         public bool Equals(ParseError other)

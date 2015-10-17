@@ -61,13 +61,17 @@ namespace ProtobufCompiler.Compiler
             "/*"
         };
 
+        internal static readonly IList<string> LineComment = new List<string>
+        {
+            "//"
+        };
+
         internal static readonly IList<string> LineDefinitions = new List<string>
         {
             "syntax",
             "import",
             "package",
-            "option",
-            "//"
+            "option"
         };
 
         internal static readonly IList<string> FieldDefinitions = new List<string>
