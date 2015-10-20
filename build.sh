@@ -35,12 +35,12 @@ if [ ! -d packages/Sake ]; then
     mono .nuget/nuget.exe install Sake -Version 0.2.2 -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
 fi
 if [ ! -d packages/dnx-mono ]; then
-    mono .nuget/nuget.exe install dnx-mono -Version 1.0.0-beta7 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
+    mono .nuget/nuget.exe install dnx-mono -Version 1.0.0-beta8 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
     chmod a+x packages/dnx-mono/bin/dnu
     chmod a+x packages/dnx-mono/bin/dnx
 fi
 if [ ! -d packages/dnx-coreclr-linux-x64 ]; then
-    mono .nuget/nuget.exe install dnx-coreclr-linux-x64 -Version 1.0.0-beta7 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
+    mono .nuget/nuget.exe install dnx-coreclr-linux-x64 -Version 1.0.0-beta8 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
     chmod a+x packages/dnx-coreclr-linux-x64/bin/dnu
     chmod a+x packages/dnx-coreclr-linux-x64/bin/dnx
 fi
