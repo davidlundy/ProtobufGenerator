@@ -19,8 +19,7 @@ namespace ProtobufCompiler.Compiler
 
         internal Source(StreamReader streamReader)
         {
-            if(streamReader == null) throw new ArgumentNullException(nameof(streamReader));
-            _streamReader = streamReader;
+            _streamReader = Check.NotNull(streamReader, nameof(streamReader));
             Line = 1;
             Column = 0;
         }

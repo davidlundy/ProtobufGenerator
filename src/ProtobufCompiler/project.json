@@ -8,9 +8,11 @@
   "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
   "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
-  "dependencies": {
-    
+  "compilationOptions": {
+    "warningsAsErrors": true
+  },
 
+  "dependencies": {
   },
 
   "frameworks": {
