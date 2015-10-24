@@ -27,19 +27,19 @@ namespace ProtobufCompiler.Compiler
             while (_tokens.Any())
             {
                 var token = _tokens.Peek();
-                if (ProtoGrammar.LineDefinitions.Contains(token.Lexeme))
+                if (LexicalElements.LineDefinitions.Contains(token.Lexeme))
                 {
                     CreateLineStatement();
                 }
-                else if (ProtoGrammar.LineComment.Contains(token.Lexeme))
+                else if (LexicalElements.LineComment.Contains(token.Lexeme))
                 {
                     CreateLineComment();
                 }
-                else if (ProtoGrammar.BlockDefinitions.Contains(token.Lexeme))
+                else if (LexicalElements.BlockDefinitions.Contains(token.Lexeme))
                 {
                     CreateBlockStatement();
                 }
-                else if (ProtoGrammar.BlockComment.Contains(token.Lexeme))
+                else if (LexicalElements.BlockComment.Contains(token.Lexeme))
                 {
                     CreateBlockComment();
                 }

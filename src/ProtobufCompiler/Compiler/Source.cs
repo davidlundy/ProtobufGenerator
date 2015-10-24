@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler
@@ -46,10 +47,10 @@ namespace ProtobufCompiler.Compiler
             Column++;
 
             // Windows - Dump the extraneous LineFeed
-            if (next.Equals(ProtoGrammar.CarriageReturn) && lookahead.Equals(ProtoGrammar.LineFeed)) _streamReader.Read();
+            if (next.IsCarriageReturn() && lookahead.IsLineFeed()) _streamReader.Read();
 
             // All Platforms -> Increase the Line Count and reset Column to 1
-            if (next.Equals(ProtoGrammar.CarriageReturn) /* Mac or Win */ || next.Equals(ProtoGrammar.LineFeed) /* Unix */)
+            if (next.IsCarriageReturn() /* Mac or Win */ || next.IsLineFeed() /* Unix */)
             {
                 Line++;
                 // Next call to 'Next' will have first character in the line returned as Column 1

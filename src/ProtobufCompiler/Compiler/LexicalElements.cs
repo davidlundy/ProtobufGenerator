@@ -6,18 +6,8 @@ namespace ProtobufCompiler.Compiler
     /// <summary>
     /// Here we'll define some helpers 
     /// </summary>
-    internal static class ProtoGrammar
+    internal static class LexicalElements
     {
-        /// <summary>
-        /// Provides support for handling EOL on Windows and Unix
-        /// </summary>
-        internal static char LineFeed = '\n';
-
-        /// <summary>
-        /// Provides support for handling EOL on Windows and Mac
-        /// </summary>
-        internal static char CarriageReturn = '\r';
-
         /// <summary>
         /// Characters which may be placed beside another character and not be considered the same token. 
         /// </summary>

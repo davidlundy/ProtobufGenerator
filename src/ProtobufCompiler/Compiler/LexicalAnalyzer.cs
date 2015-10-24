@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProtobufCompiler.Interfaces;
 using System.Linq;
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -27,7 +28,7 @@ namespace ProtobufCompiler.Compiler
         {
             if (!_buffer.Any()) return;
             var lexeme = new string(_buffer.ToArray());
-            var type = ProtoGrammar.GetType(lexeme);
+            var type = LexicalElements.GetType(lexeme);
             _tokens.Add(new Token(type, _tokenLineStart, _tokenColumnStart, lexeme));
             _buffer.Clear();
         }
@@ -48,14 +49,14 @@ namespace ProtobufCompiler.Compiler
                 if (char.IsWhiteSpace(character) || char.IsControl(character))
                 {
                     FlushBuffer();
-                    if (ProtoGrammar.LineFeed.Equals(character) || ProtoGrammar.CarriageReturn.Equals(character))
+                    if (character.IsLineFeed() || character.IsCarriageReturn())
                     {
                         _tokens.Add(new Token(TokenType.EndLine, _source.Line, _source.Column, "EOL"));
                     }
                     continue;
                 }
 
-                if (ProtoGrammar.InlineTokens.Contains(character))
+                if (LexicalElements.InlineTokens.Contains(character))
                 {
                     FlushBuffer();
                     _tokens.Add(new Token(TokenType.Control, _source.Line, _source.Column, character.ToString()));
@@ -63,10 +64,10 @@ namespace ProtobufCompiler.Compiler
                 }
 
                 // Catches // or /* opening comment
-                if (ProtoGrammar.Comment[0].Equals(character))
+                if (LexicalElements.Comment[0].Equals(character))
                 {
                     var next = _source.Peek();
-                    if (ProtoGrammar.Comment.Contains(next)) // Should handle opening single line or block comment even against preceding text.
+                    if (LexicalElements.Comment.Contains(next)) // Should handle opening single line or block comment even against preceding text.
                     {
                         FlushBuffer();
                         _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new [] {character, next})));
@@ -76,10 +77,10 @@ namespace ProtobufCompiler.Compiler
                 }
 
                 // Catches */ end comment. 
-                if (ProtoGrammar.Comment[1].Equals(character))
+                if (LexicalElements.Comment[1].Equals(character))
                 {
                     var next = _source.Peek();
-                    if (ProtoGrammar.Comment[0].Equals(next))
+                    if (LexicalElements.Comment[0].Equals(next))
                     {
                         FlushBuffer();
                         _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
