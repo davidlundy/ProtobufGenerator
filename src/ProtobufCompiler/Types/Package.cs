@@ -5,9 +5,9 @@ using System.Globalization;
 
 namespace ProtobufCompiler.Types
 {
-    internal class Package : IEquatable<Package>
+    public class Package : IEquatable<Package>
     {
-        internal string Name { get; }
+        public string Name { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);

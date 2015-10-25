@@ -5,10 +5,10 @@ using System.Globalization;
 
 namespace ProtobufCompiler.Types
 {
-    internal class Option : IEquatable<Option>
+    public class Option : IEquatable<Option>
     {
-        internal string Name { get; }
-        internal string Value { get; }
+        public string Name { get; }
+        public string Value { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);

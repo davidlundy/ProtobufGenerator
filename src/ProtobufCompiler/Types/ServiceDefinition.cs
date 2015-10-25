@@ -8,11 +8,11 @@ using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
-    internal class ServiceDefinition : IEquatable<ServiceDefinition>
+    public class ServiceDefinition : IEquatable<ServiceDefinition>
     {
-        internal string Name { get; }
-        internal IEnumerable<ServiceMethod> Methods { get; }
-        internal IEnumerable<Option> Options { get; }
+        public string Name { get; }
+        public IEnumerable<ServiceMethod> Methods { get; }
+        public IEnumerable<Option> Options { get; }
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
 #else

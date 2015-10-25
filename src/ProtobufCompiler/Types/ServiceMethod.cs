@@ -6,11 +6,11 @@ using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
-    internal class ServiceMethod : IEquatable<ServiceMethod>
+    public class ServiceMethod : IEquatable<ServiceMethod>
     {
-        internal string Name { get; }
-        internal ParameterType InputType { get; }
-        internal ParameterType OutputType { get; }
+        public string Name { get; }
+        public ParameterType InputType { get; }
+        public ParameterType OutputType { get; }
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
 #else

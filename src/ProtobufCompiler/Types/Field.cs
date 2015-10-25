@@ -7,15 +7,15 @@ using System.Globalization;
 
 namespace ProtobufCompiler.Types
 {
-    internal class Field : IEquatable<Field>
+    public class Field : IEquatable<Field>
     {
-        internal string FieldName { get; }
-        internal SimpleType SimpleType { get; }
-        internal string UserType { get; }
-        internal int FieldNumber { get; }
-        internal IEnumerable<Option> FieldOptions { get; }
-        internal bool Repeated { get; }
-        internal bool IsUsertype { get; }
+        public string FieldName { get; }
+        public SimpleType SimpleType { get; }
+        public string UserType { get; }
+        public int FieldNumber { get; }
+        public IEnumerable<Option> FieldOptions { get; }
+        public bool Repeated { get; }
+        public bool IsUsertype { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
@@ -66,7 +66,7 @@ namespace ProtobufCompiler.Types
         }
     }
 
-    internal enum SimpleType
+    public enum SimpleType
     {
         None,
         Double, 

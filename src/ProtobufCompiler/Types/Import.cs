@@ -4,17 +4,17 @@ using System.Globalization;
 #endif
 namespace ProtobufCompiler.Types
 {
-    internal enum ImportType
+    public enum ImportType
     {
         None, 
         Weak,
         Public
     }
 
-    internal class Import : IEquatable<Import>
+    public class Import : IEquatable<Import>
     {
-        internal ImportType ImportType { get; }
-        internal string ImportClass { get; }
+        public ImportType ImportType { get; }
+        public string ImportClass { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);

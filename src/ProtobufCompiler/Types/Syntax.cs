@@ -2,15 +2,15 @@
 
 namespace ProtobufCompiler.Types
 {
-    internal enum SyntaxType
+    public enum SyntaxType
     {
         Proto2,
         Proto3
     }
 
-    internal class Syntax : IEquatable<Syntax>
+    public class Syntax : IEquatable<Syntax>
     {
-        internal SyntaxType Name { get; }
+        public SyntaxType Name { get; }
 
         internal Syntax(string name)
         {

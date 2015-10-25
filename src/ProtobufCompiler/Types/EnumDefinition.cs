@@ -8,11 +8,11 @@ using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
-    internal class EnumDefinition : IEquatable<EnumDefinition>
+    public class EnumDefinition : IEquatable<EnumDefinition>
     {
-        internal string Name { get; }
-        internal IEnumerable<Option> EnumOption { get; }
-        internal IEnumerable<EnumField> EnumFields { get; }
+        public string Name { get; }
+        public IEnumerable<Option> EnumOption { get; }
+        public IEnumerable<EnumField> EnumFields { get; }
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
 #else

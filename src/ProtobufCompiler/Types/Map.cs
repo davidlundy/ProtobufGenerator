@@ -5,12 +5,12 @@ using System.Globalization;
 
 namespace ProtobufCompiler.Types
 {
-    internal class Map : IEquatable<Map>
+    public class Map : IEquatable<Map>
     {
-        internal string Name { get; }
-        internal int FieldNum { get; }
-        internal string KeyType { get; }
-        internal string ValueType { get; }
+        public string Name { get; }
+        public int FieldNum { get; }
+        public string KeyType { get; }
+        public string ValueType { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);

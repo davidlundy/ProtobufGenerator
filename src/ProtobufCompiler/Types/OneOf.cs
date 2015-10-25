@@ -7,10 +7,10 @@ using System.Globalization;
 
 namespace ProtobufCompiler.Types
 {
-    internal class OneOf : IEquatable<OneOf>
+    public class OneOf : IEquatable<OneOf>
     {
-        internal string Name { get; }
-        internal IEnumerable<OneOfField> Fields { get; }
+        public string Name { get; }
+        public IEnumerable<OneOfField> Fields { get; }
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
 #else
