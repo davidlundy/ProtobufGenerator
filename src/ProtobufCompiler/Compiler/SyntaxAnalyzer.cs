@@ -178,10 +178,35 @@ namespace ProtobufCompiler.Compiler
             return new Node(NodeType.StringLiteral, stringLit.Lexeme.Unquote());
         }
 
+        private Node ParseFullIdentifier()
+        {
+            var ident = _tokens.Peek();
+            if (!_parser.IsFullIdentifier(ident.Lexeme)) return null;
+            _tokens.Dequeue();
+            return new Node(NodeType.Identifier, ident.Lexeme);
+        }
+
         private Node ParsePackage()
         {
-            DumpStringToEndLine();
-            return null;
+            var packageTag = _tokens.Dequeue();
+
+            var packageName = ParseFullIdentifier();
+
+            if (ReferenceEquals(packageName, null))
+            {
+                _errors.Add(new ParseError($"Could not find a package name for package starting at line {packageTag.Line} Found token ", _tokens.Peek()));
+                return null;
+            }
+
+            TerminateSingleLineStatement();
+
+            var packageNode = new Node(NodeType.Package, packageTag.Lexeme);
+            packageNode.AddChild(packageName);
+
+            ScoopComment(packageNode);
+            DumpEndline();
+
+            return packageNode;
         }
 
         private Node ParseOption()

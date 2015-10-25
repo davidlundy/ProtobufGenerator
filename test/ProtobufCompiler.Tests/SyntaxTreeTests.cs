@@ -109,6 +109,33 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void ShouldBuildPackageNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "package"),
+                new Token(TokenType.String, 0, 1, "foo.bar.baz"),
+                new Token(TokenType.Control, 0, 2, ";"),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var package = new Node(NodeType.Package, "package");
+            var packageName = new Node(NodeType.Identifier, "foo.bar.baz");
+            package.AddChild(packageName);
+            root.AddChild(package);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             // Arrange Input
