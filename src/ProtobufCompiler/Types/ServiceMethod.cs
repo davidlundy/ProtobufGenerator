@@ -2,6 +2,7 @@
 #if DNXCORE50
 using System.Globalization;
 #endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -18,13 +19,9 @@ namespace ProtobufCompiler.Types
 
         internal ServiceMethod(string name, ParameterType inputType, ParameterType outputType)
         {
-            if(name == null) throw new ArgumentNullException(nameof(name));
-            if(inputType == null) throw new ArgumentNullException(nameof(inputType));
-            if (outputType == null) throw new ArgumentNullException(nameof(outputType));
-
-            Name = name;
-            InputType = inputType;
-            OutputType = outputType;
+            Name = Check.NotNull(name, nameof(name));
+            InputType = Check.NotNull(inputType, nameof(inputType));
+            OutputType = Check.NotNull(outputType, nameof(outputType));
         }
 
         public bool Equals(ServiceMethod other)

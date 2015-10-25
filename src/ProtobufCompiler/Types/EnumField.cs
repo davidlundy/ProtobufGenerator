@@ -4,6 +4,7 @@ using System.Linq;
 #if DNXCORE50
 using System.Globalization;
 #endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -21,8 +22,7 @@ namespace ProtobufCompiler.Types
 
         internal EnumField(string name, int fieldNum, IEnumerable<Option> option)
         {
-            if(name == null) throw new ArgumentNullException(nameof(name));
-            Name = name;
+            Name = Check.NotNull(name, nameof(name));
             FieldNumber = fieldNum;
             FieldOptions = option ?? new List<Option>();
         }

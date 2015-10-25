@@ -8,6 +8,10 @@
   "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
   "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
+  "compilationOptions": {
+    "warningsAsErrors": true
+  },
+
   "dependencies": {
     "FluentAssertions": "4.0.0", 
     "Newtonsoft.Json": "7.0.1"

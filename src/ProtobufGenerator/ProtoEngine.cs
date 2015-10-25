@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProtobufGenerator.Generation;
+using ProtobufGenerator.Extensions;
 
 namespace ProtobufGenerator
 {
@@ -13,7 +14,7 @@ namespace ProtobufGenerator
 
         public ProtoEngine(IConfiguration configuration)
         {
-            _config = configuration;
+            _config = Check.NotNull(configuration, nameof(configuration));
         }
 
         public void ProcessProto()

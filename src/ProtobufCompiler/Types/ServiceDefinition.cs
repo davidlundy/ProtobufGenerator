@@ -4,6 +4,7 @@ using System.Linq;
 #if DNXCORE50
 using System.Globalization;
 #endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -20,8 +21,7 @@ namespace ProtobufCompiler.Types
 
         internal ServiceDefinition(string name, IEnumerable<ServiceMethod> serviceMethods, IEnumerable<Option> serviceOptions )
         {
-            if(name == null) throw new ArgumentNullException(nameof(name));
-            Name = name;
+            Name = Check.NotNull(name, nameof(name));
             Methods = serviceMethods ?? new List<ServiceMethod>();
             Options = serviceOptions ?? new List<Option>();
         }
