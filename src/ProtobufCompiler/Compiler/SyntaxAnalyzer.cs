@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProtobufCompiler.Compiler.Nodes;
+using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler
@@ -92,41 +93,89 @@ namespace ProtobufCompiler.Compiler
                 _errors.Add(new ParseError("Expected an assignment after syntax token, found ", assignment));
                 return null;
             }
-            var proto3 = _tokens.Dequeue();
+            var proto3 = ParseStringLiteral();
 
-            if (!_parser.IsStringLiteral(proto3.Lexeme))
+            if (ReferenceEquals(proto3, null))
             {
-                _errors.Add(new ParseError("Expected a string literal after syntax assignment, found token ", proto3));
+                _errors.Add(new ParseError("Expected a string literal after syntax assignment, found token ", _tokens.Peek()));
                 return null;
             }
 
-            var terminator = _tokens.Dequeue();
-
-            if (!_parser.IsEmptyStatement(terminator.Lexeme))
-            {
-                _errors.Add(new ParseError("Expected terminating `;` after syntax declaration, found token ", terminator));
-                return null;
-            }
+            TerminateSingleLineStatement();
 
             var syntaxNode = new Node(NodeType.Syntax, syntax.Lexeme);
-            var syntaxValue = new Node(NodeType.StringLiteral, proto3.Lexeme);
-            syntaxNode.AddChild(syntaxValue);
+            syntaxNode.AddChild(proto3);
 
-            var trailing = _tokens.Peek();
-            if (_parser.IsInlineComment(trailing.Lexeme))
-            {
-                var commentNode = ParseInlineComment();
-                syntaxNode.AddChild(commentNode);
-            }
-            else if (trailing.Type.Equals(TokenType.EndLine)) _tokens.Dequeue(); // Dump the endline
+            ScoopComment(syntaxNode);
+            DumpEndline();
 
             return syntaxNode;
         }
 
         private Node ParseImport()
         {
-            DumpStringToEndLine();
-            return null;
+            var importTag = _tokens.Dequeue();
+
+            var modifier = ParseImportModifier();
+
+            var importValue = ParseStringLiteral();
+
+            if (ReferenceEquals(importValue, null))
+            {
+                _errors.Add(new ParseError("Could not find import location for import at line starting with token ", importTag));
+                return null;
+            }
+
+            TerminateSingleLineStatement();
+
+            var importNode = new Node(NodeType.Import, importTag.Lexeme);
+            importNode.AddChild(modifier);
+            importNode.AddChild(importValue);
+
+            ScoopComment(importNode);
+            DumpEndline();
+
+            return importNode;
+        }
+
+        private void TerminateSingleLineStatement()
+        {
+            var terminator = _tokens.Dequeue();
+            if (!_parser.IsEmptyStatement(terminator.Lexeme))
+            {
+                _errors.Add(new ParseError("Expected terminating `;` after syntax declaration, found token ", terminator));
+            }
+        }
+
+        private void ScoopComment(Node parent)
+        {
+            var trailing = _tokens.Peek();
+            if (!_parser.IsInlineComment(trailing.Lexeme)) return;
+            var commentNode = ParseInlineComment();
+            parent.AddChild(commentNode);
+        }
+
+        private void DumpEndline()
+        {
+            if (!_tokens.Any()) return;
+            var trailing = _tokens.Peek();
+            if (trailing.Type.Equals(TokenType.EndLine)) _tokens.Dequeue(); // Dump the endline
+        }
+
+        private Node ParseImportModifier()
+        {
+            var mod = _tokens.Peek();
+            if (!_parser.IsImportModifier(mod.Lexeme)) return null;
+            _tokens.Dequeue();
+            return new Node(NodeType.ImportModifier, mod.Lexeme);
+        }
+
+        private Node ParseStringLiteral()
+        {
+            var stringLit = _tokens.Peek();
+            if (!_parser.IsStringLiteral(stringLit.Lexeme)) return null;
+            _tokens.Dequeue();
+            return new Node(NodeType.StringLiteral, stringLit.Lexeme.Unquote());
         }
 
         private Node ParsePackage()

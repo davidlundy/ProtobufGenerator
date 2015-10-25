@@ -69,9 +69,36 @@ namespace ProtobufCompiler.Tests
             // Arrange Output
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
-            var proto3 = new Node(NodeType.StringLiteral, "\"proto3\"");
+            var proto3 = new Node(NodeType.StringLiteral, "proto3");
             syntax.AddChild(proto3);
             root.AddChild(syntax);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
+        public void ShouldBuildImportNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "import"),
+                new Token(TokenType.String, 0, 1, "\"other.message\""),
+                new Token(TokenType.Control, 0, 2, ";"),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var import = new Node(NodeType.Import, "import");
+            var otherMessage = new Node(NodeType.StringLiteral, "other.message");
+            import.AddChild(otherMessage);
+            root.AddChild(import);
 
             // Act
             _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
@@ -102,7 +129,7 @@ namespace ProtobufCompiler.Tests
             // Arrange Output
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
-            var proto3 = new Node(NodeType.StringLiteral, "\"proto3\"");
+            var proto3 = new Node(NodeType.StringLiteral, "proto3");
             var comment = new Node(NodeType.Comment, "\\\\");
             var commentText = new Node(NodeType.CommentText, "This is a comment.");
             comment.AddChild(commentText);

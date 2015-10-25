@@ -193,6 +193,11 @@ namespace ProtobufCompiler.Compiler
             return !string.IsNullOrWhiteSpace(input) && input.Equals("import");
         }
 
+        internal bool IsImportModifier(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && (input.Equals("weak") || input.Equals("public"));
+        }
+
         internal bool IsPackage(string input)
         {
             return !string.IsNullOrWhiteSpace(input) && input.Equals("package");

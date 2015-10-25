@@ -191,6 +191,17 @@ namespace ProtobufCompiler.Tests
         }
 
         [Theory]
+        [InlineData("weak", true)]
+        [InlineData("public", true)]
+        [InlineData("private", false)]
+        public void ImportModifierIsWeakOrPublic(string input, bool expected)
+        {
+            var output = _sys.IsImportModifier(input);
+            output.Should()
+                .Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid import modifier.");
+        }
+
+        [Theory]
         [InlineData("package", true)]
         public void PackageTag(string input, bool expected)
         {

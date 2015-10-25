@@ -29,6 +29,7 @@ namespace ProtobufCompiler.Compiler.Nodes
 
         internal void AddChild(Node node)
         {
+            if (ReferenceEquals(node, null)) return;
             Children.Add(node);
             node.Parent = this;
         }
@@ -81,6 +82,7 @@ namespace ProtobufCompiler.Compiler.Nodes
         Syntax,
         Package,
         Import,
+        ImportModifier,
         Option,
         OptionName,
         Enum,

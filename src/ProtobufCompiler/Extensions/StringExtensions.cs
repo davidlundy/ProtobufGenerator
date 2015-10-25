@@ -22,6 +22,16 @@ namespace ProtobufCompiler.Extensions
         }
 
         /// <summary>
+        /// Removes the leading and trailing quotes on a string literal. Practically first and last character. 
+        /// Don't use in general case. Specific case to the parser is that we are only dealing with quoted strings
+        /// in that format. 
+        /// </summary>
+        internal static string Unquote(this string self)
+        {
+            return self.Substring(1, self.Length - 2);
+        }
+
+        /// <summary>
         /// Identify Numeric Tokens, including Hex, Octal, and Decimal with exponent
         /// </summary>
         internal static bool IsNumeric(this string self)
