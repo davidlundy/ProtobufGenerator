@@ -8,6 +8,7 @@ namespace ProtobufCompiler.Compiler
 {
     internal class LexicalAnalyzer : ILexicalAnalyzer
     {
+
         public Queue<Token> TokenStream => new Queue<Token>(_tokens);
         private readonly IList<Token> _tokens;
         private readonly IList<char> _buffer;
@@ -29,7 +30,7 @@ namespace ProtobufCompiler.Compiler
         {
             if (!_buffer.Any()) return;
             var lexeme = new string(_buffer.ToArray());
-            var type = LexicalElements.GetType(lexeme);
+            var type = lexeme.GetTokenType();
             _tokens.Add(new Token(type, _tokenLineStart, _tokenColumnStart, lexeme));
             _buffer.Clear();
         }
@@ -57,42 +58,35 @@ namespace ProtobufCompiler.Compiler
                     continue;
                 }
 
-                if (LexicalElements.InlineTokens.Contains(character))
+                if (character.IsInlineToken())
                 {
                     FlushBuffer();
                     _tokens.Add(new Token(TokenType.Control, _source.Line, _source.Column, character.ToString()));
                     continue;
                 }
 
-                // Catches // or /* opening comment
-                if (LexicalElements.Comment[0].Equals(character))
+                var next = _source.Peek();
+
+                // Catches // or /* opening comment 
+                if (character.IsForwardSlash() && (next.IsForwardSlash() || next.IsAsterisk()))
                 {
-                    var next = _source.Peek();
-                    if (LexicalElements.Comment.Contains(next)) // Should handle opening single line or block comment even against preceding text.
-                    {
-                        FlushBuffer();
-                        _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new [] {character, next})));
-                        _source.Next(); // Remove what we peeked. 
-                        continue;
-                    }
+                    FlushBuffer();
+                    _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
+                    _source.Next(); // Remove what we peeked. 
+                    continue;
                 }
 
                 // Catches */ end comment. 
-                if (LexicalElements.Comment[1].Equals(character))
+                if (character.IsAsterisk() && next.IsForwardSlash())
                 {
-                    var next = _source.Peek();
-                    if (LexicalElements.Comment[0].Equals(next))
-                    {
-                        FlushBuffer();
-                        _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
-                        _source.Next(); // Remove what we peeked.
-                        continue;
-                    }
+                    FlushBuffer();
+                    _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
+                    _source.Next(); // Remove what we peeked.
+                    continue;
                 }
 
                 _buffer.Add(character);
             }
         }
-
     }
 }
