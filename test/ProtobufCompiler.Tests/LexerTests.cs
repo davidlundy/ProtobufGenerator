@@ -13,7 +13,8 @@ namespace ProtobufCompiler.Tests
     {
         private readonly ILexicalAnalyzer _sys;
 
-        private readonly string _data = @"message Outer {" + Environment.NewLine +
+        private readonly string _data = "syntax = \"proto3\";" +Environment.NewLine +
+                                            "message Outer {" + Environment.NewLine +
                                                "/*This should start a block"+Environment.NewLine+
                                                "and this should end it.*/"+Environment.NewLine+
                                                "//This should start a line comment"+Environment.NewLine+
@@ -33,11 +34,11 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void ShouldTokenize59Tokens()
+        public void ShouldTokenize64Tokens()
         {
             _sys.Tokenize();
             var tokens = _sys.TokenStream;
-            tokens.Count.Should().Be(59, "because there are 59 tokens in the message definition, including EOLs");
+            tokens.Count.Should().Be(64, "because there are 64 tokens in the message definition, including EOLs");
         }
 
         [Fact]
@@ -45,23 +46,23 @@ namespace ProtobufCompiler.Tests
         {
             _sys.Tokenize();
             var tokenStream = _sys.TokenStream;
-            tokenStream.Peek().Should().Be(new Token(TokenType.Id, 1, 1, "message"));
+            tokenStream.Peek().Should().Be(new Token(TokenType.Id, 1, 1, "syntax"));
         }
 
         [Fact]
-        public void ThereAreNineEndlineTokens()
+        public void ThereAreTenEndlineTokens()
         {
             _sys.Tokenize();
             var tokenStream = _sys.TokenStream.Where(t => t.Type == TokenType.EndLine);
-            tokenStream.Count().Should().Be(9, "because there are 10 lines in the data.");
+            tokenStream.Count().Should().Be(10, "because there are 11 lines in the data.");
         }
 
         [Fact]
-        public void ThereAreFourIdTokens()
+        public void ThereAreFiveIdTokens()
         {
             _sys.Tokenize();
             var tokenStream = _sys.TokenStream.Where(t => t.Type == TokenType.Id);
-            tokenStream.Count().Should().Be(4, "because there are 4 types in the data, message, option, message, and map.");
+            tokenStream.Count().Should().Be(5, "because there are 5 types in the data : syntax, message, option, message, and map.");
         }
 
         [Fact]
