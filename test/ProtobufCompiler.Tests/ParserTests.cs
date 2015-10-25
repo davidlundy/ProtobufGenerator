@@ -142,6 +142,101 @@ namespace ProtobufCompiler.Tests
             output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")}a valid Empty Statement");
         }
 
+        [Theory]
+        [InlineData("\\\\", true)]
+        [InlineData("\\", false)]
+        [InlineData("\\*", false)]
+        public void InlineCommentIsDoubleBackslash(string input, bool expected)
+        {
+            var output = _sys.IsInlineComment(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")}a \\\\");
+        }
+
+        [Theory]
+        [InlineData("\\\\", false)]
+        [InlineData("\\*", true)]
+        [InlineData("*\\", false)]
+        public void MultiLineCommentOpenIsBackslashAsterisk(string input, bool expected)
+        {
+            var output = _sys.IsMultiLineCommentOpen(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")}a \\*");
+        }
+
+        [Theory]
+        [InlineData("\\\\", false)]
+        [InlineData("\\*", false)]
+        [InlineData("*\\", true)]
+        [InlineData("A", false)]
+        public void MultiLineCommentCloseIsAsteriskBackslash(string input, bool expected)
+        {
+            var output = _sys.IsMultiLineCommentClose(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")}a *\\");
+        }
+
+        [Theory]
+        [InlineData("syntax", true)]
+        [InlineData("Syntax", false)]
+        public void SyntaxTag(string input, bool expected)
+        {
+            var output = _sys.IsSyntax(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"syntax\"");
+        }
+
+        [Theory]
+        [InlineData("import", true)]
+        public void ImportTag(string input, bool expected)
+        {
+            var output = _sys.IsImport(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"import\"");
+        }
+
+        [Theory]
+        [InlineData("package", true)]
+        public void PackageTag(string input, bool expected)
+        {
+            var output = _sys.IsPackage(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"package\"");
+        }
+
+        [Theory]
+        [InlineData("option", true)]
+        public void OptionTag(string input, bool expected)
+        {
+            var output = _sys.IsOption(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"option\"");
+        }
+
+        [Theory]
+        [InlineData("enum", true)]
+        public void EnumTag(string input, bool expected)
+        {
+            var output = _sys.IsEnum(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"enum\"");
+        }
+
+        [Theory]
+        [InlineData("service", true)]
+        public void ServiceTag(string input, bool expected)
+        {
+            var output = _sys.IsService(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"service\"");
+        }
+
+        [Theory]
+        [InlineData("message", true)]
+        public void MessageTag(string input, bool expected)
+        {
+            var output = _sys.IsMessage(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"message\"");
+        }
+
+        [Theory]
+        [InlineData("=", true)]
+        public void AssignmentIsEqualSign(string input, bool expected)
+        {
+            var output = _sys.IsAssignment(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"=\"");
+        }
 
     }
 }

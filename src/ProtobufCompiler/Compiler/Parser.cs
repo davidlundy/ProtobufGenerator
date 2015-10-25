@@ -167,5 +167,60 @@ namespace ProtobufCompiler.Compiler
         {
             return !string.IsNullOrWhiteSpace(input) && input.Length == 1 && input[0] == ';';
         }
+
+        internal bool IsInlineComment(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("\\\\");
+        }
+
+        internal bool IsMultiLineCommentOpen(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("\\*");
+        }
+
+        internal bool IsMultiLineCommentClose(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("*\\");
+        }
+
+        internal bool IsSyntax(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("syntax");
+        }
+
+        internal bool IsImport(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("import");
+        }
+
+        internal bool IsPackage(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("package");
+        }
+
+        internal bool IsOption(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("option");
+        }
+
+        internal bool IsEnum(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("enum");
+        }
+
+        internal bool IsService(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("service");
+        }
+
+        internal bool IsMessage(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("message");
+        }
+
+        internal bool IsAssignment(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("=");
+        }
     }
 }

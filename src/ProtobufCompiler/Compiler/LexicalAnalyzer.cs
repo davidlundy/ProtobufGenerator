@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ProtobufCompiler.Interfaces;
 using System.Linq;
 using ProtobufCompiler.Extensions;
@@ -51,7 +52,7 @@ namespace ProtobufCompiler.Compiler
                     FlushBuffer();
                     if (character.IsLineFeed() || character.IsCarriageReturn())
                     {
-                        _tokens.Add(new Token(TokenType.EndLine, _source.Line, _source.Column, "EOL"));
+                        _tokens.Add(new Token(TokenType.EndLine, _source.Line, _source.Column, Environment.NewLine));
                     }
                     continue;
                 }
