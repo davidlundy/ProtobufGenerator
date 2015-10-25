@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProtobufCompiler.Interfaces;
 #if DNXCORE50
 using System.Globalization;
 #endif
@@ -13,6 +14,8 @@ namespace ProtobufCompiler.Compiler.Nodes
         internal NodeType NodeType { get; }
         internal string NodeValue { get; }
         internal IList<Node> Children { get; }
+
+        internal Guid Guid { get; } = Guid.NewGuid();
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
@@ -33,7 +36,19 @@ namespace ProtobufCompiler.Compiler.Nodes
             Children.Add(node);
             node.Parent = this;
         }
-       
+
+        public void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
+        }
+
+        public override string ToString()
+        {
+            var debugVisitor = new DebugVisitor();
+            Accept(debugVisitor);
+            return debugVisitor.ToString();
+        }
+
         public bool Equals(Node other)
         {
             if (other == null) return false;
@@ -65,7 +80,6 @@ namespace ProtobufCompiler.Compiler.Nodes
             hash = (hash * 7) + Children.GetHashCode();
             return hash;
         }
-
     }
 
     internal enum NodeType
@@ -84,7 +98,6 @@ namespace ProtobufCompiler.Compiler.Nodes
         Import,
         ImportModifier,
         Option,
-        OptionName,
         Enum,
         EnumConstant,
         Message,

@@ -31,12 +31,24 @@ namespace ProtobufCompiler.Compiler
             return root;
         }
 
+        private void BurnLine()
+        {
+            
+            Token token;
+            do
+            {
+                if (!_tokens.Any()) return;
+                token = _tokens.Dequeue();
+            } while (!token.Type.Equals(TokenType.EndLine));
+        }
+
         internal Node ParseTopLevelStatement(Node root)
         {
             var token = _tokens.Peek();
             if (!(token.Type.Equals(TokenType.Comment) || token.Type.Equals(TokenType.Id)))
             {
                 _errors.Add(new ParseError("Found an invalid top level statement at token ", token));
+                BurnLine();
                 return null;
             }
 
@@ -211,8 +223,44 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseOption()
         {
-            DumpStringToEndLine();
-            return null;
+            var optionTag = _tokens.Dequeue();
+
+            var optionName = ParseFullIdentifier();
+            if (ReferenceEquals(optionName, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find an option name for option starting at line {optionTag.Line} Found token ",
+                        _tokens.Peek()));
+            }
+
+            var assignment = _tokens.Dequeue();
+            if (!_parser.IsAssignment(assignment.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected an assignment after option name token on line {optionTag.Line}, found ", assignment));
+                return null;
+            }
+
+            var optionValue = ParseStringLiteral();
+            if (ReferenceEquals(optionValue, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find an option value for option starting at line {optionTag.Line} Found token ", 
+                        _tokens.Peek()));
+                return null;
+            }
+
+            TerminateSingleLineStatement();
+
+            var optionNode = new Node(NodeType.Option, optionTag.Lexeme);
+            optionNode.AddChild(optionName);
+            optionNode.AddChild(optionValue);
+
+            ScoopComment(optionNode);
+            DumpEndline();
+
+            return optionNode;
         }
 
         private Node ParseEnum()

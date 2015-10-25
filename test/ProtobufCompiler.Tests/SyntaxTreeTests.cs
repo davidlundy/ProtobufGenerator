@@ -136,6 +136,37 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void ShouldBuildOptionNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "option"),
+                new Token(TokenType.String, 0, 1, "java_package"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.String, 0, 3, "\"com.example.foo\""),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine)
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var option = new Node(NodeType.Option, "option");
+            var optionName = new Node(NodeType.Identifier, "java_package");
+            var optionValue = new Node(NodeType.StringLiteral, "com.example.foo");
+            option.AddChild(optionName);
+            option.AddChild(optionValue);
+            root.AddChild(option);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             // Arrange Input
