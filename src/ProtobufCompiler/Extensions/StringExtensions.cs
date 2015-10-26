@@ -39,6 +39,15 @@ namespace ProtobufCompiler.Extensions
             return IsNumericRegex.IsMatch(self);
         }
 
+        internal static bool IsType(this string self)
+        {
+            return "double".Equals(self) || "float".Equals(self) || "int32".Equals(self) ||
+                   "int64".Equals(self) || "uint32".Equals(self) || "uint64".Equals(self) ||
+                   "sint32".Equals(self) | "sint64".Equals(self) || "fixed32".Equals(self) ||
+                   "fixed64".Equals(self) || "sfixed32".Equals(self) || "sfixed64".Equals(self) ||
+                   "bool".Equals(self) || "string".Equals(self) || "bytes".Equals(self);
+        }
+
         internal static TokenType GetTokenType(this string self)
         {
             if (self.IsIdToken())

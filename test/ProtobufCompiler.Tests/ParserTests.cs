@@ -249,5 +249,37 @@ namespace ProtobufCompiler.Tests
             output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"=\"");
         }
 
+        [Theory]
+        [InlineData("repeated", true)]
+        [InlineData("repeat", false)]
+        public void RepeatedTagIsRepeated(string input, bool expected)
+        {
+            var output = _sys.IsRepeated(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} \"repeated\"");
+        }
+
+        [Theory]
+        [InlineData("double", true)]
+        [InlineData("float", true)]
+        [InlineData("int32", true)]
+        [InlineData("int64", true)]
+        [InlineData("uint32", true)]
+        [InlineData("uint64", true)]
+        [InlineData("sint32", true)]
+        [InlineData("sint64", true)]
+        [InlineData("fixed32", true)]
+        [InlineData("fixed64", true)]
+        [InlineData("sfixed32", true)]
+        [InlineData("sfixed64", true)]
+        [InlineData("bool", true)]
+        [InlineData("string", true)]
+        [InlineData("bytes", true)]
+        [InlineData("mytype", false)]
+        public void CanParseSimpleTypes(string input, bool expected)
+        {
+            var output = _sys.IsBasicType(input);
+            output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid simple type.");
+        }
+
     }
 }

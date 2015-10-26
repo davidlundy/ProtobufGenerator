@@ -167,6 +167,177 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void ShouldParseSimpleMessage()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 1, "Outer"),
+                new Token(TokenType.Control, 0, 2, "{"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.String, 0, 0, "int32"),
+                new Token(TokenType.String, 0, 1, "field_name"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.Numeric, 0, 3, "2"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.Control, 0, 4, "}")
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.Field, "int32");
+            var type = new Node(NodeType.Type, "int32");
+            var name = new Node(NodeType.Identifier, "field_name");
+            var value = new Node(NodeType.FieldNumber, "2");
+            field.AddChild(type);
+            field.AddChild(name);
+            field.AddChild(value);
+            message.AddChild(msgName);
+            message.AddChild(field);
+            root.AddChild(message);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
+        public void ShouldBuildMessageTypeFieldNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 1, "Outer"),
+                new Token(TokenType.Control, 0, 2, "{"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.String, 0, 0, "field.type"),
+                new Token(TokenType.String, 0, 1, "field_name"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.Numeric, 0, 3, "2"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.Control, 0, 4, "}")
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.Field, "field.type");
+            var type = new Node(NodeType.UserType, "field.type");
+            var name = new Node(NodeType.Identifier, "field_name");
+            var value = new Node(NodeType.FieldNumber, "2");
+            field.AddChild(type);
+            field.AddChild(name);
+            field.AddChild(value);
+            message.AddChild(msgName);
+            message.AddChild(field);
+            root.AddChild(message);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
+        public void ShouldBuildSimpleTypeFieldNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 1, "Outer"),
+                new Token(TokenType.Control, 0, 2, "{"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.String, 0, 0, "int32"),
+                new Token(TokenType.String, 0, 1, "field_name"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.Numeric, 0, 3, "2"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.Control, 0, 4, "}")
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.Field, "int32");
+            var type = new Node(NodeType.Type, "int32");
+            var name = new Node(NodeType.Identifier, "field_name");
+            var value = new Node(NodeType.FieldNumber, "2");
+            field.AddChild(type);
+            field.AddChild(name);
+            field.AddChild(value);
+            message.AddChild(msgName);
+            message.AddChild(field);
+            root.AddChild(message);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
+        public void ShouldBuildRepeatedFieldNode()
+        {
+            // Arrange Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 1, "Outer"),
+                new Token(TokenType.Control, 0, 2, "{"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.String, 0, 0 ,"repeated"),
+                new Token(TokenType.String, 0, 0, "int32"),
+                new Token(TokenType.String, 0, 1, "field_name"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.Numeric, 0, 3, "2"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.Control, 0, 4, "}")
+            };
+
+            // Arrange Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.Field, "repeated");
+            var repeated = new Node(NodeType.Repeated, "repeated");
+            var type = new Node(NodeType.Type, "int32");
+            var name = new Node(NodeType.Identifier, "field_name");
+            var value = new Node(NodeType.FieldNumber, "2");
+            field.AddChild(repeated);
+            field.AddChild(type);
+            field.AddChild(name);
+            field.AddChild(value);
+            message.AddChild(msgName);
+            message.AddChild(field);
+            root.AddChild(message);
+
+            // Act
+            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            var result = _sys.Analyze();
+
+            // Assert
+            result.Should().Be(root, BecauseObjectGraphsEqual);
+        }
+
+        [Fact]
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             // Arrange Input

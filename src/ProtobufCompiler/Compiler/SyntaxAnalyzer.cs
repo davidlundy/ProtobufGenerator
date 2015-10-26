@@ -25,6 +25,7 @@ namespace ProtobufCompiler.Compiler
             var root = new RootNode();
             while (_tokens.Any())
             {
+
                 var topLevelStatement = ParseTopLevelStatement(root);
                 if (topLevelStatement != null) root.AddChild(topLevelStatement);
             }
@@ -190,6 +191,14 @@ namespace ProtobufCompiler.Compiler
             return new Node(NodeType.StringLiteral, stringLit.Lexeme.Unquote());
         }
 
+        private Node ParseIdentifier()
+        {
+            var ident = _tokens.Peek();
+            if (!_parser.IsIdentifier(ident.Lexeme)) return null;
+            _tokens.Dequeue();
+            return new Node(NodeType.Identifier, ident.Lexeme);
+        }
+
         private Node ParseFullIdentifier()
         {
             var ident = _tokens.Peek();
@@ -276,10 +285,120 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseMessage()
         {
-            return null;
+            var msgTag = _tokens.Dequeue();
+
+            var msgNode = new Node(NodeType.Message, msgTag.Lexeme);
+
+            var msgName = ParseIdentifier();
+            if (ReferenceEquals(msgName, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find a message name on line {msgTag.Line} for message token ",
+                        msgTag));
+                return null;
+            }
+
+            msgNode.AddChild(msgName);
+
+            var openBrack = _tokens.Dequeue();
+            if (!openBrack.Type.Equals(TokenType.Control) || !openBrack.Lexeme[0].Equals('{'))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Expected to find open bracket on line {msgTag.Line} for message token ",
+                        msgTag));
+                return null;
+            }
+
+            ScoopComment(msgNode);
+            DumpEndline();
+
+            var fieldNode = ParseMessageField();
+            msgNode.AddChild(fieldNode);
+
+            var closedBrack = _tokens.Dequeue();
+            if (!closedBrack.Type.Equals(TokenType.Control) || !closedBrack.Lexeme[0].Equals('}'))
+            {
+                _errors.Add(
+                    new ParseError(
+                        "Expected to find close bracket for message token ",
+                        msgTag));
+                return null;
+            }
+
+            return msgNode;
+
         }
 
+        private Node ParseRepeated()
+        {
+            var repeated = _tokens.Peek();
+            if (!_parser.IsRepeated(repeated.Lexeme)) return null;
 
+            _tokens.Dequeue();
+            return new Node(NodeType.Repeated, repeated.Lexeme);
+        }
+
+        private Node ParseBasicType()
+        {
+            var type = _tokens.Peek();
+            if (!_parser.IsBasicType(type.Lexeme)) return null;
+
+            _tokens.Dequeue();
+            return new Node(NodeType.Type, type.Lexeme);
+        }
+
+        private Node ParseUserType()
+        {
+            var usertype = _tokens.Peek();
+            if (!_parser.IsFullIdentifier(usertype.Lexeme)) return null;
+
+            _tokens.Dequeue();
+            return new Node(NodeType.UserType, usertype.Lexeme);
+        }
+
+        private Node ParseMessageField()
+        {
+            if (!_tokens.Any()) return null;
+            var openToken = _tokens.Peek();
+            var fieldNode = new Node(NodeType.Field, openToken.Lexeme);
+
+            var repeated = ParseRepeated();
+            fieldNode.AddChild(repeated);
+
+            var basicType = ParseBasicType();
+            fieldNode.AddChild(basicType);
+
+            if (ReferenceEquals(basicType, null))
+            {
+                fieldNode.AddChild(ParseUserType());
+            }
+
+            var name = ParseIdentifier();
+            fieldNode.AddChild(name);
+
+            var assignment = _tokens.Dequeue();
+            if (!_parser.IsAssignment(assignment.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected an assignment after field name token on line {openToken.Line}, found ", assignment));
+                return null;
+            }
+
+            var fieldValue = _tokens.Dequeue();
+            if (!_parser.IsIntegerLiteral(fieldValue.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected a field value after assignment token on line {openToken.Line}, found ", fieldValue));
+                return null;
+            }
+            fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
+
+            TerminateSingleLineStatement();
+            ScoopComment(fieldNode);
+            DumpEndline();
+
+            return fieldNode;
+        }
 
         private string DumpStringToEndLine()
         {

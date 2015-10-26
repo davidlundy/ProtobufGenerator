@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ProtobufCompiler.Extensions;
+using System.Linq;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -227,5 +228,16 @@ namespace ProtobufCompiler.Compiler
         {
             return !string.IsNullOrWhiteSpace(input) && input.Equals("=");
         }
+
+        internal bool IsRepeated(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("repeated");
+        }
+
+        internal bool IsBasicType(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.IsType();
+        }
+
     }
 }
