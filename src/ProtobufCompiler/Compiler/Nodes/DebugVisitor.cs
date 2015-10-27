@@ -26,12 +26,19 @@ namespace ProtobufCompiler.Compiler.Nodes
                     _depthMonitor.Add(node.Guid, _currentDepth);
                 }
             }
-            var leader = new string('-', _currentDepth);
-            _sb.AppendLine(string.Format("{0} {1} : {2}", leader, node.NodeType, node.NodeValue));
+            var leader = _currentDepth == 0 ? "*" : new string('-', _currentDepth);
+            _sb.AppendLine(string.Format("{0}{1} : {2}", leader, node.NodeType, node.NodeValue));
             foreach (var child in node.Children)
             {
                 child.Accept(this);
             }
+        }
+
+        public int? GetDepth(Guid guid)
+        {
+            int retval;
+            if (_depthMonitor.TryGetValue(guid, out retval)) return retval;
+            return null;
         }
 
         public override string ToString()
