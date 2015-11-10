@@ -274,8 +274,77 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseEnum()
         {
+            var enumTag = _tokens.Peek();
+            if (!enumTag.Lexeme.Equals("enum")) return null;
+            _tokens.Dequeue();
 
-            return null;
+            var enumNode = new Node(NodeType.Enum, enumTag.Lexeme);
+
+            var msgName = ParseIdentifier();
+            if (ReferenceEquals(msgName, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find a message name on line {enumTag.Line} for message token ",
+                        enumTag));
+                return null;
+            }
+
+            enumNode.AddChild(msgName);
+
+            var openBrack = _tokens.Dequeue();
+            if (!openBrack.Type.Equals(TokenType.Control) || !openBrack.Lexeme[0].Equals('{'))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Expected to find open bracket on line {enumTag.Line} for message token ",
+                        enumTag));
+                return null;
+            }
+
+            ScoopComment(enumNode);
+            DumpEndline();
+
+            var next = _tokens.Peek();
+            while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
+            {
+                var fieldNode = ParseEnumField();
+                enumNode.AddChild(fieldNode);
+                if (_tokens.Any()) next = _tokens.Peek();
+            }
+
+            return enumNode;
+        }
+
+        private Node ParseEnumField()
+        {
+            if (!_tokens.Any()) return null;
+            var openToken = _tokens.Peek();
+            var fieldNode = new Node(NodeType.EnumField, openToken.Lexeme);
+
+            var name = ParseIdentifier();
+            fieldNode.AddChild(name);
+
+            var assignment = _tokens.Dequeue();
+            if (!_parser.IsAssignment(assignment.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected an assignment after enum field name token on line {openToken.Line}, found ", assignment));
+                return null;
+            }
+
+            var fieldValue = _tokens.Dequeue();
+            if (!_parser.IsIntegerLiteral(fieldValue.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected a field value after assignment token on line {openToken.Line}, found ", fieldValue));
+                return null;
+            }
+            fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
+
+            TerminateSingleLineStatement();
+            ScoopComment(fieldNode);
+            DumpEndline();
+
+            return fieldNode;
         }
 
         private Node ParseService()
@@ -285,7 +354,9 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseMessage()
         {
-            var msgTag = _tokens.Dequeue();
+            var msgTag = _tokens.Peek();
+            if (!msgTag.Lexeme.Equals("message")) return null;
+            _tokens.Dequeue();
 
             var msgNode = new Node(NodeType.Message, msgTag.Lexeme);
 
@@ -314,17 +385,17 @@ namespace ProtobufCompiler.Compiler
             ScoopComment(msgNode);
             DumpEndline();
 
-            var fieldNode = ParseMessageField();
-            msgNode.AddChild(fieldNode);
-
-            var closedBrack = _tokens.Dequeue();
-            if (!closedBrack.Type.Equals(TokenType.Control) || !closedBrack.Lexeme[0].Equals('}'))
+            var next = _tokens.Peek();
+            while(!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
             {
-                _errors.Add(
-                    new ParseError(
-                        "Expected to find close bracket for message token ",
-                        msgTag));
-                return null;
+                var fieldNode = ParseMessageField();
+                msgNode.AddChild(fieldNode);
+                var nestedMessage = ParseMessage();
+                msgNode.AddChild(nestedMessage);
+                var nestedEnum = ParseEnum();
+                msgNode.AddChild(nestedEnum);
+
+                if (_tokens.Any()) next = _tokens.Peek();
             }
 
             return msgNode;
