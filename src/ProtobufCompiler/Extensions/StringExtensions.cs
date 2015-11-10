@@ -21,6 +21,11 @@ namespace ProtobufCompiler.Extensions
                 "oneof".Equals(self) ||  "map".Equals(self);
         }
 
+        internal static bool IsEnumOrMessage(this string self)
+        {
+            return "enum".Equals(self) || "message".Equals(self);
+        }
+
         /// <summary>
         /// Removes the leading and trailing quotes on a string literal. Practically first and last character. 
         /// Don't use in general case. Specific case to the parser is that we are only dealing with quoted strings

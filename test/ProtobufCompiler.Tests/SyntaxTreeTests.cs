@@ -167,7 +167,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void ShouldParseSimpleEnumDefinition()
+        public void ShouldParseEnumDefinition()
         {
             // Arrange Input
             var tokenList = new List<Token>
@@ -217,7 +217,7 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
-        public void ShouldParseSimpleMessage()
+        public void ShouldParseMessageDefinition()
         {
             // Arrange Input
             var tokenList = new List<Token>
@@ -232,56 +232,32 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Numeric, 0, 3, "2"),
                 new Token(TokenType.Control, 0, 4, ";"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
-                new Token(TokenType.Control, 0, 4, "}")
-            };
 
-            // Arrange Output
-            var root = new RootNode();
-            var message = new Node(NodeType.Message, "message");
-            var msgName = new Node(NodeType.Identifier, "Outer");
-            var field = new Node(NodeType.Field, "int32");
-            var type = new Node(NodeType.Type, "int32");
-            var name = new Node(NodeType.Identifier, "field_name");
-            var value = new Node(NodeType.FieldNumber, "2");
-            field.AddChild(type);
-            field.AddChild(name);
-            field.AddChild(value);
-            message.AddChild(msgName);
-            message.AddChild(field);
-            root.AddChild(message);
-
-            // Act
-            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
-            var result = _sys.Analyze();
-
-            // Assert
-            result.Should().Be(root, BecauseObjectGraphsEqual);
-        }
-
-        [Fact]
-        public void ShouldParseNestedMessage()
-        {
-            // Arrange Input
-            var tokenList = new List<Token>
-            {
-                new Token(TokenType.Id, 0, 0, "message"),
-                new Token(TokenType.String, 0, 1, "Outer"),
+                new Token(TokenType.Id, 0, 0, "enum"),
+                new Token(TokenType.String, 0, 1, "EnumName"),
                 new Token(TokenType.Control, 0, 2, "{"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
-                new Token(TokenType.String, 0, 0, "int32"),
-                new Token(TokenType.String, 0, 1, "field_name"),
-                new Token(TokenType.Control, 0, 2, "="),
-                new Token(TokenType.Numeric, 0, 3, "2"),
-                new Token(TokenType.Control, 0, 4, ";"),
-                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
+                new Token(TokenType.String, 0, 6, "DEFAULT"),
+                new Token(TokenType.Control, 0, 7, "="),
+                new Token(TokenType.Numeric, 0, 8, "0"),
+                new Token(TokenType.Control, 0, 9, ";"),
+                new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
+                new Token(TokenType.String, 0, 6, "VALONE"),
+                new Token(TokenType.Control, 0, 9, "="),
+                new Token(TokenType.Numeric, 0, 10, "1"),
+                new Token(TokenType.Control, 0, 9, ";"),
+                new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
+                new Token(TokenType.Control, 0, 12, "}"),
+
+                new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
                 new Token(TokenType.Id, 0, 0, "message"),
                 new Token(TokenType.String, 0, 1, "Inner"),
                 new Token(TokenType.Control, 0, 2, "{"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
-                new Token(TokenType.String, 0, 0, "int32"),
-                new Token(TokenType.String, 0, 1, "field_name"),
+                new Token(TokenType.String, 0, 0, "fixed64"),
+                new Token(TokenType.String, 0, 1, "field_name2"),
                 new Token(TokenType.Control, 0, 2, "="),
-                new Token(TokenType.Numeric, 0, 3, "2"),
+                new Token(TokenType.Numeric, 0, 3, "0"),
                 new Token(TokenType.Control, 0, 4, ";"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}"),
@@ -290,10 +266,11 @@ namespace ProtobufCompiler.Tests
 
             // Arrange Output
             var root = new RootNode();
+            //  Define base Message with One Field
             var message = new Node(NodeType.Message, "message");
-            var nestedMsg = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
-            var nestedName = new Node(NodeType.Identifier, "Inner");
+
+            // Outer Field
             var field = new Node(NodeType.Field, "int32");
             var type = new Node(NodeType.Type, "int32");
             var name = new Node(NodeType.Identifier, "field_name");
@@ -301,10 +278,43 @@ namespace ProtobufCompiler.Tests
             field.AddChild(type);
             field.AddChild(name);
             field.AddChild(value);
+
+            //  Define nested Message with one field
+            var nestedMsg = new Node(NodeType.Message, "message");
+            var nestedName = new Node(NodeType.Identifier, "Inner");
+
+            var innerField = new Node(NodeType.Field, "fixed64");
+            var innerType = new Node(NodeType.Type, "fixed64");
+            var innerName = new Node(NodeType.Identifier, "field_name2");
+            var innerValue = new Node(NodeType.FieldNumber, "0");
+            innerField.AddChild(innerType);
+            innerField.AddChild(innerName);
+            innerField.AddChild(innerValue);
+
+            //  Define nested Enum definition
+            var enumnode = new Node(NodeType.Enum, "enum");
+            var enumname = new Node(NodeType.Identifier, "EnumName");
+            var enumfield0 = new Node(NodeType.EnumField, "DEFAULT");
+            var enumfieldname0 = new Node(NodeType.Identifier, "DEFAULT");
+            var enumfieldvalue0 = new Node(NodeType.FieldNumber, "0");
+            var enumfield1 = new Node(NodeType.EnumField, "VALONE");
+            var enumfieldname1 = new Node(NodeType.Identifier, "VALONE");
+            var enumfieldvalue1 = new Node(NodeType.FieldNumber, "1");
+            enumnode.AddChild(enumname);
+            enumnode.AddChild(enumfield0);
+            enumnode.AddChild(enumfield1);
+            enumfield0.AddChild(enumfieldname0);
+            enumfield0.AddChild(enumfieldvalue0);
+            enumfield1.AddChild(enumfieldname1);
+            enumfield1.AddChild(enumfieldvalue1);
+
+
             nestedMsg.AddChild(nestedName);
-            nestedMsg.AddChild(field);
+            nestedMsg.AddChild(innerField);
+
             message.AddChild(msgName);
             message.AddChild(field);
+            message.AddChild(enumnode);
             message.AddChild(nestedMsg);
             root.AddChild(message);
 

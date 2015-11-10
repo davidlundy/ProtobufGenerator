@@ -313,6 +313,9 @@ namespace ProtobufCompiler.Compiler
                 if (_tokens.Any()) next = _tokens.Peek();
             }
 
+            _tokens.Dequeue();
+            DumpEndline();
+
             return enumNode;
         }
 
@@ -398,6 +401,9 @@ namespace ProtobufCompiler.Compiler
                 if (_tokens.Any()) next = _tokens.Peek();
             }
 
+            _tokens.Dequeue(); // Dump the }
+            DumpEndline();
+
             return msgNode;
 
         }
@@ -433,6 +439,8 @@ namespace ProtobufCompiler.Compiler
         {
             if (!_tokens.Any()) return null;
             var openToken = _tokens.Peek();
+            var lexeme = openToken.Lexeme;
+            if (lexeme.IsEnumOrMessage()) return null;
             var fieldNode = new Node(NodeType.Field, openToken.Lexeme);
 
             var repeated = ParseRepeated();
