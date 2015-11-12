@@ -471,7 +471,7 @@ namespace ProtobufCompiler.Compiler
                     {
                        _errors.Add(
                            new ParseError(
-                               $"Expected integer literal before ',' in reserved range ",
+                               "Expected integer literal before ',' in reserved range ",
                                token));
                         return new List<Node>();
                     }
@@ -499,7 +499,7 @@ namespace ProtobufCompiler.Compiler
                 {
                     _errors.Add(
                        new ParseError(
-                           $"Expected integer literal before 'to' in reserved range ",
+                           "Expected integer literal before 'to' in reserved range ",
                            token));
                     return new List<Node>();
                 }
@@ -510,7 +510,7 @@ namespace ProtobufCompiler.Compiler
                 {
                     _errors.Add(
                         new ParseError(
-                            $"Expected integer literal after 'to' in reserved range ",
+                            "Expected integer literal after 'to' in reserved range ",
                             nextToken));
                     return new List<Node>();
                 }
@@ -553,7 +553,7 @@ namespace ProtobufCompiler.Compiler
                     {
                         _errors.Add(
                             new ParseError(
-                                $"Expected string literal before ',' in reserved range ",
+                                "Expected string literal before ',' in reserved range ",
                                 token));
                         return new List<Node>();
                     }
@@ -662,7 +662,7 @@ namespace ProtobufCompiler.Compiler
             {
                 _errors.Add(
                     new ParseError(
-                        $"Expected a user or value type for map definition ",
+                        "Expected a user or value type for map definition ",
                         mapTag));
                 return null;
             }

@@ -27,7 +27,7 @@ namespace ProtobufCompiler.Compiler.Nodes
                 }
             }
             var leader = _currentDepth == 0 ? "*" : new string('-', _currentDepth);
-            _sb.AppendLine(string.Format("{0}{1} : {2}", leader, node.NodeType, node.NodeValue));
+            _sb.AppendLine($"{leader}{node.NodeType} : {node.NodeValue}");
             foreach (var child in node.Children)
             {
                 child.Accept(this);

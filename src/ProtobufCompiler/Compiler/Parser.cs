@@ -1,6 +1,5 @@
 ﻿using ProtobufCompiler.Extensions;
 using System.Linq;
-using System;
 
 namespace ProtobufCompiler.Compiler
 {
