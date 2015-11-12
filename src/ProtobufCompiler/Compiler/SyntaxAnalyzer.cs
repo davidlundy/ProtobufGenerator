@@ -396,8 +396,9 @@ namespace ProtobufCompiler.Compiler
                 var nestedMessage = ParseMessage();
                 var nestedEnum = ParseEnum();
                 var oneOf = ParseOneOfField();
+                var map = ParseMapField();
 
-                msgNode.AddChildren(fieldNode, nestedMessage, nestedEnum, oneOf);
+                msgNode.AddChildren(fieldNode, nestedMessage, nestedEnum, oneOf, map);
 
                 if (_tokens.Any()) next = _tokens.Peek();
             }
@@ -460,6 +461,101 @@ namespace ProtobufCompiler.Compiler
             return msgNode;
         }
 
+        private Node ParseMapField()
+        {
+            var mapTag = _tokens.Peek();
+            if (!mapTag.Lexeme.Equals("map")) return null;
+            _tokens.Dequeue();
+
+            var mapNode = new Node(NodeType.Map, mapTag.Lexeme);
+
+            var openAngle = _tokens.Dequeue();
+            if (!"<".Equals(openAngle.Lexeme))
+            {
+                _errors.Add(
+                   new ParseError(
+                       $"Expected open angle bracket at column {openAngle.Column} on line {openAngle.Line} for map definition ",
+                       mapTag));
+                return null;
+            }
+
+            var key = _tokens.Dequeue();
+            if (!key.Lexeme.IsMapKeyType())
+            {
+                _errors.Add(
+                   new ParseError(
+                       $"Expected valid map key type at column {key.Column} on line {key.Line} for map definition. Found {key.Lexeme} ",
+                       mapTag));
+                return null;
+            }
+            var mapKey = new Node(NodeType.MapKey, key.Lexeme);
+
+            var comma = _tokens.Dequeue();
+            if (!",".Equals(comma.Lexeme))
+            {
+                _errors.Add(
+                   new ParseError(
+                       $"Expected open comma at column {comma.Column} on line {comma.Line} for map definition ",
+                       mapTag));
+                return null;
+            }
+
+            var value = ParseMapValueType();
+
+            if (ReferenceEquals(null, value))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Expected a user or value type for map definition ",
+                        mapTag));
+                return null;
+            }
+
+
+            var closeAngle = _tokens.Dequeue();
+            if (!">".Equals(closeAngle.Lexeme))
+            {
+                _errors.Add(
+                   new ParseError(
+                       $"Expected close angle bracket at column {closeAngle.Column} on line {closeAngle.Line} for map definition ",
+                       mapTag));
+                return null;
+            }
+
+            var msgName = ParseIdentifier();
+            if (ReferenceEquals(msgName, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find a oneof name on line {mapTag.Line} for message token ",
+                        mapTag));
+                return null;
+            }
+
+            var assignment = _tokens.Dequeue();
+            if (!_parser.IsAssignment(assignment.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected an assignment after field name token on line {mapTag.Line}, found ", assignment));
+                return null;
+            }
+
+            var fieldValue = _tokens.Dequeue();
+            if (!_parser.IsIntegerLiteral(fieldValue.Lexeme))
+            {
+                _errors.Add(new ParseError($"Expected a field value after assignment token on line {mapTag.Line}, found ", fieldValue));
+                return null;
+            }
+            var fieldNumber = new Node(NodeType.FieldNumber, fieldValue.Lexeme);
+
+            mapNode.AddChildren(msgName, mapKey, value, fieldNumber);
+
+            TerminateSingleLineStatement();
+            ScoopComment(mapNode);
+            DumpEndline();
+
+            return mapNode;
+        }
+
         private Node ParseRepeated()
         {
             var repeated = _tokens.Peek();
@@ -467,6 +563,15 @@ namespace ProtobufCompiler.Compiler
 
             _tokens.Dequeue();
             return new Node(NodeType.Repeated, repeated.Lexeme);
+        }
+
+        private Node ParseMapValueType()
+        {
+            var type = _tokens.Peek();
+            if (!_parser.IsBasicType(type.Lexeme) && !_parser.IsFullIdentifier(type.Lexeme)) return null;
+
+            _tokens.Dequeue();
+            return new Node(NodeType.MapValue, type.Lexeme);
         }
 
         private Node ParseBasicType()

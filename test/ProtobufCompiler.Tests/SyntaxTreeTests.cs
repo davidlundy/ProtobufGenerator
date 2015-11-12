@@ -443,6 +443,49 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void ShouldBuildMapFieldNode()
+        {
+            #region Arrange Map Field Token Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 0, "Outer"),
+                new Token(TokenType.Control, 0, 0, "{"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "map"),
+                new Token(TokenType.Control, 0, 0, "<"),
+                new Token(TokenType.String, 0, 0, "string"),
+                new Token(TokenType.Control, 0, 0, ","),
+                new Token(TokenType.String, 0, 0, "Project"),
+                new Token(TokenType.Control, 0, 0, ">"),
+                new Token(TokenType.String, 0, 0, "projects"),
+                new Token(TokenType.Control, 0, 0, "="),
+                new Token(TokenType.Numeric, 0, 0, "3"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Control, 0, 0, "}")
+            };
+            #endregion
+
+            #region Arrange Expected NodeTree Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.Map, "map");
+            var key = new Node(NodeType.MapKey, "string");
+            var value = new Node(NodeType.MapValue, "Project");
+            var mapName = new Node(NodeType.Identifier, "projects");
+            var mapValue = new Node(NodeType.FieldNumber, "3");
+
+            field.AddChildren(mapName, key, value, mapValue);
+            message.AddChildren(msgName, field);
+            root.AddChild(message);
+            #endregion
+
+            AssertSyntax(tokenList, root);
+        }
+
+        [Fact]
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             #region Arrange Inline Trailing Comment Token Input

@@ -23,7 +23,16 @@ namespace ProtobufCompiler.Extensions
 
         internal static bool IsNotSimpleField(this string self)
         {
-            return "enum".Equals(self) || "message".Equals(self) || "oneof".Equals(self);
+            return "enum".Equals(self) || "message".Equals(self) || "oneof".Equals(self) ||
+                "map".Equals(self);
+        }
+
+        internal static bool IsMapKeyType(this string self)
+        {
+            return "int32".Equals(self) || "int64".Equals(self) || "uint32".Equals(self) || 
+                   "uint64".Equals(self) || "sint32".Equals(self) | "sint64".Equals(self) || 
+                   "fixed32".Equals(self) || "fixed64".Equals(self) || "sfixed32".Equals(self) || 
+                   "sfixed64".Equals(self) || "bool".Equals(self) || "string".Equals(self);
         }
 
         /// <summary>
@@ -46,11 +55,8 @@ namespace ProtobufCompiler.Extensions
 
         internal static bool IsType(this string self)
         {
-            return "double".Equals(self) || "float".Equals(self) || "int32".Equals(self) ||
-                   "int64".Equals(self) || "uint32".Equals(self) || "uint64".Equals(self) ||
-                   "sint32".Equals(self) | "sint64".Equals(self) || "fixed32".Equals(self) ||
-                   "fixed64".Equals(self) || "sfixed32".Equals(self) || "sfixed64".Equals(self) ||
-                   "bool".Equals(self) || "string".Equals(self) || "bytes".Equals(self);
+            return IsMapKeyType(self) || "double".Equals(self) || 
+                "float".Equals(self) || "bytes".Equals(self);
         }
 
         internal static TokenType GetTokenType(this string self)
