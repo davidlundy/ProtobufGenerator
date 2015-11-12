@@ -357,6 +357,7 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseMessage()
         {
+            if (!_tokens.Any()) return null;
             var msgTag = _tokens.Peek();
             if (!msgTag.Lexeme.Equals("message")) return null;
             _tokens.Dequeue();
@@ -392,13 +393,14 @@ namespace ProtobufCompiler.Compiler
             while(!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
             {
                 // Some of these may be null returns. That's ok. AddChildren will ignore. 
+                var reservation = ParseReservation();
                 var fieldNode = ParseMessageField();
                 var nestedMessage = ParseMessage();
                 var nestedEnum = ParseEnum();
                 var oneOf = ParseOneOfField();
                 var map = ParseMapField();
 
-                msgNode.AddChildren(fieldNode, nestedMessage, nestedEnum, oneOf, map);
+                msgNode.AddChildren(reservation, fieldNode, nestedMessage, nestedEnum, oneOf, map);
 
                 if (_tokens.Any()) next = _tokens.Peek();
             }
@@ -408,6 +410,160 @@ namespace ProtobufCompiler.Compiler
 
             return msgNode;
 
+        }
+
+        private Node ParseReservation()
+        {
+            var reserveTag = _tokens.Peek();
+            if (!reserveTag.Lexeme.Equals("reserved")) return null;
+            _tokens.Dequeue();
+
+            var reservedNode = new Node(NodeType.Reserved, reserveTag.Lexeme);
+
+            var next = _tokens.Peek();
+            if (_parser.IsStringLiteral(next.Lexeme))
+            {
+                var nameRange = ParseStringRange().ToArray();
+
+                if (nameRange.Any())
+                {
+                    reservedNode.AddChildren(nameRange);
+                    TerminateSingleLineStatement();
+                    ScoopComment(reservedNode);
+                    DumpEndline();
+                    return reservedNode;
+                }
+            }
+
+            if (_parser.IsDecimalLiteral(next.Lexeme))
+            {
+                var intRange = ParseIntegerRange().ToArray();
+
+                if (intRange.Any())
+                {
+                    reservedNode.AddChildren(intRange);
+                    TerminateSingleLineStatement();
+                    ScoopComment(reservedNode);
+                    DumpEndline();
+                    return reservedNode;
+                }
+            }
+           
+            var existingString = DumpStringToEndLine();
+            _errors.Add(
+                    new ParseError(
+                        $"Could not find a valid reservation on line {reserveTag.Line}. Found: {existingString}",
+                        reserveTag));
+            return null;
+        }
+
+        private IEnumerable<Node> ParseIntegerRange()
+        {
+            var intRes = new Stack<int>();
+            var token = _tokens.Peek();
+            while (!token.Lexeme.Equals(";"))
+            {
+                token = _tokens.Dequeue();
+                var lexeme = token.Lexeme;
+                if (",".Equals(lexeme))
+                {
+                    if (!intRes.Any())
+                    {
+                       _errors.Add(
+                           new ParseError(
+                               $"Expected integer literal before ',' in reserved range ",
+                               token));
+                        return new List<Node>();
+                    }
+                    token = _tokens.Peek();
+                    continue;
+                }
+
+
+                if (_parser.IsDecimalLiteral(lexeme))
+                {
+                    intRes.Push(int.Parse(lexeme));
+                    token = _tokens.Peek();
+                    continue;
+                }
+
+
+                if (!"to".Equals(lexeme))
+                {
+                    token = _tokens.Peek();
+                    continue;
+                }
+
+                // So now we are looking ahead at the token after 'to', so we have something like '9 to 11'
+                if (!intRes.Any()) // In the case that we found a 'to' but haven't yet found an integer
+                {
+                    _errors.Add(
+                       new ParseError(
+                           $"Expected integer literal before 'to' in reserved range ",
+                           token));
+                    return new List<Node>();
+                }
+
+                var startRangeAt = intRes.Pop(); // Go get the last integer read, e.g. 9
+                var nextToken = _tokens.Peek(); // Look ahead for the next integer, e.g. 11
+                if (!_parser.IsDecimalLiteral(nextToken.Lexeme)) // If the next token isn't an integer create Error
+                {
+                    _errors.Add(
+                        new ParseError(
+                            $"Expected integer literal after 'to' in reserved range ",
+                            nextToken));
+                    return new List<Node>();
+                }
+
+                // If we don't have an error go ahead and remove the token and use it to find the end range. 
+                nextToken = _tokens.Dequeue();
+                var endRangeAt = int.Parse(nextToken.Lexeme);
+
+                // Now push all the integers in the range onto the stack.
+                var rangeLength = endRangeAt - startRangeAt + 1; 
+                foreach (var elem in Enumerable.Range(startRangeAt, rangeLength))
+                {
+                    intRes.Push(elem);
+                }
+
+                // If we've got this far, set the token for the While comparison to the next.
+                token = _tokens.Peek();
+            }
+
+            // Now that we've hit an Endline or ';' terminator, return. 
+            return intRes.Select(t => new Node(NodeType.IntegerLiteral, t.ToString())).Reverse();
+        }
+
+        private IEnumerable<Node> ParseStringRange()
+        {
+            var stringRes = new List<string>();
+            var token = _tokens.Peek();
+            while (!token.Lexeme.Equals(";"))
+            {
+                token = _tokens.Dequeue();
+                var lexeme = token.Lexeme;
+                if (",".Equals(lexeme))
+                {
+                    token = _tokens.Peek();
+                    continue;
+                }
+                if (!_parser.IsStringLiteral(lexeme))
+                {
+                    if (!stringRes.Any())
+                    {
+                        _errors.Add(
+                            new ParseError(
+                                $"Expected string literal before ',' in reserved range ",
+                                token));
+                        return new List<Node>();
+                    }
+                    token = _tokens.Peek();
+                    continue;
+                }
+                stringRes.Add(lexeme.Unquote());
+                token = _tokens.Peek();
+            }
+            return stringRes.Select(t => new Node(NodeType.StringLiteral, t));
         }
 
         private Node ParseOneOfField()
@@ -597,7 +753,7 @@ namespace ProtobufCompiler.Compiler
             if (!_tokens.Any()) return null;
             var openToken = _tokens.Peek();
             var lexeme = openToken.Lexeme;
-            if (lexeme.IsNotSimpleField()) return null;
+            if (!_parser.IsFieldStart(lexeme)) return null;
             var fieldNode = new Node(NodeType.Field, openToken.Lexeme);
 
             var repeated = ParseRepeated();

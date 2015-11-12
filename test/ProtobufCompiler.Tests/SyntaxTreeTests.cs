@@ -256,7 +256,7 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}"),
                 #endregion
-
+                new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}")
             };
             #endregion
@@ -479,6 +479,67 @@ namespace ProtobufCompiler.Tests
 
             field.AddChildren(mapName, key, value, mapValue);
             message.AddChildren(msgName, field);
+            root.AddChild(message);
+            #endregion
+
+            AssertSyntax(tokenList, root);
+        }
+
+        [Fact]
+        public void ShouldBuildReservedFieldNode()
+        {
+            #region Arrange Map Field Token Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 0, "Outer"),
+                new Token(TokenType.Control, 0, 0, "{"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "reserved"),
+                new Token(TokenType.Numeric, 0, 0, "2"),
+                new Token(TokenType.Control, 0, 0, ","),
+                new Token(TokenType.Numeric, 0, 0, "15"),
+                new Token(TokenType.Control, 0, 0, ","),
+                new Token(TokenType.Numeric, 0, 0, "9"),
+                new Token(TokenType.String, 0, 0, "to"),
+                new Token(TokenType.Numeric, 0, 0, "11"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "reserved"),
+                new Token(TokenType.String, 0, 0, "\"foo\""),
+                new Token(TokenType.Control, 0, 0, ","),
+                new Token(TokenType.String, 0, 0, "\"bar\""),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Control, 0, 0, "}")
+            };
+            #endregion
+
+            #region Arrange Expected NodeTree Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+
+            var numReserve = new Node(NodeType.Reserved, "reserved");
+            var reservedNums = new List<Node>
+            {
+                new Node(NodeType.IntegerLiteral, "2"),
+                new Node(NodeType.IntegerLiteral, "15"),
+                new Node(NodeType.IntegerLiteral, "9"),
+                new Node(NodeType.IntegerLiteral, "10"),
+                new Node(NodeType.IntegerLiteral, "11")
+            };
+            numReserve.AddChildren(reservedNums.ToArray());
+
+            var nameReserve = new Node(NodeType.Reserved, "reserved");
+            var reservedNames = new List<Node>
+            {
+                new Node(NodeType.StringLiteral, "foo"),
+                new Node(NodeType.StringLiteral, "bar")
+            };
+            nameReserve.AddChildren(reservedNames.ToArray());
+            
+            message.AddChildren(msgName, numReserve, nameReserve);
             root.AddChild(message);
             #endregion
 

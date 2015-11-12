@@ -21,10 +21,10 @@ namespace ProtobufCompiler.Extensions
                 "oneof".Equals(self) ||  "map".Equals(self);
         }
 
-        internal static bool IsNotSimpleField(this string self)
+        internal static bool IsReservedString(this string self)
         {
             return "enum".Equals(self) || "message".Equals(self) || "oneof".Equals(self) ||
-                "map".Equals(self);
+                "map".Equals(self) || "reserved".Equals(self);
         }
 
         internal static bool IsMapKeyType(this string self)

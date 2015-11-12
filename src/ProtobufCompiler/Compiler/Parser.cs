@@ -1,5 +1,6 @@
 ﻿using ProtobufCompiler.Extensions;
 using System.Linq;
+using System;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -209,6 +210,20 @@ namespace ProtobufCompiler.Compiler
             return !string.IsNullOrWhiteSpace(input) && input.Equals("option");
         }
 
+        internal bool IsOneOf(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("oneof");
+        }
+
+        internal bool IsMap(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("map");
+        }
+
+        internal bool IsReservation(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && input.Equals("reserved");
+        }
         internal bool IsEnum(string input)
         {
             return !string.IsNullOrWhiteSpace(input) && input.Equals("enum");
@@ -239,5 +254,19 @@ namespace ProtobufCompiler.Compiler
             return !string.IsNullOrWhiteSpace(input) && input.IsType();
         }
 
+        internal bool IsReservedWord(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) && (
+                IsMessage(input) || IsEnum(input) || IsMap(input) || IsReservation(input) ||
+                IsMap(input) || IsOption(input) || IsOneOf(input)
+                );
+        }
+
+        internal bool IsFieldStart(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input) &&
+                   (IsBasicType(input) || IsFullIdentifier(input) || IsRepeated(input))
+                   && !IsReservedWord(input);
+        }
     }
 }
