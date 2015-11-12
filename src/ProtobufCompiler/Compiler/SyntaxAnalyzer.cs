@@ -391,12 +391,13 @@ namespace ProtobufCompiler.Compiler
             var next = _tokens.Peek();
             while(!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
             {
+                // Some of these may be null returns. That's ok. AddChildren will ignore. 
                 var fieldNode = ParseMessageField();
-                msgNode.AddChild(fieldNode);
                 var nestedMessage = ParseMessage();
-                msgNode.AddChild(nestedMessage);
                 var nestedEnum = ParseEnum();
-                msgNode.AddChild(nestedEnum);
+                var oneOf = ParseOneOfField();
+
+                msgNode.AddChildren(fieldNode, nestedMessage, nestedEnum, oneOf);
 
                 if (_tokens.Any()) next = _tokens.Peek();
             }
@@ -406,6 +407,57 @@ namespace ProtobufCompiler.Compiler
 
             return msgNode;
 
+        }
+
+        private Node ParseOneOfField()
+        {
+            var oneOfTag = _tokens.Peek();
+            if (!oneOfTag.Lexeme.Equals("oneof")) return null;
+            _tokens.Dequeue();
+
+            var msgNode = new Node(NodeType.OneOfField, oneOfTag.Lexeme);
+
+            var msgName = ParseIdentifier();
+            if (ReferenceEquals(msgName, null))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Could not find a oneof name on line {oneOfTag.Line} for message token ",
+                        oneOfTag));
+                return null;
+            }
+
+            var openBrack = _tokens.Dequeue();
+            if (!openBrack.Type.Equals(TokenType.Control) || !openBrack.Lexeme[0].Equals('{'))
+            {
+                _errors.Add(
+                    new ParseError(
+                        $"Expected to find open bracket on line {oneOfTag.Line} for message token ",
+                        oneOfTag));
+                return null;
+            }
+
+            msgNode.AddChild(msgName);
+
+            ScoopComment(msgNode);
+            DumpEndline();
+
+            var next = _tokens.Peek();
+            while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
+            {
+                // Some of these may be null returns. That's ok. AddChildren will ignore. 
+                var fieldNode = ParseMessageField();
+                var oneOf = ParseOneOfField();
+
+                msgNode.AddChildren(fieldNode, oneOf);
+
+                if (_tokens.Any()) next = _tokens.Peek();
+            }
+
+            _tokens.Dequeue(); // Dump the }
+            DumpEndline();
+
+            return msgNode;
         }
 
         private Node ParseRepeated()
@@ -440,7 +492,7 @@ namespace ProtobufCompiler.Compiler
             if (!_tokens.Any()) return null;
             var openToken = _tokens.Peek();
             var lexeme = openToken.Lexeme;
-            if (lexeme.IsEnumOrMessage()) return null;
+            if (lexeme.IsNotSimpleField()) return null;
             var fieldNode = new Node(NodeType.Field, openToken.Lexeme);
 
             var repeated = ParseRepeated();

@@ -384,6 +384,65 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void ShouldBuildOneOfFieldNode()
+        {
+            #region Arrange OneOf Field Token Input
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "message"),
+                new Token(TokenType.String, 0, 0, "Outer"),
+                new Token(TokenType.Control, 0, 0, "{"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "oneof"),
+                new Token(TokenType.String, 0, 0, "test_oneof"),
+                new Token(TokenType.Control, 0, 0, "{"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.String, 0, 0, "string"),
+                new Token(TokenType.String, 0, 0, "name"),
+                new Token(TokenType.Control, 0, 0, "="),
+                new Token(TokenType.Numeric, 0, 0, "4"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.String, 0, 0, "SubMessage"),
+                new Token(TokenType.String, 0, 0, "sub_message"),
+                new Token(TokenType.Control, 0, 0, "="),
+                new Token(TokenType.Numeric, 0, 0, "9"),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Control, 0, 0, "}"),
+                new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
+                new Token(TokenType.Control, 0, 0, "}")
+            };
+            #endregion
+
+            #region Arrange Expected NodeTree Output
+            var root = new RootNode();
+            var message = new Node(NodeType.Message, "message");
+            var msgName = new Node(NodeType.Identifier, "Outer");
+            var field = new Node(NodeType.OneOfField, "oneof");
+            var oneofName = new Node(NodeType.Identifier, "test_oneof");
+
+            var stringField = new Node(NodeType.Field, "string");
+            var stringType = new Node(NodeType.Type, "string");
+            var stringName = new Node(NodeType.Identifier, "name");
+            var stringValue = new Node(NodeType.FieldNumber, "4");
+            stringField.AddChildren(stringType, stringName, stringValue);
+
+            var customField = new Node(NodeType.Field, "SubMessage");
+            var customType = new Node(NodeType.UserType, "SubMessage");
+            var customName = new Node(NodeType.Identifier, "sub_message");
+            var customValue = new Node(NodeType.FieldNumber, "9");
+            customField.AddChildren(customType, customName, customValue);
+
+            field.AddChildren(oneofName, stringField, customField);
+            message.AddChildren(msgName, field);
+            root.AddChild(message);
+            #endregion
+
+            AssertSyntax(tokenList, root);
+        }
+
+        [Fact]
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             #region Arrange Inline Trailing Comment Token Input

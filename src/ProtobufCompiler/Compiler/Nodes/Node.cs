@@ -109,6 +109,7 @@ namespace ProtobufCompiler.Compiler.Nodes
         Enum,
         EnumConstant,
         Message,
+        OneOfField,
         Field,
         FieldNumber,
         Type,

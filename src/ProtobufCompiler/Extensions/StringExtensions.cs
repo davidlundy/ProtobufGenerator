@@ -21,9 +21,9 @@ namespace ProtobufCompiler.Extensions
                 "oneof".Equals(self) ||  "map".Equals(self);
         }
 
-        internal static bool IsEnumOrMessage(this string self)
+        internal static bool IsNotSimpleField(this string self)
         {
-            return "enum".Equals(self) || "message".Equals(self);
+            return "enum".Equals(self) || "message".Equals(self) || "oneof".Equals(self);
         }
 
         /// <summary>
