@@ -37,6 +37,14 @@ namespace ProtobufCompiler.Compiler.Nodes
             node.Parent = this;
         }
 
+        internal void AddChildren(params Node[] nodes)
+        {
+            foreach (var node in nodes)
+            {
+                AddChild(node);
+            }
+        }
+
         public void Accept(IVisitor visitor)
         {
             visitor.Visit(this);
