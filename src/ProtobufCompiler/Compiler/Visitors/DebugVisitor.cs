@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
 
-namespace ProtobufCompiler.Compiler.Nodes
+namespace ProtobufCompiler.Compiler.Visitors
 {
     internal class DebugVisitor : IVisitor
     {

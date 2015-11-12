@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProtobufCompiler.Compiler.Visitors;
 using ProtobufCompiler.Interfaces;
 #if DNXCORE50
 using System.Globalization;

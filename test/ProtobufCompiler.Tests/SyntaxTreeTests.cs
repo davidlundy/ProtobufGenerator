@@ -159,7 +159,6 @@ namespace ProtobufCompiler.Tests
             AssertSyntax(tokenList, root);
         }
 
-
         [Fact]
         public void ShouldParseEnumDefinition()
         {
