@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ProtobufCompiler.Compiler.Errors;
 
 namespace ProtobufCompiler.Compiler.Nodes
 {

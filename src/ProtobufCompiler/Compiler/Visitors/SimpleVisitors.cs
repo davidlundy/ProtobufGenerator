@@ -1,37 +1,60 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
 using ProtobufCompiler.Types;
 
 namespace ProtobufCompiler.Compiler.Visitors
 {
-    internal class SyntaxVisitor : IVisitor
+    internal abstract class SemanticBaseVisitor : IErrorTrackingVisitor
+    {
+        public ICollection<ParseError> Errors { get; internal set; }
+
+        internal SemanticBaseVisitor(ICollection<ParseError> errors)
+        {
+            Errors = errors;
+        }
+
+        public abstract void Visit(Node node);
+    }
+
+    internal class SyntaxVisitor : SemanticBaseVisitor
     {
         public Syntax Syntax { get; internal set; }
 
-        public void Visit(Node node)
+        internal SyntaxVisitor(ICollection<ParseError> errors) : base(errors)
+        {
+            
+        }
+
+        public override void Visit(Node node)
         {
             var syntax = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.StringLiteral));
             Syntax = new Syntax(syntax?.NodeValue);
         }
     }
 
-    internal class PackageVisitor : IVisitor
+    internal class PackageVisitor : SemanticBaseVisitor
     {
         public Package Package { get; internal set; }
 
-        public void Visit(Node node)
+        internal PackageVisitor(ICollection<ParseError> errors) : base(errors) { }
+
+        public override void Visit(Node node)
         {
             var package = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.Identifier));
             Package = new Package(package?.NodeValue);
         }
     }
 
-    internal class OptionVisitor : IVisitor
+    internal class OptionVisitor : SemanticBaseVisitor
     {
         public Option Option { get; internal set; }
 
-        public void Visit(Node node)
+        internal OptionVisitor(ICollection<ParseError> errors ) : base(errors) { }
+
+        public override void Visit(Node node)
         {
             var name = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.Identifier));
             var value = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.StringLiteral));
@@ -39,11 +62,13 @@ namespace ProtobufCompiler.Compiler.Visitors
         }
     }
 
-    internal class ImportVisitor : IVisitor
+    internal class ImportVisitor : SemanticBaseVisitor
     {
         public Import Import { get; internal set; }
 
-        public void Visit(Node node)
+        internal ImportVisitor(ICollection<ParseError> errors ) : base(errors) { }
+
+        public override void Visit(Node node)
         {
             var modifier = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.ImportModifier));
             var clas = node.Children.SingleOrDefault(t => t.NodeType.Equals(NodeType.StringLiteral));
@@ -51,21 +76,29 @@ namespace ProtobufCompiler.Compiler.Visitors
         }
     }
 
-    internal class EnumVisitor : IVisitor
+    internal class EnumVisitor : SemanticBaseVisitor
     {
         public EnumDefinition EnumDefinition { get; internal set; }
 
-        public void Visit(Node node)
+        internal EnumVisitor(ICollection<ParseError> errors) : base(errors)
+        {
+        }
+
+        public override void Visit(Node node)
         {
 
         }
     }
 
-    internal class ServiceVisitor : IVisitor
+    internal class ServiceVisitor : SemanticBaseVisitor
     {
         public ServiceDefinition Service { get; internal set; }
 
-        public void Visit(Node node)
+        internal ServiceVisitor(ICollection<ParseError> errors) : base(errors)
+        {
+        }
+
+        public override void Visit(Node node)
         {
 
         }

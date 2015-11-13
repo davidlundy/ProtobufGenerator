@@ -1,14 +1,19 @@
-﻿using ProtobufCompiler.Compiler.Nodes;
-using ProtobufCompiler.Interfaces;
+﻿using System.Collections.Generic;
+using ProtobufCompiler.Compiler.Errors;
+using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Types;
 
 namespace ProtobufCompiler.Compiler.Visitors
 {
-    internal class MessageVisitor : IVisitor
+    internal class MessageVisitor : SemanticBaseVisitor
     {
         public MessageDefinition Message { get; internal set; }
 
-        public void Visit(Node node)
+        internal MessageVisitor(ICollection<ParseError> errors) : base(errors)
+        {
+        }
+
+        public override void Visit(Node node)
         {
 
         }

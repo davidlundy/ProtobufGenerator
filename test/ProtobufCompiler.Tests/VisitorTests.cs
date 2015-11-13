@@ -55,6 +55,18 @@ namespace ProtobufCompiler.Tests
         }
 
         [Fact]
+        public void BuilderVisitorCantVisitNonRoot()
+        {
+            #region Arrange Bad Root Node Input and Builder Visitor
+            var root = new Node(NodeType.Service, "service");
+            var sut = new BuilderVisitor();
+            #endregion
+
+            var expected = Assert.Throws<InvalidOperationException>(() => root.Accept(sut));
+            expected.Message.Should().Be("Cannot use BuilderVisitor on non-root Node");
+        }
+
+        [Fact]
         public void BuilderVisitorShouldBuildSyntax()
         {
             #region Arrange Syntax Node Input

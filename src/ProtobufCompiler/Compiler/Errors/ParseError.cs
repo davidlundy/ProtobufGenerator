@@ -3,12 +3,11 @@
 using System.Globalization;
 #endif
 
-namespace ProtobufCompiler.Compiler
+namespace ProtobufCompiler.Compiler.Errors
 {
-    internal class ParseError : IEquatable<ParseError>
+    internal class ParseError : CompilerError, IEquatable<ParseError>
     {
         internal Token Token { get; }
-        internal string Message { get; }
 
 #if DNXCORE50
         internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
@@ -16,10 +15,9 @@ namespace ProtobufCompiler.Compiler
         internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
 #endif
 
-        public ParseError(string message, Token token = null)
+        internal ParseError(string message, Token token = null) : base(message)
         {
             Token = token;
-            Message = message;
         }
 
         public override string ToString()
