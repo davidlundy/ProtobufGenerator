@@ -20,10 +20,10 @@ IF NOT EXIST packages\Sake (
 	.nuget\nuget.exe install Sake -Version 0.2.2 -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
 )
 IF NOT EXIST packages\dnx-clr-win-x64 (
-	.nuget\nuget.exe install dnx-clr-win-x64 -Version 1.0.0-beta8 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
+	.nuget\nuget.exe install dnx-clr-win-x64 -Version 1.0.0-rc1-final -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
 )
 IF NOT EXIST packages\dnx-coreclr-win-x64 (
-	.nuget\nuget.exe install dnx-coreclr-win-x64 -Version 1.0.0-beta8 -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
+	.nuget\nuget.exe install dnx-coreclr-win-x64 -Version 1.0.0-rc1-final -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
 )
 
 :run

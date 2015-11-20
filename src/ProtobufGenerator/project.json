@@ -25,6 +25,7 @@
     },
     "dnxcore50": {
       "dependencies": {
+        "System.Runtime":  "4.0.21-beta-*",
         "System.Collections": "4.0.11-beta-*",
         "System.Linq": "4.0.1-beta-*",
         "System.Reflection": "4.1.0-beta-*"
