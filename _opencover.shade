@@ -1,0 +1,64 @@
+use namespace="System.Diagnostics"
+use namespace="System.IO"
+
+default workingdir="${Directory.GetCurrentDirectory()}"
+
+log info="OpenCover"
+log info="  Executable Location: ${executable}"
+log info="  DNX Location: ${dnx}"
+log info="  DNX Command: ${cmd}"
+log info="  Output Directory: ${outputDir}"
+log info="  Output FileName: ${outputFile}"
+log info="  PDB Directories: ${pdb}"
+log info="  Test Project: ${project}"
+log info="  Filter: ${filter}"
+
+functions
+@{
+	Directory.CreateDirectory(outputDir);
+
+	var processStartInfo = new ProcessStartInfo {
+		UseShellExecute = false, 
+		WorkingDirectory = Path.GetDirectoryName(project),
+		FileName = executable,
+		Arguments = string.Format(
+                "-register:user -target:\"{0}\" -targetargs:\"--lib {1} {2} \" -output:{3} -mergeoutput -filter:\"{4}\" -skipautoprops -hideskipped:Filter;MissingPdb",
+                dnx, pdb,cmd, Path.Combine(outputDir, outputFile), filter)
+	
+	};
+	
+	Log.Info(string.Format("OpenCover Arguments: {0}", processStartInfo.Arguments));
+	Log.Info(string.Format("Working Directory: {0}", processStartInfo.WorkingDirectory));
+	
+	
+	processStartInfo.RedirectStandardError = true;
+	processStartInfo.RedirectStandardOutput = true;
+	
+	using (var process = Process.Start(processStartInfo))
+    {
+
+            process.EnableRaisingEvents = true;
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            process.ErrorDataReceived += (sender, eventArgs) =>
+            {
+                if (!string.IsNullOrWhiteSpace(eventArgs.Data))
+                {
+                    Log.Error(eventArgs.Data);
+                }
+            };
+
+            process.OutputDataReceived += (sender, eventArgs) =>
+            {
+                Log.Info(eventArgs.Data);
+            };
+
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception(string.Format("Exit code {0} from {1}", process.ExitCode, executable));
+        }
+    }
+}

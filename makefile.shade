@@ -9,7 +9,13 @@ use-standard-lifecycle
 
 default BASE_DIR='${Directory.GetCurrentDirectory()}'
 default TARGET_DIR='${Path.Combine(BASE_DIR, "artifacts")}'
+default PDB_DIR='${Path.Combine(TARGET_DIR, "Debug", "dnx451")}'
 default PACKAGES_DIR='${Path.Combine(BASE_DIR, "packages")}'
+default COVERAGE_OUTPUT='${Path.Combine(TARGET_DIR,"reports")}'
+default COVERAGE_FILENAME='coverage.xml'
+default OPENCOVER='${Path.Combine(PACKAGES_DIR, "OpenCover", "tools", "OpenCover.Console.exe")}'
+default REPORTGEN='${Path.Combine(PACKAGES_DIR, "ReportGenerator", "tools", "ReportGenerator.exe")}'
+default REPORTINPUT='${Path.Combine(COVERAGE_OUTPUT, COVERAGE_FILENAME)}'
 
 var DNU=""
 var DNX_CLR=""
@@ -39,7 +45,18 @@ var DNX_CORECLR=""
     for each="var projectFile in Files.Include('src/**/project.json')"
         exec program="${DNU}" commandline="pack ${projectFile} --quiet --out ${TARGET_DIR} --configuration Release"
 
+#build-test-compile target="test-compile" description="Build the PDB files needed to generate test coverage reports"
+	for each="var projectFile in Files.Include('src/**/project.json')"
+		exec program="${DNU}" commandline="build ${projectFile} --quiet --out ${TARGET_DIR} --configuration Debug"
+		
 #build-test target="test"
     for each="var projectFile in Files.Include('test/**/project.json')"
         exec program="${DNX_CLR}" commandline="-p ${projectFile} test"
         exec program="${DNX_CORECLR}" commandline="-p ${projectFile} test"
+		
+#build-coverage target="test" description="Generate Code Coverage Report"
+	for each="var projectFile in Files.Include('test/**/project.json')"
+		opencover executable="${OPENCOVER}" dnx="${DNX_CLR}" cmd="test" outputDir="${COVERAGE_OUTPUT}" outputFile="${COVERAGE_FILENAME}" pdb="${PDB_DIR}" project="${projectFile}" filter="-[Xunit*]* -[Fluent*]* +[ProtobufCompiler*]*"
+		
+#build-report target="test" description="Generate Visual Report"
+	exec program="${REPORTGEN}" commandline="-reports:${REPORTINPUT} -targetdir:${COVERAGE_OUTPUT}"

@@ -25,6 +25,19 @@ IF NOT EXIST packages\dnx-clr-win-x64 (
 IF NOT EXIST packages\dnx-coreclr-win-x64 (
 	.nuget\nuget.exe install dnx-coreclr-win-x64 -Version 1.0.0-rc1-final -ExcludeVersion -Out packages -Source https://www.myget.org/F/aspnetmaster/api/v3/index.json
 )
+IF NOT EXIST packages\OpenCover (
+	.nuget\nuget.exe install OpenCover -Version 4.6.210-rc -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
+)
+IF NOT EXIST packages\ReportGenerator (
+	.nuget\nuget.exe install ReportGenerator -Version 2.3.4 -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
+)
+IF NOT EXIST packages\coveralls.net (
+	.nuget\nuget.exe install coveralls.net -Version 0.6.0 -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
+)
 
 :run
 packages\Sake\tools\Sake.exe -f makefile.shade %*
+
+IF EXIST %APPVEYOR% (
+	packages\coveralls.net\tools\csmacnz.Coveralls.exe --opencover -i ./artifacts/reports/coverage.xml --repoToken %COVERALLS_REPO_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch %APPVEYOR_REPO_BRANCH% --commitAuthor %APPVEYOR_REPO_COMMIT_AUTHOR% --commitEmail %APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL% --commitMessage %APPVEYOR_REPO_COMMIT_MESSAGE% --jobId %APPVEYOR_JOB_ID%
+)
