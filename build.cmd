@@ -37,7 +37,5 @@ IF NOT EXIST packages\coveralls.net (
 
 :run
 packages\Sake\tools\Sake.exe -f makefile.shade %*
+packages\coveralls.net\tools\csmacnz.Coveralls.exe --opencover -i ./artifacts/reports/coverage.xml --repoToken %COVERALLS_REPO_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch %APPVEYOR_REPO_BRANCH% --commitAuthor %APPVEYOR_REPO_COMMIT_AUTHOR% --commitEmail %APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL% --commitMessage %APPVEYOR_REPO_COMMIT_MESSAGE% --jobId %APPVEYOR_JOB_ID%
 
-IF %APPVEYOR% == true(
-	packages\coveralls.net\tools\csmacnz.Coveralls.exe --opencover -i ./artifacts/reports/coverage.xml --repoToken %COVERALLS_REPO_TOKEN% --commitId %APPVEYOR_REPO_COMMIT% --commitBranch %APPVEYOR_REPO_BRANCH% --commitAuthor %APPVEYOR_REPO_COMMIT_AUTHOR% --commitEmail %APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL% --commitMessage %APPVEYOR_REPO_COMMIT_MESSAGE% --jobId %APPVEYOR_JOB_ID%
-)
