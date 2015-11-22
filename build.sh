@@ -44,10 +44,5 @@ if [ ! -d packages/dnx-coreclr-linux-x64 ]; then
     chmod a+x packages/dnx-coreclr-linux-x64/bin/dnu
     chmod a+x packages/dnx-coreclr-linux-x64/bin/dnx
 fi
-if [ ! -d packages/OpenCover ]; then
-	mono .nuget/nuget.exe install OpenCover -Version 4.6.210-rc -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
-fi
-if [ ! -d packages/ReportGenerator ]; then
-	mono .nuget\nuget.exe install ReportGenerator -Version 2.3.4 -ExcludeVersion -Out packages -Source https://api.nuget.org/v3/index.json
-fi
+
 mono packages/Sake/tools/Sake.exe -f makefile.shade "$@"

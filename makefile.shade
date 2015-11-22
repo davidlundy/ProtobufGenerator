@@ -54,9 +54,9 @@ var DNX_CORECLR=""
         exec program="${DNX_CLR}" commandline="-p ${projectFile} test"
         exec program="${DNX_CORECLR}" commandline="-p ${projectFile} test"
 		
-#build-coverage target="test" description="Generate Code Coverage Report"
+#build-coverage target="test" if="!IsLinux" description="Generate Code Coverage Report"
 	for each="var projectFile in Files.Include('test/**/project.json')"
 		opencover executable="${OPENCOVER}" dnx="${DNX_CLR}" cmd="test" outputDir="${COVERAGE_OUTPUT}" outputFile="${COVERAGE_FILENAME}" pdb="${PDB_DIR}" project="${projectFile}" filter="-[Xunit*]* -[Fluent*]* +[ProtobufCompiler*]*"
 		
-#build-report target="test" description="Generate Visual Report"
+#build-report target="test" if="!IsLinux" description="Generate Visual Report"
 	exec program="${REPORTGEN}" commandline="-reports:${REPORTINPUT} -targetdir:${COVERAGE_OUTPUT}"
