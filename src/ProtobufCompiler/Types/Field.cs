@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -16,12 +14,6 @@ namespace ProtobufCompiler.Types
         public IEnumerable<Option> FieldOptions { get; }
         public bool Repeated { get; }
         public bool IsUsertype { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal Field(string type, string name, int fieldNum, IEnumerable<Option> fieldOptions, bool isRepeated)
         {
@@ -37,11 +29,11 @@ namespace ProtobufCompiler.Types
         public bool Equals(Field other)
         {
             if (other == null) return false;
-            return InvCultIc.Equals(FieldName, other.FieldName) &&
+            return FieldName.EqualsIgnoreCase(other.FieldName) &&
                    SimpleType.Equals(other.SimpleType) &&
                    FieldNumber.Equals(other.FieldNumber) &&
                    Repeated.Equals(other.Repeated) &&
-                   InvCultIc.Equals(UserType, other.UserType) &&
+                   UserType.EqualsIgnoreCase(other.UserType) &&
                    FieldOptions.SequenceEqual(other.FieldOptions);
 
         }

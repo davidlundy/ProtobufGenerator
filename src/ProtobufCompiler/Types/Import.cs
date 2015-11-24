@@ -1,7 +1,6 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
+
 namespace ProtobufCompiler.Types
 {
     public enum ImportType
@@ -16,11 +15,6 @@ namespace ProtobufCompiler.Types
         public ImportType ImportType { get; }
         public string ImportClass { get; }
 
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
         internal Import(string type, string clas)
         {
             ImportType = string.IsNullOrWhiteSpace(type) ? 
@@ -32,7 +26,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(Import other)
         {
             if (other == null) return false;
-            return ImportType.Equals(other.ImportType) && InvCultIc.Equals(ImportClass, other.ImportClass);
+            return ImportType.Equals(other.ImportType) && ImportClass.EqualsIgnoreCase(other.ImportClass);
         }
 
         public override bool Equals(object obj)

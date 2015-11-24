@@ -1,7 +1,5 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -9,12 +7,6 @@ namespace ProtobufCompiler.Types
     {
         public string Name { get; }
         public string Value { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal Option(string name, string value)
         {
@@ -26,8 +18,8 @@ namespace ProtobufCompiler.Types
         {
             if (other == null) return false;
 
-            return InvCultIc.Equals(Name, other.Name) &&
-                   InvCultIc.Equals(Value, other.Value);
+            return Name.EqualsIgnoreCase(other.Name) &&
+                   Value.EqualsIgnoreCase(other.Value);
         }
 
         public override bool Equals(object obj)

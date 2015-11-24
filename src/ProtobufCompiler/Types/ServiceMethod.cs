@@ -1,7 +1,4 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
 using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
@@ -11,11 +8,6 @@ namespace ProtobufCompiler.Types
         public string Name { get; }
         public ParameterType InputType { get; }
         public ParameterType OutputType { get; }
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal ServiceMethod(string name, ParameterType inputType, ParameterType outputType)
         {
@@ -27,7 +19,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(ServiceMethod other)
         {
             if (other == null) return false;
-            return InvCultIc.Equals(Name, other.Name) &&
+            return Name.EqualsIgnoreCase(other.Name) &&
                    InputType.Equals(other.InputType) &&
                    OutputType.Equals(other.OutputType);
         }

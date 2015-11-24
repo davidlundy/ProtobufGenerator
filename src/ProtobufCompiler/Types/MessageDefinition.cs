@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -16,12 +14,6 @@ namespace ProtobufCompiler.Types
         public ICollection<Map> Maps { get; }
         public ICollection<EnumDefinition> Enumerations { get; }
         public ICollection<MessageDefinition> Messages { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal MessageDefinition(string name, ICollection<Field> fields, ICollection<OneOf> oneOfs, ICollection<Option> options, ICollection<Map> maps, ICollection<EnumDefinition> enumerations, ICollection<MessageDefinition> messages)
         {
@@ -37,7 +29,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(MessageDefinition other)
         {
             if (other == null) return false;
-            return InvCultIc.Equals(Name, other.Name) &&
+            return Name.EqualsIgnoreCase(other.Name) &&
                    Fields.SequenceEqual(other.Fields) &&
                    OneOfs.SequenceEqual(other.OneOfs) &&
                    Options.SequenceEqual(other.Options) &&

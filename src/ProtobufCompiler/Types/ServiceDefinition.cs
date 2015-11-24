@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-#if DNXCORE50
-using System.Globalization;
-#endif
 using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
@@ -13,11 +10,6 @@ namespace ProtobufCompiler.Types
         public string Name { get; }
         public IEnumerable<ServiceMethod> Methods { get; }
         public IEnumerable<Option> Options { get; }
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal ServiceDefinition(string name, IEnumerable<ServiceMethod> serviceMethods, IEnumerable<Option> serviceOptions )
         {
@@ -29,7 +21,7 @@ namespace ProtobufCompiler.Types
         public bool Equals(ServiceDefinition other)
         {
             if (other == null) return false;
-            return InvCultIc.Equals(Name, other.Name) &&
+            return Name.EqualsIgnoreCase(other.Name) &&
                    Methods.SequenceEqual(other.Methods);
 
         }

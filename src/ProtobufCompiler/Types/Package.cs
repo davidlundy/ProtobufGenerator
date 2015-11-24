@@ -1,19 +1,11 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
     public class Package : IEquatable<Package>
     {
         public string Name { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal Package(string name)
         {
@@ -22,7 +14,7 @@ namespace ProtobufCompiler.Types
 
         public bool Equals(Package other)
         {
-            return other != null && InvCultIc.Equals(Name, other.Name);
+            return other != null && Name.EqualsIgnoreCase(other.Name);
         }
 
         public override bool Equals(object obj)

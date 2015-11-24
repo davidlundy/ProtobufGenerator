@@ -1,7 +1,5 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Types
 {
@@ -11,12 +9,6 @@ namespace ProtobufCompiler.Types
         public int FieldNum { get; }
         public string KeyType { get; }
         public string ValueType { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal Map(string name, int fieldNum, string keyType, string valueType)
         {
@@ -29,10 +21,10 @@ namespace ProtobufCompiler.Types
         public bool Equals(Map other)
         {
             if (other == null) return false;
-            return InvCultIc.Equals(Name, other.Name) &&
+            return Name.EqualsIgnoreCase(other.Name) &&
                    FieldNum.Equals(other.FieldNum) &&
-                   InvCultIc.Equals(KeyType, other.KeyType) &&
-                   InvCultIc.Equals(ValueType, other.ValueType);
+                   KeyType.EqualsIgnoreCase(other.KeyType) &&
+                   ValueType.EqualsIgnoreCase(other.ValueType);
         }
 
         public override bool Equals(object obj)
