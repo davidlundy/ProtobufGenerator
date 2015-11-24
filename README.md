@@ -14,8 +14,8 @@ Appveyor [Windows Server 2012] : [![Build status](https://ci.appveyor.com/api/pr
 
 ### Project Structure
 
-- ProtobufCompiler : Handles parsing .proto definitions into an object representing a C# class definition. **Experimental**
-- ProtobufGenerator : Handles generation of C# class (.cs) files given some defined job parameters and a compiled representation of the .proto definition files. Salvaged from working implementation of ProtobufGenerator which used embedded protoc compiler.  **Mostly Stable**
+- ProtobufCompiler : Handles parsing .proto definitions into a FileDescriptorSet. 
+- ProtobufGenerator : Handles generation of C# class (.cs) files given some defined job parameters and a compiled representation of the .proto definition files. Salvaged from working implementation of ProtobufGenerator which used embedded protoc compiler. 
 
 [Protobuf-Net]: <https://github.com/mgravell/protobuf-net>
 [Proto3 Language Specification]: <https://developers.google.com/protocol-buffers/docs/reference/proto3-spec>
