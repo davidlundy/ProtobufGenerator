@@ -83,9 +83,39 @@ namespace ProtobufCompiler.Compiler
 
         internal bool IsExponent(string input)
         {
-            return !string.IsNullOrWhiteSpace(input) && input.Length >= 2 &&
-                   ('e'.Equals(input[0]) || 'E'.Equals(input[0])) &&
-                   ('-'.Equals(input[1]) || '+'.Equals(input[1]) || input.Skip(1).All(IsDecimalDigit));
+            if (string.IsNullOrWhiteSpace(input)) return false;
+
+            // must have at least e|E and 1 more
+            if (input.Length < 2) return false;
+            if (!'e'.Equals(input[0]) && !'E'.Equals(input[0])) return false;
+            
+            // If we have the simplest case of only digits after E
+            if (!input.Skip(1).SkipWhile(IsDecimalDigit).Any()) return true;
+
+            // Otherwise we need to check for required signage
+            if (!'+'.Equals(input[1]) && !'-'.Equals(input[1])) return false;
+
+            // And then see what is behind it.
+            var rest = input.Skip(2).ToArray();
+
+            // If we only have digits after the e|E +|- then we're good.
+            if (rest.All(IsDecimalDigit)) return true;
+
+            // A decimal is fine, as long as it's not by itself
+            if (rest.Contains('.') && rest.Count() == 1) return false;
+
+            // We can have a float literal in the exp, but it can't have own exponent. 
+            // So no recursive call. 
+            var sepPlus = rest.SkipWhile(IsDecimalDigit).ToArray();
+
+            // If the non-digit wasn't a '.'
+            if (!'.'.Equals(sepPlus[0])) return false;
+
+            // "1." case, ugly but technically valid
+            if (sepPlus.Length == 1) return true;
+            
+            // If there is anything left not a decimal return false.
+            return !sepPlus.Skip(1).SkipWhile(IsDecimalDigit).Any();
         }
 
         internal bool IsDecimals(string input)
@@ -105,9 +135,9 @@ namespace ProtobufCompiler.Compiler
             if ('.'.Equals(sepPlus[0]))
             {
                 if (sepPlus.Length == 1) return true; // "1." case
-                var trailingDec = sepPlus.SkipWhile(IsDecimalDigit).ToArray();
+                var trailingDec = sepPlus.Skip(1).SkipWhile(IsDecimalDigit).ToArray();
                 if (!trailingDec.Any()) return true; // "1.23438" case
-                if ('e'.Equals(trailingDec[0]) || 'E'.Equals(trailingDec[0])) return IsExponent(trailingDec.ToString());
+                if ('e'.Equals(trailingDec[0]) || 'E'.Equals(trailingDec[0])) return IsExponent(new string(trailingDec));
             }
             else if ('e'.Equals(sepPlus[0]) || 'E'.Equals(sepPlus[0]))
             {

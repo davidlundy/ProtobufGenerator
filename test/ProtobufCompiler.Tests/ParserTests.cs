@@ -281,5 +281,24 @@ namespace ProtobufCompiler.Tests
             output.Should().Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid simple type.");
         }
 
+        [Theory]
+        [InlineData("3", false)]
+        [InlineData("a", false)]
+        [InlineData("3.0", true)]
+        [InlineData("0.3", true)]
+        [InlineData("300.000", true)]
+        [InlineData("3.0e23", true)]
+        [InlineData("3.0e23a", false)]
+        [InlineData("3.034e+2.23", true)]
+        [InlineData("3.034E+2.23", true)]
+        [InlineData("3.034e-2.23", true)]
+        [InlineData("3.034e-2.23e+1.2", false)]
+        public void CanParseFloatLiterals(string input, bool expected)
+        {
+            var output = _sys.IsFloatLiteral(input);
+            output.Should()
+                .Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid float literal.");
+        }
+
     }
 }
