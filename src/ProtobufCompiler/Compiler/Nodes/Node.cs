@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProtobufCompiler.Compiler.Visitors;
+using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
-#if DNXCORE50
-using System.Globalization;
-#endif
 
 namespace ProtobufCompiler.Compiler.Nodes
 {
@@ -17,12 +15,6 @@ namespace ProtobufCompiler.Compiler.Nodes
         internal IList<Node> Children { get; }
 
         internal Guid Guid { get; } = Guid.NewGuid();
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal Node(NodeType nodeType, string value)
         {
@@ -69,7 +61,7 @@ namespace ProtobufCompiler.Compiler.Nodes
             if (!NodeType.Equals(NodeType.Root) && !other.NodeType.Equals(NodeType.Root))
             {
                 return NodeType.Equals(other.NodeType) && Children.SequenceEqual(other.Children) &&
-                       InvCultIc.Equals(NodeValue, other.NodeValue);
+                       NodeValue.EqualsIgnoreCase(other.NodeValue);
             }
             return false;
         }

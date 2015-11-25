@@ -1,19 +1,11 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
     internal class ParseError : CompilerError, IEquatable<ParseError>
     {
         internal Token Token { get; }
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal ParseError(string message, Token token = null) : base(message)
         {
@@ -28,7 +20,7 @@ namespace ProtobufCompiler.Compiler.Errors
         public bool Equals(ParseError other)
         {
             if (other == null) return false;
-            return Token.Equals(other.Token) && InvCultIc.Equals(Message, other.Message);
+            return Token.Equals(other.Token) && Message.EqualsIgnoreCase(other.Message);
         }
 
         public override bool Equals(object obj)

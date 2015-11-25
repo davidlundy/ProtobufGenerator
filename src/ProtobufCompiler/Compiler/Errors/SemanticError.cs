@@ -1,18 +1,10 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
     internal class SemanticError : CompilerError, IEquatable<SemanticError>
     {
-
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
 
         internal SemanticError(string message) : base(message)
         {
@@ -26,8 +18,7 @@ namespace ProtobufCompiler.Compiler.Errors
 
         public bool Equals(SemanticError other)
         {
-            if (other == null) return false;
-            return InvCultIc.Equals(Message, other.Message);
+            return other != null && Message.EqualsIgnoreCase(other.Message);
         }
 
         public override bool Equals(object obj)

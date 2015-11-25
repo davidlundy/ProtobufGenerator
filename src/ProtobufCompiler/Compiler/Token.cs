@@ -1,7 +1,5 @@
 ﻿using System;
-#if DNXCORE50
-using System.Globalization;
-#endif
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -23,12 +21,6 @@ namespace ProtobufCompiler.Compiler
         internal int Line { get; }
         internal string Lexeme { get; }
 
-#if DNXCORE50
-        internal StringComparer InvCultIc = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.None);
-#else
-        internal StringComparer InvCultIc = StringComparer.InvariantCultureIgnoreCase;
-#endif
-
         public Token(TokenType type, int line, int column, string lexeme = "")
         {
             Type = type;
@@ -43,7 +35,7 @@ namespace ProtobufCompiler.Compiler
             return Type.Equals(other.Type) &&
                    Column == other.Column &&
                    Line == other.Line &&
-                   InvCultIc.Equals(Lexeme, other.Lexeme);
+                   Lexeme.EqualsIgnoreCase(other.Lexeme);
 
         }
 
