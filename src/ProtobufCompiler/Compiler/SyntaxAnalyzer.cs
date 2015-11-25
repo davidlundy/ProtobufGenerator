@@ -30,6 +30,7 @@ namespace ProtobufCompiler.Compiler
                 var topLevelStatement = ParseTopLevelStatement(root);
                 if (topLevelStatement != null) root.AddChild(topLevelStatement);
             }
+            root.AddErrors(_errors);
             return root;
         }
 
@@ -51,7 +52,7 @@ namespace ProtobufCompiler.Compiler
             {
                 _errors.Add(new ParseError("Found an invalid top level statement at token ", token));
                 BurnLine();
-                return null;
+                token = _tokens.Peek();
             }
 
             var lexeme = token.Lexeme;

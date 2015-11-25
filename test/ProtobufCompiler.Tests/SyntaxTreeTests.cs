@@ -5,6 +5,7 @@ using ProtobufCompiler.Compiler;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
 using Xunit;
+using ProtobufCompiler.Compiler.Errors;
 
 namespace ProtobufCompiler.Tests
 {
@@ -13,14 +14,18 @@ namespace ProtobufCompiler.Tests
         private const string BecauseObjectGraphsEqual = "because Node class implements IComparable<Node> and the object graphs should be equal.";
         private ISyntaxAnalyzer _sys;
 
-        private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root)
+        private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root, IList<ParseError> errors)
         {
             // Act
             _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
             var result = _sys.Analyze();
 
-            // Assert
+            // Assert Result
             result.Should().Be(root, BecauseObjectGraphsEqual);
+
+            // Assert Any Expected Errors
+            if(ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections. 
+            result.Errors.ShouldAllBeEquivalentTo(errors);
         }
 
         [Fact]
@@ -55,7 +60,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(comment);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -81,7 +86,37 @@ namespace ProtobufCompiler.Tests
             root.AddChild(syntax);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
+        }
+
+        [Fact]
+        public void ShouldErrorInvalidTopLevelStatementAndKeepParsing()
+        {
+            #region Arrange Invalid Token Input
+
+            var badToken = new Token(TokenType.String, 5, 5, "for");
+            var tokenList = new List<Token>
+            {
+                badToken,
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "syntax"),
+                new Token(TokenType.Control, 0, 1, "="),
+                new Token(TokenType.String, 0, 2, "\"proto3\""),
+                new Token(TokenType.Control, 0, 3, ";"),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
+            };
+            #endregion
+
+            #region Arrange Expected NodeTree Output
+            var root = new RootNode();
+            var syntax = new Node(NodeType.Syntax, "syntax");
+            var proto3 = new Node(NodeType.StringLiteral, "proto3");
+            syntax.AddChild(proto3);
+            root.AddChild(syntax);
+            #endregion
+
+
+            AssertSyntax(tokenList, root, new [] { new ParseError("Found an invalid top level statement at token ", badToken) });
         }
 
         [Fact]
@@ -105,7 +140,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(import);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -129,7 +164,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(package);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -156,7 +191,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(option);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -199,7 +234,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(enumnode);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -305,7 +340,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -341,7 +376,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -379,7 +414,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -438,7 +473,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -481,7 +516,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -542,7 +577,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(message);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
 
         [Fact]
@@ -575,7 +610,7 @@ namespace ProtobufCompiler.Tests
             root.AddChild(syntax);
             #endregion
 
-            AssertSyntax(tokenList, root);
+            AssertSyntax(tokenList, root, null);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ProtobufCompiler.Compiler.Errors;
+using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Nodes
 {
@@ -14,6 +15,11 @@ namespace ProtobufCompiler.Compiler.Nodes
             Imports = new List<string>();
             Exports = new List<string>();
             Errors = new List<ParseError>();
+        }
+
+        internal void AddErrors(IEnumerable<ParseError> errors)
+        {
+            Errors.AddRange(errors);
         }
     }
 }
