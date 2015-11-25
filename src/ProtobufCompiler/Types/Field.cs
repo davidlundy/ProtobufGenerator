@@ -19,7 +19,7 @@ namespace ProtobufCompiler.Types
         {
             FieldName = name;
             FieldNumber = fieldNum;
-            FieldOptions = fieldOptions;
+            FieldOptions = fieldOptions ?? new List<Option>();
             Repeated = isRepeated;
             IsUsertype = !Enum.IsDefined(typeof (SimpleType), type);
             SimpleType = IsUsertype ? SimpleType.None : (SimpleType)Enum.Parse(typeof(SimpleType), type);

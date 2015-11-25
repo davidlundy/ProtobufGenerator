@@ -82,11 +82,40 @@ namespace ProtobufCompiler.Compiler.Visitors
 
         internal EnumVisitor(ICollection<ParseError> errors) : base(errors)
         {
+            
         }
 
         public override void Visit(Node node)
         {
+            var name = node.Children.Single(t => t.NodeType.Equals(NodeType.Identifier)).NodeValue;
+            var enumFieldNodes = node.Children.Where(t => t.NodeType.Equals(NodeType.EnumField));
+            var enumFields = new List<EnumField>();
+            foreach(var ef in enumFieldNodes)
+            {
+                var vis = new EnumFieldVisitor(Errors);
+                ef.Accept(vis);
+                enumFields.Add(vis.EnumField);
+            }
+            
+            EnumDefinition = new EnumDefinition(name, null, enumFields);
+        }
+    }
 
+    internal class EnumFieldVisitor : SemanticBaseVisitor
+    {
+        public EnumField EnumField { get; internal set; }
+
+        internal EnumFieldVisitor(ICollection<ParseError> errors) : base(errors)
+        {
+            
+        }
+
+        public override void Visit(Node node)
+        {
+            var name = node.Children.Single(t => t.NodeType.Equals(NodeType.Identifier)).NodeValue;
+            var value = node.Children.Single(t => t.NodeType.Equals(NodeType.FieldNumber)).NodeValue;
+            var number = int.Parse(value);
+            EnumField = new EnumField(name, number, null);
         }
     }
 

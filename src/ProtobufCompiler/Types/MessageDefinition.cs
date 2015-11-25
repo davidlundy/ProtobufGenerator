@@ -18,12 +18,12 @@ namespace ProtobufCompiler.Types
         internal MessageDefinition(string name, ICollection<Field> fields, ICollection<OneOf> oneOfs, ICollection<Option> options, ICollection<Map> maps, ICollection<EnumDefinition> enumerations, ICollection<MessageDefinition> messages)
         {
             Name = name;
-            Fields = fields;
-            OneOfs = oneOfs;
-            Options = options;
-            Maps = maps;
-            Enumerations = enumerations;
-            Messages = messages;
+            Fields = fields ?? new List<Field>();
+            OneOfs = oneOfs ?? new List<OneOf>();
+            Options = options ?? new List<Option>();
+            Maps = maps ?? new List<Map>();
+            Enumerations = enumerations ?? new List<EnumDefinition>();
+            Messages = messages ?? new List<MessageDefinition>();
         }
 
         public bool Equals(MessageDefinition other)
