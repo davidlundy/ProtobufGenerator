@@ -102,7 +102,7 @@ namespace ProtobufCompiler.Compiler
             if (rest.All(IsDecimalDigit)) return true;
 
             // A decimal is fine, as long as it's not by itself
-            if (rest.Contains('.') && rest.Count() == 1) return false;
+            if (rest.Contains('.') && rest.Length == 1) return false;
 
             // We can have a float literal in the exp, but it can't have own exponent. 
             // So no recursive call. 
@@ -116,11 +116,6 @@ namespace ProtobufCompiler.Compiler
             
             // If there is anything left not a decimal return false.
             return !sepPlus.Skip(1).SkipWhile(IsDecimalDigit).Any();
-        }
-
-        internal bool IsDecimals(string input)
-        {
-            return !string.IsNullOrWhiteSpace(input) && input.All(IsDecimalDigit);
         }
 
         internal bool IsFloatLiteral(string input)

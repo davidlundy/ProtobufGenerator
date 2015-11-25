@@ -300,5 +300,21 @@ namespace ProtobufCompiler.Tests
                 .Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid float literal.");
         }
 
+        [Theory]
+        [InlineData("3.0", false)]
+        [InlineData("cat", false)]
+        [InlineData("3", true)]
+        [InlineData("400", true)]
+        [InlineData("07", true)]
+        [InlineData("0x0F", true)]
+        [InlineData("0X0F", true)]
+        [InlineData("X0F", false)]
+        public void CanParseIntegerLiterals(string input, bool expected)
+        {
+            var output = _sys.IsIntegerLiteral(input);
+            output.Should()
+                .Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid integer literal.");
+        }
+
     }
 }
