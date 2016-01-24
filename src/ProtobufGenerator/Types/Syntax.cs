@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProtobufCompiler.Types
+namespace ProtobufGenerator.Types
 {
     public enum SyntaxType
     {

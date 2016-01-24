@@ -3,7 +3,7 @@ using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
-    internal class ParseError : CompilerError, IEquatable<ParseError>
+    public class ParseError : CompilerError, IEquatable<ParseError>
     {
         internal Token Token { get; }
 

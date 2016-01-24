@@ -1,6 +1,6 @@
 ﻿namespace ProtobufCompiler.Compiler.Errors
 {
-    internal abstract class CompilerError
+    public abstract class CompilerError
     {
         internal string Message { get; }
 

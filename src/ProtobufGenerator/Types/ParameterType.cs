@@ -1,7 +1,7 @@
 ﻿using System;
-using ProtobufCompiler.Extensions;
+using ProtobufGenerator.Extensions;
 
-namespace ProtobufCompiler.Types
+namespace ProtobufGenerator.Types
 {
     public class ParameterType : IEquatable<ParameterType>
     {

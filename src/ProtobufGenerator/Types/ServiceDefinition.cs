@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using ProtobufGenerator.Extensions;
 using System.Linq;
-using ProtobufCompiler.Extensions;
 
-namespace ProtobufCompiler.Types
+namespace ProtobufGenerator.Types
 {
     public class ServiceDefinition : IEquatable<ServiceDefinition>
     {

@@ -1,7 +1,6 @@
 ﻿using ProtobufGenerator.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using ProtobufGenerator.Generation;
 using ProtobufGenerator.Extensions;
 

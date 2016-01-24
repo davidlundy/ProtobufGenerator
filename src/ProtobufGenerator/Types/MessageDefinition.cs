@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ProtobufGenerator.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProtobufCompiler.Extensions;
 
-namespace ProtobufCompiler.Types
+namespace ProtobufGenerator.Types
 {
     public class MessageDefinition : IEquatable<MessageDefinition>
     {

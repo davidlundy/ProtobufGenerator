@@ -7,16 +7,16 @@ using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler.Nodes
 {
-    internal class Node : IEquatable<Node>
+    public class Node : IEquatable<Node>
     {
-        internal Node Parent { get; set; }
-        internal NodeType NodeType { get; }
-        internal string NodeValue { get; }
-        internal IList<Node> Children { get; }
+        public Node Parent { get; set; }
+        public NodeType NodeType { get; }
+        public string NodeValue { get; }
+        public IList<Node> Children { get; }
 
-        internal Guid Guid { get; } = Guid.NewGuid();
+        public Guid Guid { get; } = Guid.NewGuid();
 
-        internal Node(NodeType nodeType, string value)
+        public Node(NodeType nodeType, string value)
         {
             NodeType = nodeType;
             NodeValue = value ?? string.Empty;
@@ -83,7 +83,7 @@ namespace ProtobufCompiler.Compiler.Nodes
         }
     }
 
-    internal enum NodeType
+    public enum NodeType
     {
         Root,
         Comment,

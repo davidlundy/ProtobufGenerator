@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace ProtobufGenerator.Interfaces
+﻿namespace ProtobufGenerator.Interfaces
 {
     public interface IGenerateProto
     {

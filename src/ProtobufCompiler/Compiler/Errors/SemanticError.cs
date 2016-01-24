@@ -3,7 +3,7 @@ using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
-    internal class SemanticError : CompilerError, IEquatable<SemanticError>
+    public class SemanticError : CompilerError, IEquatable<SemanticError>
     {
 
         internal SemanticError(string message) : base(message)

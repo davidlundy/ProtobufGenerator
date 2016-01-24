@@ -4,12 +4,12 @@ using ProtobufCompiler.Compiler.Nodes;
 
 namespace ProtobufCompiler.Interfaces
 {
-    internal interface IVisitor
+    public interface IVisitor
     {
         void Visit(Node node);
     }
 
-    internal interface IErrorTrackingVisitor : IVisitor
+    public interface IErrorTrackingVisitor : IVisitor
     {
         ICollection<ParseError> Errors { get; }
     }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ProtobufCompiler.Types
+namespace ProtobufGenerator.Types
 {
     public class OneOfField : Field
     {
