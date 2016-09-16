@@ -1,31 +1,19 @@
 ﻿{
   "version": "1.0.0-alpha",
-  "description": "",
   "authors": [ "David Lundy" ],
-  "owners": [ "David Lundy" ],
-  "summary": "",
-  "tags": [ "binary", "serialization", "protocol", "buffers", "protobuf", "deserialization" ],
-  "projectUrl": "https://github.com/draylundy/ProtobufGenerator",
-  "licenseUrl": "https://raw.githubusercontent.com/draylundy/ProtobufGenerator/master/LICENSE",
 
-  "compilationOptions": {
-    "warningsAsErrors": true
+  "buildOptions": {
+    "debugType": "portable"
   },
 
   "dependencies": {
+    "NETStandard.Library": "1.6.0"
   },
 
   "frameworks": {
-    "dnx451": {
-    },
-    "dnxcore50": {
-      "dependencies": {
-        "System.Globalization": "4.0.11-beta-*",
-        "System.Globalization.Extensions": "4.0.1-beta-*",
-        "System.Collections": "4.0.11-beta-*",
-        "System.Linq": "4.0.1-beta-*",
-        "System.Text.RegularExpressions": "4.0.11-beta-*"
-      }
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "buildOptions": { "define": [ "NETSTANDARD1_6" ] }
     }
   }
 }

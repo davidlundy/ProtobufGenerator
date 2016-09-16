@@ -2,10 +2,10 @@
 using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
-using ProtobufGenerator.Types;
+using ProtobufCompiler.Compiler.Types;
 using System.Linq;
 
-namespace ProtobufGenerator.Visitors
+namespace ProtobufCompiler.Compiler.Types
 {
     internal abstract class SemanticBaseVisitor : IErrorTrackingVisitor
     {

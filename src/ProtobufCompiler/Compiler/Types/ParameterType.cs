@@ -1,7 +1,7 @@
 ﻿using System;
-using ProtobufGenerator.Extensions;
+using ProtobufCompiler.Extensions;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class ParameterType : IEquatable<ParameterType>
     {
@@ -17,7 +17,7 @@ namespace ProtobufGenerator.Types
         public bool Equals(ParameterType other)
         {
             if (other == null) return false;
-            return Name.EqualsIgnoreCase(other.Name) &&
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    Streaming.Equals(other.Streaming);
         }
 

@@ -13,11 +13,11 @@ namespace ProtobufCompiler.Tests
     {
         private readonly ILexicalAnalyzer _sys;
 
-        private readonly string _data = "syntax = \"proto3\";" +Environment.NewLine +
+        private readonly string _data = "syntax = \"proto3\";" + Environment.NewLine +
                                             "message Outer {" + Environment.NewLine +
-                                               "/*This should start a block"+Environment.NewLine+
-                                               "and this should end it.*/"+Environment.NewLine+
-                                               "//This should start a line comment"+Environment.NewLine+
+                                               "/*This should start a block" + Environment.NewLine +
+                                               "and this should end it.*/" + Environment.NewLine +
+                                               "//This should start a line comment" + Environment.NewLine +
                                                "option my_option = true; // some comment" + Environment.NewLine +
                                                "message Inner {" + Environment.NewLine +
                                                "int64 ival = 1;" + Environment.NewLine +

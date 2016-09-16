@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ProtobufGenerator.Extensions;
+using ProtobufCompiler.Extensions;
 using System.Linq;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class EnumField : IEquatable<EnumField>
     {
@@ -21,7 +21,7 @@ namespace ProtobufGenerator.Types
         public bool Equals(EnumField other)
         {
             if (other == null) return false;
-            return Name.EqualsIgnoreCase(other.Name) &&
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    FieldNumber.Equals(other.FieldNumber) &&
                    FieldOptions.SequenceEqual(other.FieldOptions);
         }

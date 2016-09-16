@@ -20,7 +20,7 @@ namespace ProtobufCompiler.Compiler.Errors
         public bool Equals(ParseError other)
         {
             if (other == null) return false;
-            return Token.Equals(other.Token) && Message.EqualsIgnoreCase(other.Message);
+            return Token.Equals(other.Token) && Message.Equals(other.Message, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

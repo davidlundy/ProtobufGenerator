@@ -1,7 +1,7 @@
-﻿using ProtobufGenerator.Extensions;
+﻿using ProtobufCompiler.Extensions;
 using System;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public enum ImportType
     {
@@ -26,7 +26,7 @@ namespace ProtobufGenerator.Types
         public bool Equals(Import other)
         {
             if (other == null) return false;
-            return ImportType.Equals(other.ImportType) && ImportClass.EqualsIgnoreCase(other.ImportClass);
+            return ImportType.Equals(other.ImportType) && ImportClass.Equals(other.ImportClass, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

@@ -1,7 +1,7 @@
-﻿using ProtobufGenerator.Extensions;
+﻿using ProtobufCompiler.Extensions;
 using System;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class Map : IEquatable<Map>
     {
@@ -21,10 +21,10 @@ namespace ProtobufGenerator.Types
         public bool Equals(Map other)
         {
             if (other == null) return false;
-            return Name.EqualsIgnoreCase(other.Name) &&
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    FieldNum.Equals(other.FieldNum) &&
-                   KeyType.EqualsIgnoreCase(other.KeyType) &&
-                   ValueType.EqualsIgnoreCase(other.ValueType);
+                   KeyType.Equals(other.KeyType, StringComparison.OrdinalIgnoreCase) &&
+                   ValueType.Equals(other.ValueType, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

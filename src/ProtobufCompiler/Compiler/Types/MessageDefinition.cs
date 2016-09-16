@@ -1,9 +1,9 @@
-﻿using ProtobufGenerator.Extensions;
+﻿using ProtobufCompiler.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class MessageDefinition : IEquatable<MessageDefinition>
     {
@@ -29,7 +29,7 @@ namespace ProtobufGenerator.Types
         public bool Equals(MessageDefinition other)
         {
             if (other == null) return false;
-            return Name.EqualsIgnoreCase(other.Name) &&
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    Fields.SequenceEqual(other.Fields) &&
                    OneOfs.SequenceEqual(other.OneOfs) &&
                    Options.SequenceEqual(other.Options) &&

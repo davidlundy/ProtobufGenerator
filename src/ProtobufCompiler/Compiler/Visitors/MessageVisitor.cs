@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
-using ProtobufGenerator.Types;
+using ProtobufCompiler.Compiler.Types;
 using System.Linq;
 
-namespace ProtobufGenerator.Visitors
+namespace ProtobufCompiler.Compiler.Types
 {
     internal class MessageVisitor : SemanticBaseVisitor
     {

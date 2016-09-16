@@ -24,7 +24,7 @@ namespace ProtobufCompiler.Tests
             result.Should().Be(root, BecauseObjectGraphsEqual);
 
             // Assert Any Expected Errors
-            if(ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections. 
+            if (ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections. 
             result.Errors.ShouldAllBeEquivalentTo(errors);
         }
 
@@ -52,7 +52,7 @@ namespace ProtobufCompiler.Tests
 
             #region Arrange Expected NodeTree Output
             var root = new RootNode();
-            var comment = new Node(NodeType.Comment,"\\*");
+            var comment = new Node(NodeType.Comment, "\\*");
             // Bit of an issue here, notice the spaces around the NewLine, we'd like to make that go away.
             var text = "This is a comment. " + Environment.NewLine + " This is a second line.";
             var commentText = new Node(NodeType.CommentText, text);
@@ -116,7 +116,7 @@ namespace ProtobufCompiler.Tests
             #endregion
 
 
-            AssertSyntax(tokenList, root, new [] { new ParseError("Found an invalid top level statement at token ", badToken) });
+            AssertSyntax(tokenList, root, new[] { new ParseError("Found an invalid top level statement at token ", badToken) });
         }
 
         [Fact]
@@ -410,7 +410,7 @@ namespace ProtobufCompiler.Tests
             var name = new Node(NodeType.Identifier, "field_name");
             var value = new Node(NodeType.FieldNumber, "2");
             field.AddChildren(repeated, type, name, value);
-            message.AddChildren(msgName,field);
+            message.AddChildren(msgName, field);
             root.AddChild(message);
             #endregion
 
@@ -572,7 +572,7 @@ namespace ProtobufCompiler.Tests
                 new Node(NodeType.StringLiteral, "bar")
             };
             nameReserve.AddChildren(reservedNames.ToArray());
-            
+
             message.AddChildren(msgName, numReserve, nameReserve);
             root.AddChild(message);
             #endregion

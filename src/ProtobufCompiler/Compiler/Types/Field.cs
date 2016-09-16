@@ -1,9 +1,9 @@
-﻿using ProtobufGenerator.Extensions;
+﻿using ProtobufCompiler.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class Field : IEquatable<Field>
     {
@@ -29,11 +29,11 @@ namespace ProtobufGenerator.Types
         public bool Equals(Field other)
         {
             if (other == null) return false;
-            return FieldName.EqualsIgnoreCase(other.FieldName) &&
+            return FieldName.Equals(other.FieldName, StringComparison.OrdinalIgnoreCase) &&
                    SimpleType.Equals(other.SimpleType) &&
                    FieldNumber.Equals(other.FieldNumber) &&
                    Repeated.Equals(other.Repeated) &&
-                   UserType.EqualsIgnoreCase(other.UserType) &&
+                   UserType.Equals(other.UserType, StringComparison.OrdinalIgnoreCase) &&
                    FieldOptions.SequenceEqual(other.FieldOptions);
 
         }

@@ -61,7 +61,7 @@ namespace ProtobufCompiler.Compiler.Nodes
             if (!NodeType.Equals(NodeType.Root) && !other.NodeType.Equals(NodeType.Root))
             {
                 return NodeType.Equals(other.NodeType) && Children.SequenceEqual(other.Children) &&
-                       NodeValue.EqualsIgnoreCase(other.NodeValue);
+                       NodeValue.Equals(other.NodeValue, StringComparison.OrdinalIgnoreCase);
             }
             return false;
         }

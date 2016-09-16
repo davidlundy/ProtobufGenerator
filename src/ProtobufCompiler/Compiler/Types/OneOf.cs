@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProtobufGenerator.Extensions;
+using ProtobufCompiler.Extensions;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class OneOf : IEquatable<OneOf>
     {
@@ -19,7 +19,7 @@ namespace ProtobufGenerator.Types
         public bool Equals(OneOf other)
         {
             if (other == null) return false;
-            return Name.EqualsIgnoreCase(other.Name) &&
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    Fields.SequenceEqual(other.Fields);
         }
 

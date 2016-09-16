@@ -1,7 +1,7 @@
 ﻿using System;
-using ProtobufGenerator.Extensions;
+using ProtobufCompiler.Extensions;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class Package : IEquatable<Package>
     {
@@ -14,7 +14,7 @@ namespace ProtobufGenerator.Types
 
         public bool Equals(Package other)
         {
-            return other != null && Name.EqualsIgnoreCase(other.Name);
+            return other != null && Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

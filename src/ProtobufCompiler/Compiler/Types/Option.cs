@@ -1,7 +1,7 @@
 ﻿using System;
-using ProtobufGenerator.Extensions;
+using ProtobufCompiler.Extensions;
 
-namespace ProtobufGenerator.Types
+namespace ProtobufCompiler.Compiler.Types
 {
     public class Option : IEquatable<Option>
     {
@@ -18,8 +18,8 @@ namespace ProtobufGenerator.Types
         {
             if (other == null) return false;
 
-            return Name.EqualsIgnoreCase(other.Name) &&
-                   Value.EqualsIgnoreCase(other.Value);
+            return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
+                   Value.Equals(other.Value, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

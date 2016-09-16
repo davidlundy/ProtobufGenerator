@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using ProtobufGenerator.Generation;
 using ProtobufGenerator.Extensions;
+using System.IO;
 
 namespace ProtobufGenerator
 {
@@ -18,7 +19,13 @@ namespace ProtobufGenerator
 
         public void ProcessProto()
         {
-            throw new NotImplementedException();
+            foreach (var job in _config.JobSet.Jobs)
+            {
+                var protoDirectory = job.ProtoDirectory;
+                var fileList = Directory.GetFiles(protoDirectory, "*.proto", SearchOption.AllDirectories);
+
+            }
         }
     }
 }
+

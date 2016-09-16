@@ -18,7 +18,7 @@ namespace ProtobufCompiler.Compiler.Errors
 
         public bool Equals(SemanticError other)
         {
-            return other != null && Message.EqualsIgnoreCase(other.Message);
+            return other != null && Message.Equals(other.Message, StringComparison.OrdinalIgnoreCase);
         }
 
         public override bool Equals(object obj)

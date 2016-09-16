@@ -35,7 +35,7 @@ namespace ProtobufCompiler.Compiler
             return Type.Equals(other.Type) &&
                    Column == other.Column &&
                    Line == other.Line &&
-                   Lexeme.EqualsIgnoreCase(other.Lexeme);
+                   Lexeme.Equals(other.Lexeme, StringComparison.OrdinalIgnoreCase);
 
         }
 
@@ -49,10 +49,10 @@ namespace ProtobufCompiler.Compiler
         public override int GetHashCode()
         {
             var hash = 13;
-            hash = (hash*7) + Type.GetHashCode();
-            hash = (hash*7) + Column.GetHashCode();
-            hash = (hash*7) + Line.GetHashCode();
-            hash = (hash*7) + Lexeme.GetHashCode();
+            hash = (hash * 7) + Type.GetHashCode();
+            hash = (hash * 7) + Column.GetHashCode();
+            hash = (hash * 7) + Line.GetHashCode();
+            hash = (hash * 7) + Lexeme.GetHashCode();
             return hash;
         }
 
