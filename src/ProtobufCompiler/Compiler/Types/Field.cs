@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtobufCompiler.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +17,7 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal Field(string type, string name, int fieldNum, IEnumerable<Option> fieldOptions, bool isRepeated)
         {
+            type = type.ToFirstUpper();
             FieldName = name;
             FieldNumber = fieldNum;
             FieldOptions = fieldOptions ?? new List<Option>();

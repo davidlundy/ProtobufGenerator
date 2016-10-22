@@ -89,6 +89,22 @@ namespace ProtobufCompiler.Extensions
                 "float".Equals(self) || "bytes".Equals(self);
         }
 
+        /// <summary>
+        /// Returns the string with the first letter capitalized, leaving the remaining characters in the original case.
+        /// <para>Used primarily to turn e.g. int32 into Int32 so we can parse to an Enum value that won't collide with the C# language</para>
+        /// </summary>
+        /// <param name="self">The string to mangle</param>
+        /// <returns>The same string with the first character upper case.</returns>
+        internal static string ToFirstUpper(this string self)
+        {
+            Check.NotNull(self, nameof(self));
+
+            if (self.Length > 1)
+                return char.ToUpper(self[0]) + self.Substring(1);
+
+            return self.ToUpper();
+        }
+
         internal static TokenType GetTokenType(this string self)
         {
             if (self.IsIdToken())
