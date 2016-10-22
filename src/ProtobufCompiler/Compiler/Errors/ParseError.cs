@@ -1,5 +1,4 @@
 ﻿using System;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
@@ -37,6 +36,5 @@ namespace ProtobufCompiler.Compiler.Errors
             hash = (hash * 7) + Message.GetHashCode();
             return hash;
         }
-
     }
 }

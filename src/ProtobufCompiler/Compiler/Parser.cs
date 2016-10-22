@@ -88,7 +88,7 @@ namespace ProtobufCompiler.Compiler
             // must have at least e|E and 1 more
             if (input.Length < 2) return false;
             if (!'e'.Equals(input[0]) && !'E'.Equals(input[0])) return false;
-            
+
             // If we have the simplest case of only digits after E
             if (!input.Skip(1).SkipWhile(IsDecimalDigit).Any()) return true;
 
@@ -104,8 +104,8 @@ namespace ProtobufCompiler.Compiler
             // A decimal is fine, as long as it's not by itself
             if (rest.Contains('.') && rest.Length == 1) return false;
 
-            // We can have a float literal in the exp, but it can't have own exponent. 
-            // So no recursive call. 
+            // We can have a float literal in the exp, but it can't have own exponent.
+            // So no recursive call.
             var sepPlus = rest.SkipWhile(IsDecimalDigit).ToArray();
 
             // If the non-digit wasn't a '.'
@@ -113,7 +113,7 @@ namespace ProtobufCompiler.Compiler
 
             // "1." case, ugly but technically valid
             if (sepPlus.Length == 1) return true;
-            
+
             // If there is anything left not a decimal return false.
             return !sepPlus.Skip(1).SkipWhile(IsDecimalDigit).Any();
         }
@@ -123,7 +123,7 @@ namespace ProtobufCompiler.Compiler
             if (string.IsNullOrWhiteSpace(input)) return false;
             if (!input.Contains('.')) return false; // No '.' case
             if (input.Length < 2) return false; // Min 1 digit and 1 '.'
-            
+
             // Scan to non-decimal
             var sepPlus = input.SkipWhile(IsDecimalDigit).ToArray();
 
@@ -248,6 +248,7 @@ namespace ProtobufCompiler.Compiler
         {
             return !string.IsNullOrWhiteSpace(input) && input.Equals("reserved");
         }
+
         internal bool IsEnum(string input)
         {
             return !string.IsNullOrWhiteSpace(input) && input.Equals("enum");

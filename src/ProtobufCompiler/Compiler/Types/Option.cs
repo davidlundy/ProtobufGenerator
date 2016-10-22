@@ -1,5 +1,4 @@
 ﻿using System;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Types
 {

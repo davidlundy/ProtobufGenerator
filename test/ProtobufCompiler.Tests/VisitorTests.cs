@@ -1,11 +1,11 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ProtobufCompiler.Compiler.Nodes;
-using ProtobufCompiler.Compiler.Visitors;
-using Xunit;
 using ProtobufCompiler.Compiler.Types;
+using ProtobufCompiler.Compiler.Visitors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace ProtobufCompiler.Tests
 {
@@ -32,7 +32,6 @@ namespace ProtobufCompiler.Tests
             var result = debugVisitor.ToString();
 
             result.Should().Be(expected, "because pretty printing should be successful.");
-
         }
 
         [Fact]
@@ -46,7 +45,6 @@ namespace ProtobufCompiler.Tests
             one.AddChild(two);
             two.AddChild(three);
 
-
             var debugVisitor = new DebugVisitor();
             root.Accept(debugVisitor);
 
@@ -59,9 +57,11 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorCantVisitNonRoot()
         {
             #region Arrange Bad Root Node Input and Builder Visitor
+
             var root = new Node(NodeType.Service, "service");
             var sut = new BuilderVisitor();
-            #endregion
+
+            #endregion Arrange Bad Root Node Input and Builder Visitor
 
             var expected = Assert.Throws<InvalidOperationException>(() => root.Accept(sut));
             expected.Message.Should().Be("Cannot use BuilderVisitor on non-root Node");
@@ -71,12 +71,14 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildSyntax()
         {
             #region Arrange Syntax Node Input
+
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
             var proto3 = new Node(NodeType.StringLiteral, "proto3");
             syntax.AddChild(proto3);
             root.AddChild(syntax);
-            #endregion
+
+            #endregion Arrange Syntax Node Input
 
             var expected = new Syntax("proto3");
             var sut = new BuilderVisitor();
@@ -89,12 +91,14 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildPackage()
         {
             #region Arrange Package Node Input
+
             var root = new RootNode();
             var package = new Node(NodeType.Package, "package");
             var packageName = new Node(NodeType.Identifier, "foo.bar.baz");
             package.AddChild(packageName);
             root.AddChild(package);
-            #endregion
+
+            #endregion Arrange Package Node Input
 
             var expected = new Package("foo.bar.baz");
             var sut = new BuilderVisitor();
@@ -107,13 +111,15 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildImport()
         {
             #region Arrange Package Node Input
+
             var root = new RootNode();
             var import = new Node(NodeType.Import, "import");
             var type = new Node(NodeType.ImportModifier, "public");
             var otherMessage = new Node(NodeType.StringLiteral, "other.message");
             import.AddChildren(type, otherMessage);
             root.AddChild(import);
-            #endregion
+
+            #endregion Arrange Package Node Input
 
             var expected = new Import("public", "other.message");
             var sut = new BuilderVisitor();
@@ -126,13 +132,15 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildOption()
         {
             #region Arrange Package Node Input
+
             var root = new RootNode();
             var option = new Node(NodeType.Option, "option");
             var optionName = new Node(NodeType.Identifier, "java_package");
             var optionValue = new Node(NodeType.StringLiteral, "com.example.foo");
             option.AddChildren(optionName, optionValue);
             root.AddChild(option);
-            #endregion
+
+            #endregion Arrange Package Node Input
 
             var expected = new Option("java_package", "com.example.foo");
             var sut = new BuilderVisitor();
@@ -145,6 +153,7 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildEnum()
         {
             #region Arrange Expected NodeTree Input
+
             var root = new RootNode();
             var enumnode = new Node(NodeType.Enum, "enum");
             var enumname = new Node(NodeType.Identifier, "EnumName");
@@ -158,7 +167,8 @@ namespace ProtobufCompiler.Tests
             field1.AddChildren(name1, value1);
             enumnode.AddChildren(enumname, field, field1);
             root.AddChild(enumnode);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Input
 
             var expected = new EnumDefinition("EnumName", null, new List<EnumField>
             {
@@ -176,20 +186,24 @@ namespace ProtobufCompiler.Tests
         public void BuilderVisitorShouldBuildMessage()
         {
             #region Arrange Expected NodeTree Input
+
             var root = new RootNode();
             //  Define base Message with One Field
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
 
             #region Outer Message Field nodes
+
             var field = new Node(NodeType.Field, "int32");
             var type = new Node(NodeType.Type, "int32");
             var name = new Node(NodeType.Identifier, "field_name");
             var value = new Node(NodeType.FieldNumber, "2");
             field.AddChildren(type, name, value);
-            #endregion
+
+            #endregion Outer Message Field nodes
 
             #region Nested Message nodes
+
             var nestedMsg = new Node(NodeType.Message, "message");
             var nestedName = new Node(NodeType.Identifier, "Inner");
 
@@ -198,9 +212,11 @@ namespace ProtobufCompiler.Tests
             var innerName = new Node(NodeType.Identifier, "field_name2");
             var innerValue = new Node(NodeType.FieldNumber, "0");
             innerField.AddChildren(innerType, innerName, innerValue);
-            #endregion
+
+            #endregion Nested Message nodes
 
             #region Nested Enumeration nodes
+
             var enumnode = new Node(NodeType.Enum, "enum");
             var enumname = new Node(NodeType.Identifier, "EnumName");
             var enumfield0 = new Node(NodeType.EnumField, "DEFAULT");
@@ -212,15 +228,17 @@ namespace ProtobufCompiler.Tests
             enumnode.AddChildren(enumname, enumfield0, enumfield1);
             enumfield0.AddChildren(enumfieldname0, enumfieldvalue0);
             enumfield1.AddChildren(enumfieldname1, enumfieldvalue1);
-            #endregion
 
+            #endregion Nested Enumeration nodes
 
             nestedMsg.AddChildren(nestedName, innerField);
             message.AddChildren(msgName, field, enumnode, nestedMsg);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Input
 
             #region Arrange Expected Output
+
             var expFields = new List<Field>
             {
                 new Field("int32", "field_name", 2, null, false)
@@ -242,7 +260,8 @@ namespace ProtobufCompiler.Tests
                 new MessageDefinition("Inner", inFields, null, null, null, null, null)
             };
             var expected = new MessageDefinition("Outer", expFields, null, null, null, enumDefs, msgDefs);
-            #endregion
+
+            #endregion Arrange Expected Output
 
             var sut = new BuilderVisitor();
             root.Accept(sut);

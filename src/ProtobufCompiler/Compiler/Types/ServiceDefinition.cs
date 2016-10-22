@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ProtobufCompiler.Extensions;
+using System;
 using System.Collections.Generic;
-using ProtobufCompiler.Extensions;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler.Types
@@ -11,7 +11,7 @@ namespace ProtobufCompiler.Compiler.Types
         public IEnumerable<ServiceMethod> Methods { get; }
         public IEnumerable<Option> Options { get; }
 
-        internal ServiceDefinition(string name, IEnumerable<ServiceMethod> serviceMethods, IEnumerable<Option> serviceOptions )
+        internal ServiceDefinition(string name, IEnumerable<ServiceMethod> serviceMethods, IEnumerable<Option> serviceOptions)
         {
             Name = Check.NotNull(name, nameof(name));
             Methods = serviceMethods ?? new List<ServiceMethod>();
@@ -23,7 +23,6 @@ namespace ProtobufCompiler.Compiler.Types
             if (other == null) return false;
             return Name.Equals(other.Name, StringComparison.OrdinalIgnoreCase) &&
                    Methods.SequenceEqual(other.Methods);
-
         }
 
         public override bool Equals(object obj)

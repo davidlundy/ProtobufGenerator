@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
+using System.Collections.Generic;
 
 namespace ProtobufCompiler.Interfaces
 {
@@ -13,5 +13,4 @@ namespace ProtobufCompiler.Interfaces
     {
         ICollection<CompilerError> Errors { get; }
     }
-
 }

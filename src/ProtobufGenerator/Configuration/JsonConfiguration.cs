@@ -1,12 +1,13 @@
-﻿using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ProtobufGenerator.Interfaces;
+using System.IO;
 
 namespace ProtobufGenerator.Configuration
 {
     public class JsonConfiguration : IConfiguration
     {
         public JobSet JobSet { get; }
+
         public JsonConfiguration(string filePath)
         {
             using (var sr = new StreamReader(new FileStream(filePath, FileMode.Open)))

@@ -1,5 +1,4 @@
 ﻿using System;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -36,7 +35,6 @@ namespace ProtobufCompiler.Compiler
                    Column == other.Column &&
                    Line == other.Line &&
                    Lexeme.Equals(other.Lexeme, StringComparison.OrdinalIgnoreCase);
-
         }
 
         public override bool Equals(object obj)

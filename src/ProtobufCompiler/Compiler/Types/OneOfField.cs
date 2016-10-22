@@ -7,7 +7,6 @@ namespace ProtobufCompiler.Compiler.Types
         public OneOfField(string type, string name, int fieldNum, IEnumerable<Option> fieldOptions) :
             base(type, name, fieldNum, fieldOptions, false)
         {
-            
         }
     }
 }

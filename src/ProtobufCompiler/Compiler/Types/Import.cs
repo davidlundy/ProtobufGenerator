@@ -1,11 +1,10 @@
-﻿using ProtobufCompiler.Extensions;
-using System;
+﻿using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
     public enum ImportType
     {
-        None, 
+        None,
         Weak,
         Public
     }
@@ -17,8 +16,8 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal Import(string type, string clas)
         {
-            ImportType = string.IsNullOrWhiteSpace(type) ? 
-                ImportType = ImportType.None : 
+            ImportType = string.IsNullOrWhiteSpace(type) ?
+                ImportType = ImportType.None :
                 (ImportType)Enum.Parse(ImportType.GetType(), type, true);
             ImportClass = clas;
         }

@@ -1,7 +1,7 @@
 ﻿namespace ProtobufCompiler.Interfaces
 {
     /// <summary>
-    /// Represents the source of a character stream. 
+    /// Represents the source of a character stream.
     /// </summary>
     internal interface ISource
     {
@@ -17,7 +17,7 @@
         char Next();
 
         /// <summary>
-        /// Look at the next character in the stream without consuming it. 
+        /// Look at the next character in the stream without consuming it.
         /// </summary>
         /// <returns></returns>
         char Peek();
@@ -29,7 +29,7 @@
         int Line { get; }
 
         /// <summary>
-        /// Get the current string position of the input. Increments on Next. 
+        /// Get the current string position of the input. Increments on Next.
         /// </summary>
         int Column { get; }
     }

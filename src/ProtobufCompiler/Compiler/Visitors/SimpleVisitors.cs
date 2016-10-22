@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
-using ProtobufCompiler.Compiler.Types;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler.Types
@@ -25,7 +24,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal SyntaxVisitor(ICollection<CompilerError> errors) : base(errors)
         {
-            
         }
 
         public override void Visit(Node node)
@@ -39,7 +37,9 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Package Package { get; internal set; }
 
-        internal PackageVisitor(ICollection<CompilerError> errors) : base(errors) { }
+        internal PackageVisitor(ICollection<CompilerError> errors) : base(errors)
+        {
+        }
 
         public override void Visit(Node node)
         {
@@ -52,7 +52,9 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Option Option { get; internal set; }
 
-        internal OptionVisitor(ICollection<CompilerError> errors ) : base(errors) { }
+        internal OptionVisitor(ICollection<CompilerError> errors) : base(errors)
+        {
+        }
 
         public override void Visit(Node node)
         {
@@ -66,7 +68,9 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Import Import { get; internal set; }
 
-        internal ImportVisitor(ICollection<CompilerError> errors ) : base(errors) { }
+        internal ImportVisitor(ICollection<CompilerError> errors) : base(errors)
+        {
+        }
 
         public override void Visit(Node node)
         {
@@ -82,7 +86,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal EnumVisitor(ICollection<CompilerError> errors) : base(errors)
         {
-            
         }
 
         public override void Visit(Node node)
@@ -90,13 +93,13 @@ namespace ProtobufCompiler.Compiler.Types
             var name = node.Children.Single(t => t.NodeType.Equals(NodeType.Identifier)).NodeValue;
             var enumFieldNodes = node.Children.Where(t => t.NodeType.Equals(NodeType.EnumField));
             var enumFields = new List<EnumField>();
-            foreach(var ef in enumFieldNodes)
+            foreach (var ef in enumFieldNodes)
             {
                 var vis = new EnumFieldVisitor(Errors);
                 ef.Accept(vis);
                 enumFields.Add(vis.EnumField);
             }
-            
+
             EnumDefinition = new EnumDefinition(name, null, enumFields);
         }
     }
@@ -107,7 +110,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal EnumFieldVisitor(ICollection<CompilerError> errors) : base(errors)
         {
-            
         }
 
         public override void Visit(Node node)
@@ -129,7 +131,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         public override void Visit(Node node)
         {
-
         }
     }
 }

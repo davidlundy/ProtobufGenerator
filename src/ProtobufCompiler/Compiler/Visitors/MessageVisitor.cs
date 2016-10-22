@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
-using ProtobufCompiler.Compiler.Types;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler.Types
@@ -12,7 +11,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         internal MessageVisitor(ICollection<CompilerError> errors) : base(errors)
         {
-
         }
 
         public override void Visit(Node node)
@@ -47,7 +45,6 @@ namespace ProtobufCompiler.Compiler.Types
             }
 
             Message = new MessageDefinition(name, fields, null, null, null, enums, messages);
-
         }
     }
 
@@ -57,7 +54,6 @@ namespace ProtobufCompiler.Compiler.Types
 
         public FieldVisitor(ICollection<CompilerError> errors) : base(errors)
         {
-
         }
 
         public override void Visit(Node node)

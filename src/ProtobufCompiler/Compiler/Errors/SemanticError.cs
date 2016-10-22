@@ -1,14 +1,11 @@
 ﻿using System;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
     public class SemanticError : CompilerError, IEquatable<SemanticError>
     {
-
         internal SemanticError(string message) : base(message)
         {
-
         }
 
         public override string ToString()
@@ -34,6 +31,5 @@ namespace ProtobufCompiler.Compiler.Errors
             hash = (hash * 7) + Message.GetHashCode();
             return hash;
         }
-
     }
 }

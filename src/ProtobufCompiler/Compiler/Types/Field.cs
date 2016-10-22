@@ -1,5 +1,4 @@
-﻿using ProtobufCompiler.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,7 @@ namespace ProtobufCompiler.Compiler.Types
             FieldNumber = fieldNum;
             FieldOptions = fieldOptions ?? new List<Option>();
             Repeated = isRepeated;
-            IsUsertype = !Enum.IsDefined(typeof (SimpleType), type);
+            IsUsertype = !Enum.IsDefined(typeof(SimpleType), type);
             SimpleType = IsUsertype ? SimpleType.None : (SimpleType)Enum.Parse(typeof(SimpleType), type);
             UserType = IsUsertype ? type : string.Empty;
         }
@@ -35,7 +34,6 @@ namespace ProtobufCompiler.Compiler.Types
                    Repeated.Equals(other.Repeated) &&
                    UserType.Equals(other.UserType, StringComparison.OrdinalIgnoreCase) &&
                    FieldOptions.SequenceEqual(other.FieldOptions);
-
         }
 
         public override bool Equals(object obj)
@@ -61,7 +59,7 @@ namespace ProtobufCompiler.Compiler.Types
     public enum SimpleType
     {
         None,
-        Double, 
+        Double,
         Float,
         Int32,
         Int64,

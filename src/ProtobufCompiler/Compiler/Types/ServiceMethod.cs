@@ -1,5 +1,5 @@
-﻿using System;
-using ProtobufCompiler.Extensions;
+﻿using ProtobufCompiler.Extensions;
+using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {

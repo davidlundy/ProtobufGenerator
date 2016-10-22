@@ -42,7 +42,6 @@ namespace ProtobufCompiler.Tests
             output.Should().Be(expected, $"Because {input} is{(expected ? string.Empty : " not ")}a valid Hex Digit");
         }
 
-
         [Theory]
         [InlineData('0', true)]
         [InlineData('7', true)]
@@ -315,6 +314,5 @@ namespace ProtobufCompiler.Tests
             output.Should()
                 .Be(expected, $"because {input} is{(expected ? string.Empty : " not ")} a valid integer literal.");
         }
-
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -26,7 +26,6 @@ namespace ProtobufCompiler.Compiler
             var root = new RootNode();
             while (_tokens.Any())
             {
-
                 var topLevelStatement = ParseTopLevelStatement(root);
                 if (topLevelStatement != null) root.AddChild(topLevelStatement);
             }
@@ -36,7 +35,6 @@ namespace ProtobufCompiler.Compiler
 
         private void BurnLine()
         {
-            
             Token token;
             do
             {
@@ -82,7 +80,7 @@ namespace ProtobufCompiler.Compiler
         private Node ParseInlineComment()
         {
             var token = _tokens.Dequeue(); // Remove the line comment token
-            
+
             var commentNode = new Node(NodeType.Comment, token.Lexeme);
             var commentText = new Node(NodeType.CommentText, DumpStringToEndLine());
             commentNode.AddChild(commentText);
@@ -100,7 +98,7 @@ namespace ProtobufCompiler.Compiler
 
         private Node ParseSyntax()
         {
-            var syntax = _tokens.Dequeue(); // Pop off syntax token. 
+            var syntax = _tokens.Dequeue(); // Pop off syntax token.
 
             var assignment = _tokens.Dequeue();
             if (!_parser.IsAssignment(assignment.Lexeme))
@@ -257,7 +255,7 @@ namespace ProtobufCompiler.Compiler
             {
                 _errors.Add(
                     new ParseError(
-                        $"Could not find an option value for option starting at line {optionTag.Line} Found token ", 
+                        $"Could not find an option value for option starting at line {optionTag.Line} Found token ",
                         _tokens.Peek()));
                 return null;
             }
@@ -392,9 +390,9 @@ namespace ProtobufCompiler.Compiler
             DumpEndline();
 
             var next = _tokens.Peek();
-            while(!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
+            while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
             {
-                // Some of these may be null returns. That's ok. AddChildren will ignore. 
+                // Some of these may be null returns. That's ok. AddChildren will ignore.
                 var reservation = ParseReservation();
                 var fieldNode = ParseMessageField();
                 var nestedMessage = ParseMessage();
@@ -411,7 +409,6 @@ namespace ProtobufCompiler.Compiler
             DumpEndline();
 
             return msgNode;
-
         }
 
         private Node ParseReservation()
@@ -450,7 +447,7 @@ namespace ProtobufCompiler.Compiler
                     return reservedNode;
                 }
             }
-           
+
             var existingString = DumpStringToEndLine();
             _errors.Add(
                     new ParseError(
@@ -471,16 +468,15 @@ namespace ProtobufCompiler.Compiler
                 {
                     if (!intRes.Any())
                     {
-                       _errors.Add(
-                           new ParseError(
-                               "Expected integer literal before ',' in reserved range ",
-                               token));
+                        _errors.Add(
+                            new ParseError(
+                                "Expected integer literal before ',' in reserved range ",
+                                token));
                         return new List<Node>();
                     }
                     token = _tokens.Peek();
                     continue;
                 }
-
 
                 if (_parser.IsDecimalLiteral(lexeme))
                 {
@@ -488,7 +484,6 @@ namespace ProtobufCompiler.Compiler
                     token = _tokens.Peek();
                     continue;
                 }
-
 
                 if (!"to".Equals(lexeme))
                 {
@@ -517,12 +512,12 @@ namespace ProtobufCompiler.Compiler
                     return new List<Node>();
                 }
 
-                // If we don't have an error go ahead and remove the token and use it to find the end range. 
+                // If we don't have an error go ahead and remove the token and use it to find the end range.
                 nextToken = _tokens.Dequeue();
                 var endRangeAt = int.Parse(nextToken.Lexeme);
 
                 // Now push all the integers in the range onto the stack.
-                var rangeLength = endRangeAt - startRangeAt + 1; 
+                var rangeLength = endRangeAt - startRangeAt + 1;
                 foreach (var elem in Enumerable.Range(startRangeAt, rangeLength))
                 {
                     intRes.Push(elem);
@@ -532,7 +527,7 @@ namespace ProtobufCompiler.Compiler
                 token = _tokens.Peek();
             }
 
-            // Now that we've hit an Endline or ';' terminator, return. 
+            // Now that we've hit an Endline or ';' terminator, return.
             return intRes.Select(t => new Node(NodeType.IntegerLiteral, t.ToString())).Reverse();
         }
 
@@ -604,7 +599,7 @@ namespace ProtobufCompiler.Compiler
             var next = _tokens.Peek();
             while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
             {
-                // Some of these may be null returns. That's ok. AddChildren will ignore. 
+                // Some of these may be null returns. That's ok. AddChildren will ignore.
                 var fieldNode = ParseMessageField();
                 var oneOf = ParseOneOfField();
 
@@ -668,7 +663,6 @@ namespace ProtobufCompiler.Compiler
                         mapTag));
                 return null;
             }
-
 
             var closeAngle = _tokens.Dequeue();
             if (!">".Equals(closeAngle.Lexeme))

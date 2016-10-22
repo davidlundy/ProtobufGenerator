@@ -1,8 +1,8 @@
-﻿using System;
+﻿using ProtobufCompiler.Compiler.Nodes;
+using ProtobufCompiler.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using ProtobufCompiler.Compiler.Nodes;
-using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler.Visitors
 {
@@ -11,7 +11,7 @@ namespace ProtobufCompiler.Compiler.Visitors
         private readonly Dictionary<Guid, int> _depthMonitor = new Dictionary<Guid, int>();
         private readonly StringBuilder _sb = new StringBuilder();
         private int _currentDepth;
-        
+
         public void Visit(Node node)
         {
             if (node.NodeType.Equals(NodeType.Root))

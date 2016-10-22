@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ProtobufCompiler.Extensions;
+using System;
 using System.Collections.Generic;
-using ProtobufCompiler.Extensions;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler.Types

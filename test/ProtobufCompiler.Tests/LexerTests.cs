@@ -1,10 +1,10 @@
-﻿using System;
+﻿using FluentAssertions;
+using ProtobufCompiler.Compiler;
+using ProtobufCompiler.Interfaces;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using FluentAssertions;
-using ProtobufCompiler.Compiler;
-using ProtobufCompiler.Interfaces;
 using Xunit;
 
 namespace ProtobufCompiler.Tests
@@ -72,6 +72,5 @@ namespace ProtobufCompiler.Tests
             var tokenStream = _sys.TokenStream.Where(t => t.Type == TokenType.Comment);
             tokenStream.Count().Should().Be(4, "because there are 4 different opening or closing comment tokens");
         }
-
     }
 }

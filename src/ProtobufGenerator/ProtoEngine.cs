@@ -1,11 +1,10 @@
-﻿using ProtobufGenerator.Interfaces;
-using System;
-using System.Collections.Generic;
-using ProtobufGenerator.Generation;
-using ProtobufGenerator.Extensions;
-using System.IO;
+﻿using ProtobufCompiler;
 using ProtobufCompiler.Interfaces;
-using ProtobufCompiler;
+using ProtobufGenerator.Extensions;
+using ProtobufGenerator.Generation;
+using ProtobufGenerator.Interfaces;
+using System.Collections.Generic;
+using System.IO;
 
 namespace ProtobufGenerator
 {
@@ -28,7 +27,7 @@ namespace ProtobufGenerator
                 var protoDirectory = job.ProtoDirectory;
                 var fileList = Directory.GetFiles(protoDirectory, "*.proto", SearchOption.AllDirectories);
 
-                foreach(var file in fileList)
+                foreach (var file in fileList)
                 {
                     var compilation = _protoCompiler.Compile(file);
                     var descriptor = compilation.FileDescriptor;
@@ -37,4 +36,3 @@ namespace ProtobufGenerator
         }
     }
 }
-

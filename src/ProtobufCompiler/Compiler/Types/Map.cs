@@ -1,5 +1,4 @@
-﻿using ProtobufCompiler.Extensions;
-using System;
+﻿using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
@@ -37,10 +36,10 @@ namespace ProtobufCompiler.Compiler.Types
         public override int GetHashCode()
         {
             var hash = 13;
-            hash = (hash*7) + Name.GetHashCode();
-            hash = (hash*7) + FieldNum.GetHashCode();
-            hash = (hash*7) + KeyType.GetHashCode();
-            hash = (hash*7) + ValueType.GetHashCode();
+            hash = (hash * 7) + Name.GetHashCode();
+            hash = (hash * 7) + FieldNum.GetHashCode();
+            hash = (hash * 7) + KeyType.GetHashCode();
+            hash = (hash * 7) + ValueType.GetHashCode();
             return hash;
         }
     }

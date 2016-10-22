@@ -1,7 +1,7 @@
-﻿using System.IO;
-using System.Text;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ProtobufCompiler.Compiler;
+using System.IO;
+using System.Text;
 using Xunit;
 
 namespace ProtobufCompiler.Tests
@@ -96,7 +96,5 @@ namespace ProtobufCompiler.Tests
 
             _sys.Invoking(s => s.Next()).ShouldThrow<EndOfStreamException>();
         }
-
-
     }
 }

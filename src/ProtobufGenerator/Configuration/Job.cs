@@ -28,7 +28,7 @@ namespace ProtobufGenerator.Configuration
         public IEnumerable<string> NullableClasses { get; set; }
 
         /// <summary>
-        /// Dictionary of CustomAnnotations to provide indexed by class name. 
+        /// Dictionary of CustomAnnotations to provide indexed by class name.
         /// </summary>
         public IDictionary<string, IList<string>> CustomAnnotations { get; set; }
 
@@ -44,7 +44,7 @@ namespace ProtobufGenerator.Configuration
 
         /// <summary>
         /// Destination project. Future versions that have an EnvDTE or Roslyn environment available can
-        /// add code elements to the destination project. 
+        /// add code elements to the destination project.
         /// </summary>
         public string DestinationProject { get; set; }
     }

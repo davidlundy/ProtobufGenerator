@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler.Types
 {
@@ -33,8 +32,8 @@ namespace ProtobufCompiler.Compiler.Types
         public override int GetHashCode()
         {
             var hash = 13;
-            hash = (hash*7) + Name.GetHashCode();
-            hash = (hash*7) + Fields.GetHashCode();
+            hash = (hash * 7) + Name.GetHashCode();
+            hash = (hash * 7) + Fields.GetHashCode();
             return hash;
         }
     }

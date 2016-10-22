@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using ProtobufCompiler.Compiler;
+using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
+using System;
+using System.Collections.Generic;
 using Xunit;
-using ProtobufCompiler.Compiler.Errors;
 
 namespace ProtobufCompiler.Tests
 {
@@ -24,7 +24,7 @@ namespace ProtobufCompiler.Tests
             result.Should().Be(root, BecauseObjectGraphsEqual);
 
             // Assert Any Expected Errors
-            if (ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections. 
+            if (ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections.
             result.Errors.ShouldAllBeEquivalentTo(errors);
         }
 
@@ -32,6 +32,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildMultilineComment()
         {
             #region Arrange Multiline Comment Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Comment, 0, 0, "\\*"),
@@ -48,9 +49,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Comment, 0, 0, "*\\"),
                 new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Multiline Comment Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var comment = new Node(NodeType.Comment, "\\*");
             // Bit of an issue here, notice the spaces around the NewLine, we'd like to make that go away.
@@ -58,7 +61,8 @@ namespace ProtobufCompiler.Tests
             var commentText = new Node(NodeType.CommentText, text);
             comment.AddChild(commentText);
             root.AddChild(comment);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -67,24 +71,27 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildSyntaxNodes()
         {
             #region Arrange Syntax Declaration Token Input
+
             var tokenList = new List<Token>
             {
-
                 new Token(TokenType.Id, 0, 0, "syntax"),
                 new Token(TokenType.Control, 0, 1, "="),
                 new Token(TokenType.String, 0, 2, "\"proto3\""),
                 new Token(TokenType.Control, 0, 3, ";"),
                 new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Syntax Declaration Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
             var proto3 = new Node(NodeType.StringLiteral, "proto3");
             syntax.AddChild(proto3);
             root.AddChild(syntax);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -105,16 +112,18 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 3, ";"),
                 new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Invalid Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
             var proto3 = new Node(NodeType.StringLiteral, "proto3");
             syntax.AddChild(proto3);
             root.AddChild(syntax);
-            #endregion
 
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, new[] { new ParseError("Found an invalid top level statement at token ", badToken) });
         }
@@ -123,6 +132,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildImportNode()
         {
             #region Arrange Import Declaration Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "import"),
@@ -130,15 +140,18 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 2, ";"),
                 new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Import Declaration Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var import = new Node(NodeType.Import, "import");
             var otherMessage = new Node(NodeType.StringLiteral, "other.message");
             import.AddChild(otherMessage);
             root.AddChild(import);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -147,6 +160,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildPackageNode()
         {
             #region Arrange Package Declaration Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "package"),
@@ -154,15 +168,18 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 2, ";"),
                 new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Package Declaration Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var package = new Node(NodeType.Package, "package");
             var packageName = new Node(NodeType.Identifier, "foo.bar.baz");
             package.AddChild(packageName);
             root.AddChild(package);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -171,6 +188,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildOptionNode()
         {
             #region Arrange Option Declaration Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "option"),
@@ -180,16 +198,19 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 4, ";"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Option Declaration Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var option = new Node(NodeType.Option, "option");
             var optionName = new Node(NodeType.Identifier, "java_package");
             var optionValue = new Node(NodeType.StringLiteral, "com.example.foo");
             option.AddChildren(optionName, optionValue);
             root.AddChild(option);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -198,6 +219,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldParseEnumDefinition()
         {
             #region Arrange Enum Definition Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "enum"),
@@ -216,9 +238,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
                 new Token(TokenType.Control, 0, 12, "}")
             };
-            #endregion
+
+            #endregion Arrange Enum Definition Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var enumnode = new Node(NodeType.Enum, "enum");
             var enumname = new Node(NodeType.Identifier, "EnumName");
@@ -232,7 +256,8 @@ namespace ProtobufCompiler.Tests
             field1.AddChildren(name1, value1);
             enumnode.AddChildren(enumname, field, field1);
             root.AddChild(enumnode);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -241,6 +266,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldParseMessageDefinition()
         {
             #region Arrange Message Definition Token Input
+
             var tokenList = new List<Token>
             {
                 // Outer Message Start
@@ -249,6 +275,7 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 2, "{"),
 
                 #region Message Fields
+
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.String, 0, 0, "int32"),
                 new Token(TokenType.String, 0, 1, "field_name"),
@@ -256,9 +283,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Numeric, 0, 3, "2"),
                 new Token(TokenType.Control, 0, 4, ";"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
-                #endregion
+
+                #endregion Message Fields
 
                 #region Nested Enumeration Definition
+
                 new Token(TokenType.Id, 0, 0, "enum"),
                 new Token(TokenType.String, 0, 1, "EnumName"),
                 new Token(TokenType.Control, 0, 2, "{"),
@@ -274,9 +303,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 9, ";"),
                 new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
                 new Token(TokenType.Control, 0, 12, "}"),
-                #endregion
+
+                #endregion Nested Enumeration Definition
 
                 #region Nested Message Definition
+
                 new Token(TokenType.EndLine, 0, 11, Environment.NewLine),
                 new Token(TokenType.Id, 0, 0, "message"),
                 new Token(TokenType.String, 0, 1, "Inner"),
@@ -289,27 +320,34 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 4, ";"),
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}"),
-                #endregion
+
+                #endregion Nested Message Definition
+
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}")
             };
-            #endregion
+
+            #endregion Arrange Message Definition Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             //  Define base Message with One Field
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
 
             #region Outer Message Field nodes
+
             var field = new Node(NodeType.Field, "int32");
             var type = new Node(NodeType.Type, "int32");
             var name = new Node(NodeType.Identifier, "field_name");
             var value = new Node(NodeType.FieldNumber, "2");
             field.AddChildren(type, name, value);
-            #endregion
+
+            #endregion Outer Message Field nodes
 
             #region Nested Message nodes
+
             var nestedMsg = new Node(NodeType.Message, "message");
             var nestedName = new Node(NodeType.Identifier, "Inner");
 
@@ -318,9 +356,11 @@ namespace ProtobufCompiler.Tests
             var innerName = new Node(NodeType.Identifier, "field_name2");
             var innerValue = new Node(NodeType.FieldNumber, "0");
             innerField.AddChildren(innerType, innerName, innerValue);
-            #endregion
+
+            #endregion Nested Message nodes
 
             #region Nested Enumeration nodes
+
             var enumnode = new Node(NodeType.Enum, "enum");
             var enumname = new Node(NodeType.Identifier, "EnumName");
             var enumfield0 = new Node(NodeType.EnumField, "DEFAULT");
@@ -332,13 +372,14 @@ namespace ProtobufCompiler.Tests
             enumnode.AddChildren(enumname, enumfield0, enumfield1);
             enumfield0.AddChildren(enumfieldname0, enumfieldvalue0);
             enumfield1.AddChildren(enumfieldname1, enumfieldvalue1);
-            #endregion
 
+            #endregion Nested Enumeration nodes
 
             nestedMsg.AddChildren(nestedName, innerField);
             message.AddChildren(msgName, field, enumnode, nestedMsg);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -347,6 +388,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildMessageTypeFieldNode()
         {
             #region Arrange Message Type Field Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "message"),
@@ -361,9 +403,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}")
             };
-            #endregion
+
+            #endregion Arrange Message Type Field Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
@@ -374,7 +418,8 @@ namespace ProtobufCompiler.Tests
             field.AddChildren(type, name, value);
             message.AddChildren(msgName, field);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -383,6 +428,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildRepeatedFieldNode()
         {
             #region Arrange Repeated Field Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "message"),
@@ -398,9 +444,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 5, Environment.NewLine),
                 new Token(TokenType.Control, 0, 4, "}")
             };
-            #endregion
+
+            #endregion Arrange Repeated Field Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
@@ -412,7 +460,8 @@ namespace ProtobufCompiler.Tests
             field.AddChildren(repeated, type, name, value);
             message.AddChildren(msgName, field);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -421,6 +470,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildOneOfFieldNode()
         {
             #region Arrange OneOf Field Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "message"),
@@ -447,9 +497,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
                 new Token(TokenType.Control, 0, 0, "}")
             };
-            #endregion
+
+            #endregion Arrange OneOf Field Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
@@ -471,7 +523,8 @@ namespace ProtobufCompiler.Tests
             field.AddChildren(oneofName, stringField, customField);
             message.AddChildren(msgName, field);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -480,6 +533,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildMapFieldNode()
         {
             #region Arrange Map Field Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "message"),
@@ -499,9 +553,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
                 new Token(TokenType.Control, 0, 0, "}")
             };
-            #endregion
+
+            #endregion Arrange Map Field Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
@@ -514,7 +570,8 @@ namespace ProtobufCompiler.Tests
             field.AddChildren(mapName, key, value, mapValue);
             message.AddChildren(msgName, field);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -523,6 +580,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildReservedFieldNode()
         {
             #region Arrange Map Field Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "message"),
@@ -547,9 +605,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.EndLine, 0, 0, Environment.NewLine),
                 new Token(TokenType.Control, 0, 0, "}")
             };
-            #endregion
+
+            #endregion Arrange Map Field Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
@@ -575,7 +635,8 @@ namespace ProtobufCompiler.Tests
 
             message.AddChildren(msgName, numReserve, nameReserve);
             root.AddChild(message);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }
@@ -584,6 +645,7 @@ namespace ProtobufCompiler.Tests
         public void ShouldBuildInlineStatementWithTrailingComment()
         {
             #region Arrange Inline Trailing Comment Token Input
+
             var tokenList = new List<Token>
             {
                 new Token(TokenType.Id, 0, 0, "syntax"),
@@ -597,9 +659,11 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.String, 0, 8, "comment."),
                 new Token(TokenType.EndLine, 0, 9, Environment.NewLine)
             };
-            #endregion
+
+            #endregion Arrange Inline Trailing Comment Token Input
 
             #region Arrange Expected NodeTree Output
+
             var root = new RootNode();
             var syntax = new Node(NodeType.Syntax, "syntax");
             var proto3 = new Node(NodeType.StringLiteral, "proto3");
@@ -608,7 +672,8 @@ namespace ProtobufCompiler.Tests
             comment.AddChild(commentText);
             syntax.AddChildren(proto3, comment);
             root.AddChild(syntax);
-            #endregion
+
+            #endregion Arrange Expected NodeTree Output
 
             AssertSyntax(tokenList, root, null);
         }

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using ProtobufCompiler.Compiler.Visitors;
+using ProtobufCompiler.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProtobufCompiler.Compiler.Visitors;
-using ProtobufCompiler.Extensions;
-using ProtobufCompiler.Interfaces;
 
 namespace ProtobufCompiler.Compiler.Nodes
 {

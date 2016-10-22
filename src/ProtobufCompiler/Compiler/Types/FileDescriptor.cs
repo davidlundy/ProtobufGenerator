@@ -13,7 +13,5 @@ namespace ProtobufCompiler.Compiler.Types
         public ICollection<MessageDefinition> Messages { get; set; } = new List<MessageDefinition>();
         public ICollection<EnumDefinition> Enumerations { get; set; } = new List<EnumDefinition>();
         public ICollection<ServiceDefinition> Services { get; set; } = new List<ServiceDefinition>();
-
-
     }
 }

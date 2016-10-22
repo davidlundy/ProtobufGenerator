@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using ProtobufCompiler.Compiler;
+﻿using ProtobufCompiler.Compiler;
+using System.Text.RegularExpressions;
 
 namespace ProtobufCompiler.Extensions
 {
@@ -26,7 +26,7 @@ namespace ProtobufCompiler.Extensions
         }
 
         /// <summary>
-        /// Characters which may be placed beside another character and not be considered the same token. 
+        /// Characters which may be placed beside another character and not be considered the same token.
         /// </summary>
         internal static bool IsInlineToken(this char self)
         {
@@ -46,9 +46,9 @@ namespace ProtobufCompiler.Extensions
         /// </summary>
         internal static bool IsIdToken(this string self)
         {
-            return "syntax".Equals(self) ||  "import".Equals(self) ||  "package".Equals(self) ||  
-                "option".Equals(self) ||  "enum".Equals(self) ||  "message".Equals(self) ||  
-                "oneof".Equals(self) ||  "map".Equals(self);
+            return "syntax".Equals(self) || "import".Equals(self) || "package".Equals(self) ||
+                "option".Equals(self) || "enum".Equals(self) || "message".Equals(self) ||
+                "oneof".Equals(self) || "map".Equals(self);
         }
 
         internal static bool IsReservedString(this string self)
@@ -59,16 +59,16 @@ namespace ProtobufCompiler.Extensions
 
         internal static bool IsMapKeyType(this string self)
         {
-            return "int32".Equals(self) || "int64".Equals(self) || "uint32".Equals(self) || 
-                   "uint64".Equals(self) || "sint32".Equals(self) | "sint64".Equals(self) || 
-                   "fixed32".Equals(self) || "fixed64".Equals(self) || "sfixed32".Equals(self) || 
+            return "int32".Equals(self) || "int64".Equals(self) || "uint32".Equals(self) ||
+                   "uint64".Equals(self) || "sint32".Equals(self) | "sint64".Equals(self) ||
+                   "fixed32".Equals(self) || "fixed64".Equals(self) || "sfixed32".Equals(self) ||
                    "sfixed64".Equals(self) || "bool".Equals(self) || "string".Equals(self);
         }
 
         /// <summary>
-        /// Removes the leading and trailing quotes on a string literal. Practically first and last character. 
+        /// Removes the leading and trailing quotes on a string literal. Practically first and last character.
         /// Don't use in general case. Specific case to the parser is that we are only dealing with quoted strings
-        /// in that format. 
+        /// in that format.
         /// </summary>
         internal static string Unquote(this string self)
         {
@@ -85,7 +85,7 @@ namespace ProtobufCompiler.Extensions
 
         internal static bool IsType(this string self)
         {
-            return IsMapKeyType(self) || "double".Equals(self) || 
+            return IsMapKeyType(self) || "double".Equals(self) ||
                 "float".Equals(self) || "bytes".Equals(self);
         }
 

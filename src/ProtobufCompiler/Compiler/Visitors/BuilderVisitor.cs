@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
-using ProtobufCompiler.Compiler.Types;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler.Types
@@ -16,8 +15,7 @@ namespace ProtobufCompiler.Compiler.Types
 
         // ReSharper disable once EmptyConstructor : Prevent external construction
         internal BuilderVisitor()
-        { 
-            
+        {
         }
 
         public void Visit(Node node)

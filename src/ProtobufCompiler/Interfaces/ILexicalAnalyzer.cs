@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using ProtobufCompiler.Compiler;
+﻿using ProtobufCompiler.Compiler;
+using System.Collections.Generic;
 
 namespace ProtobufCompiler.Interfaces
 {

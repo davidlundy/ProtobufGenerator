@@ -1,11 +1,7 @@
-﻿using ProtobufCompiler.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ProtobufCompiler.Compiler;
 using ProtobufCompiler.Compiler.Types;
+using ProtobufCompiler.Interfaces;
 using System.IO;
-using ProtobufCompiler.Compiler;
 
 namespace ProtobufCompiler
 {

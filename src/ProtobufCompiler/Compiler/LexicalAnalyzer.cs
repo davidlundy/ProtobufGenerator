@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using ProtobufCompiler.Extensions;
 
 namespace ProtobufCompiler.Compiler
 {
     internal class LexicalAnalyzer : ILexicalAnalyzer
     {
-
         public Queue<Token> TokenStream => new Queue<Token>(_tokens);
         private readonly IList<Token> _tokens;
         private readonly IList<char> _buffer;
@@ -47,7 +46,6 @@ namespace ProtobufCompiler.Compiler
                     _tokenLineStart = _source.Line;
                 }
 
-
                 if (char.IsWhiteSpace(character) || char.IsControl(character))
                 {
                     FlushBuffer();
@@ -67,16 +65,16 @@ namespace ProtobufCompiler.Compiler
 
                 var next = _source.Peek();
 
-                // Catches // or /* opening comment 
+                // Catches // or /* opening comment
                 if (character.IsForwardSlash() && (next.IsForwardSlash() || next.IsAsterisk()))
                 {
                     FlushBuffer();
                     _tokens.Add(new Token(TokenType.Comment, _source.Line, _source.Column, string.Concat(new[] { character, next })));
-                    _source.Next(); // Remove what we peeked. 
+                    _source.Next(); // Remove what we peeked.
                     continue;
                 }
 
-                // Catches */ end comment. 
+                // Catches */ end comment.
                 if (character.IsAsterisk() && next.IsForwardSlash())
                 {
                     FlushBuffer();

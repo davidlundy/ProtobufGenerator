@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Extensions;
+using System.Collections.Generic;
 
 namespace ProtobufCompiler.Compiler.Nodes
 {
