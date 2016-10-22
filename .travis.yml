@@ -1,14 +1,19 @@
 language: csharp
-sudo: false
-env:
-  - MONO_THREADS_PER_CPU=2000
-os:
-  - linux
-addons:
-  apt:
-    sources:
-    - debian-sid
-    packages:
-    - libunwind8
+solution: ProtobufGenerator.sln
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      dotnet: 1.0.0-preview2-003131
+      mono: none
+      env: DOTNETCORE=1
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+
 script:
-  - ./build.sh
+  - time dotnet restore && time dotnet build -c Release src/**/project.json && time dotnet test test/**/project.json;
