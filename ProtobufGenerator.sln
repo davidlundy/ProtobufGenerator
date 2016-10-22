@@ -26,7 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProtobufGenerator.Console", "test\ProtobufGenerator.Console\ProtobufGenerator.Console.xproj", "{343CACF1-2733-4574-ADB8-CCE2CE4BAAC7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{DF29AB3C-93DA-4CED-9AF4-81E8D110C26C}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProtobufGenerator.Console", "sample\ProtobufGenerator.Console\ProtobufGenerator.Console.xproj", "{343CACF1-2733-4574-ADB8-CCE2CE4BAAC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,6 @@ Global
 		{BF6EB16A-FE8B-444C-AB5D-272D1AAD69F1} = {FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}
 		{444BF722-C826-40DF-AA94-8CDE4EBE5FAA} = {FF757B7E-26B5-4A09-A0B1-3D9F2CF02C56}
 		{F356389D-2141-4F52-A107-94F42D06A95B} = {A01CAD60-9808-4718-9C07-4E1417CBD220}
-		{343CACF1-2733-4574-ADB8-CCE2CE4BAAC7} = {A01CAD60-9808-4718-9C07-4E1417CBD220}
+		{343CACF1-2733-4574-ADB8-CCE2CE4BAAC7} = {DF29AB3C-93DA-4CED-9AF4-81E8D110C26C}
 	EndGlobalSection
 EndGlobal
