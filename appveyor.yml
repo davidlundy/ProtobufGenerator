@@ -1,8 +1,9 @@
-init:
-  - git config --global core.autocrlf true
-build_script:
-  - build.cmd
+version: 1.0.{build}
 clone_depth: 1
-os: Windows Server 2012
-test: off
-deploy: off
+build_script:
+- ps: >-
+    dotnet restore
+
+    dotnet build -c Release src/**/project.json
+test_script:
+- ps: dir test | % { dotnet test $_.FullName }
