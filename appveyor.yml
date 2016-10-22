@@ -1,5 +1,14 @@
 version: 1.0.{build}
+branches:
+  only:
+    - master
+image: Visual Studio 2015
+init:
+  - git config --global core.autocrlf input
 clone_depth: 1
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: DEZqxmNsGf+omE2rCDP5swi5LocrCI04yrbJ8kwXT2JCYyLlBUX7FtPnMTKfSxvN
 build_script:
 - ps: >-
     dotnet restore
@@ -7,3 +16,5 @@ build_script:
     dotnet build -c Release src/**/project.json
 test_script:
 - ps: dir test | % { dotnet test $_.FullName }
+on_success:
+  - ps: .\coverage.ps1
