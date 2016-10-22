@@ -4,17 +4,21 @@ using System.Collections.Generic;
 using ProtobufGenerator.Generation;
 using ProtobufGenerator.Extensions;
 using System.IO;
+using ProtobufCompiler.Interfaces;
+using ProtobufCompiler;
 
 namespace ProtobufGenerator
 {
     public class ProtoEngine : IGenerateProto
     {
         private readonly IConfiguration _config;
+        private readonly IProtoCompiler _protoCompiler;
         private readonly Dictionary<string, JobResult> _jobResults = new Dictionary<string, JobResult>();
 
-        public ProtoEngine(IConfiguration configuration)
+        public ProtoEngine(IConfiguration configuration, IProtoCompiler compiler = null)
         {
             _config = Check.NotNull(configuration, nameof(configuration));
+            _protoCompiler = compiler ?? new ProtoCompiler();
         }
 
         public void ProcessProto()
@@ -24,6 +28,11 @@ namespace ProtobufGenerator
                 var protoDirectory = job.ProtoDirectory;
                 var fileList = Directory.GetFiles(protoDirectory, "*.proto", SearchOption.AllDirectories);
 
+                foreach(var file in fileList)
+                {
+                    var compilation = _protoCompiler.Compile(file);
+                    var descriptor = compilation.FileDescriptor;
+                }
             }
         }
     }

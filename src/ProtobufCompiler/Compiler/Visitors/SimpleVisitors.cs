@@ -9,9 +9,9 @@ namespace ProtobufCompiler.Compiler.Types
 {
     internal abstract class SemanticBaseVisitor : IErrorTrackingVisitor
     {
-        public ICollection<ParseError> Errors { get; internal set; }
+        public ICollection<CompilerError> Errors { get; internal set; }
 
-        internal SemanticBaseVisitor(ICollection<ParseError> errors)
+        internal SemanticBaseVisitor(ICollection<CompilerError> errors)
         {
             Errors = errors;
         }
@@ -23,7 +23,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Syntax Syntax { get; internal set; }
 
-        internal SyntaxVisitor(ICollection<ParseError> errors) : base(errors)
+        internal SyntaxVisitor(ICollection<CompilerError> errors) : base(errors)
         {
             
         }
@@ -39,7 +39,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Package Package { get; internal set; }
 
-        internal PackageVisitor(ICollection<ParseError> errors) : base(errors) { }
+        internal PackageVisitor(ICollection<CompilerError> errors) : base(errors) { }
 
         public override void Visit(Node node)
         {
@@ -52,7 +52,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Option Option { get; internal set; }
 
-        internal OptionVisitor(ICollection<ParseError> errors ) : base(errors) { }
+        internal OptionVisitor(ICollection<CompilerError> errors ) : base(errors) { }
 
         public override void Visit(Node node)
         {
@@ -66,7 +66,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Import Import { get; internal set; }
 
-        internal ImportVisitor(ICollection<ParseError> errors ) : base(errors) { }
+        internal ImportVisitor(ICollection<CompilerError> errors ) : base(errors) { }
 
         public override void Visit(Node node)
         {
@@ -80,7 +80,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public EnumDefinition EnumDefinition { get; internal set; }
 
-        internal EnumVisitor(ICollection<ParseError> errors) : base(errors)
+        internal EnumVisitor(ICollection<CompilerError> errors) : base(errors)
         {
             
         }
@@ -105,7 +105,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public EnumField EnumField { get; internal set; }
 
-        internal EnumFieldVisitor(ICollection<ParseError> errors) : base(errors)
+        internal EnumFieldVisitor(ICollection<CompilerError> errors) : base(errors)
         {
             
         }
@@ -123,7 +123,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public ServiceDefinition Service { get; internal set; }
 
-        internal ServiceVisitor(ICollection<ParseError> errors) : base(errors)
+        internal ServiceVisitor(ICollection<CompilerError> errors) : base(errors)
         {
         }
 

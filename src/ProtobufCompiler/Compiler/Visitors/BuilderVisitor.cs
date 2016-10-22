@@ -12,7 +12,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public FileDescriptor FileDescriptor { get; internal set; } = new FileDescriptor();
 
-        public ICollection<ParseError> Errors { get; internal set; } = new List<ParseError>();
+        public ICollection<CompilerError> Errors { get; internal set; } = new List<CompilerError>();
 
         // ReSharper disable once EmptyConstructor : Prevent external construction
         internal BuilderVisitor()

@@ -10,7 +10,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public MessageDefinition Message { get; internal set; }
 
-        internal MessageVisitor(ICollection<ParseError> errors) : base(errors)
+        internal MessageVisitor(ICollection<CompilerError> errors) : base(errors)
         {
 
         }
@@ -55,7 +55,7 @@ namespace ProtobufCompiler.Compiler.Types
     {
         public Field Field { get; internal set; }
 
-        public FieldVisitor(ICollection<ParseError> errors) : base(errors)
+        public FieldVisitor(ICollection<CompilerError> errors) : base(errors)
         {
 
         }

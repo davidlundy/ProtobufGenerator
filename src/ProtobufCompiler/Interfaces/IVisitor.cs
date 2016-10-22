@@ -11,7 +11,7 @@ namespace ProtobufCompiler.Interfaces
 
     public interface IErrorTrackingVisitor : IVisitor
     {
-        ICollection<ParseError> Errors { get; }
+        ICollection<CompilerError> Errors { get; }
     }
 
 }

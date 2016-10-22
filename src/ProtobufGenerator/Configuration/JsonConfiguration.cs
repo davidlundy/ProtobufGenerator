@@ -15,5 +15,10 @@ namespace ProtobufGenerator.Configuration
                 JobSet = JsonConvert.DeserializeObject<JobSet>(json);
             }
         }
+
+        public JsonConfiguration(JobSet jobSet)
+        {
+            JobSet = jobSet;
+        }
     }
 }

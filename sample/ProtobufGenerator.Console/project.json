@@ -1,7 +1,10 @@
 {
   "version": "1.0.0-alpha",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "copyToOutput": {
+      "include": ["*.proto"]
+    }
   },
 
   "dependencies": {
