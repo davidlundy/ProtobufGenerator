@@ -26,11 +26,17 @@ namespace ProtobufGenerator
             {
                 var protoDirectory = job.ProtoDirectory;
                 var fileList = Directory.GetFiles(protoDirectory, "*.proto", SearchOption.AllDirectories);
+                var generator = new RoslynGenerator(job);
 
                 foreach (var file in fileList)
                 {
                     var compilation = _protoCompiler.Compile(file);
                     var descriptor = compilation.FileDescriptor;
+                    var fileContent = generator.Generate(descriptor);
+                    foreach(var content in fileContent)
+                    {
+                        File.WriteAllText(Path.Combine(protoDirectory, content.FileName), content.FileContent);
+                    }
                 }
             }
         }

@@ -9,12 +9,15 @@
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Newtonsoft.Json": "9.0.*",
-    "ProtobufCompiler": "1.0.0-*"
+    "ProtobufCompiler": "1.0.0-*",
+    "Microsoft.CodeAnalysis.CSharp": "2.0.0-beta5",
+    "Microsoft.CodeAnalysis.CSharp.Workspaces": "2.0.0-beta5",
+    "Microsoft.CodeAnalysis.Workspaces.Common": "2.0.0-beta5"
   },
 
   "frameworks": {
     "netstandard1.6": {
-      "imports": "dnxcore50"
+      "imports": ["dnxcore50", "portable-net45+win8+wp8+wpa81"]
     }
   }
 }
