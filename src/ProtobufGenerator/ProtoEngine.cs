@@ -3,6 +3,7 @@ using ProtobufCompiler.Interfaces;
 using ProtobufGenerator.Extensions;
 using ProtobufGenerator.Generation;
 using ProtobufGenerator.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -31,6 +32,14 @@ namespace ProtobufGenerator
                 foreach (var file in fileList)
                 {
                     var compilation = _protoCompiler.Compile(file);
+                    if (compilation.Errors.Count > 0)
+                    {
+                        foreach(var error in compilation.Errors)
+                        {
+                            Console.WriteLine(error);
+                        }
+                        continue;
+                    }
                     var descriptor = compilation.FileDescriptor;
                     var fileContent = generator.Generate(descriptor);
                     foreach(var content in fileContent)

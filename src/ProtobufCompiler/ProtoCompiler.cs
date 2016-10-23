@@ -25,7 +25,7 @@ namespace ProtobufCompiler
             return new Compilation
             {
                 FileDescriptor = builderVisitor.FileDescriptor,
-                Errors = builderVisitor.Errors
+                Errors = rootNode.Errors
             };
         }
     }

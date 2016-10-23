@@ -23,6 +23,8 @@ namespace ProtobufGenerator.Console
             }));
 
             engine.ProcessProto();
+
+            System.Console.ReadLine();
         }
     }
 }

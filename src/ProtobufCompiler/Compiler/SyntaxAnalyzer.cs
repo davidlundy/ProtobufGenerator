@@ -12,7 +12,7 @@ namespace ProtobufCompiler.Compiler
     {
         private readonly Queue<Token> _tokens;
         private readonly Parser _parser;
-        private readonly IList<ParseError> _errors;
+        private readonly ICollection<ParseError> _errors;
 
         internal SyntaxAnalyzer(Queue<Token> tokens)
         {
@@ -45,7 +45,16 @@ namespace ProtobufCompiler.Compiler
 
         internal Node ParseTopLevelStatement(Node root)
         {
-            var token = _tokens.Peek();
+            Token token;
+
+            // Handle empty lines.
+            while (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
+            {
+                token = _tokens.Dequeue();
+            }
+
+            token = _tokens.Peek();
+
             if (!(token.Type.Equals(TokenType.Comment) || token.Type.Equals(TokenType.Id)))
             {
                 _errors.Add(new ParseError("Found an invalid top level statement at token ", token));

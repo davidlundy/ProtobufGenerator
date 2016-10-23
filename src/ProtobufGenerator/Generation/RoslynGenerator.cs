@@ -4,7 +4,6 @@ using ProtobufCompiler.Compiler.Types;
 using ProtobufGenerator.Configuration;
 using ProtobufGenerator.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ProtobufGenerator.Generation
 {

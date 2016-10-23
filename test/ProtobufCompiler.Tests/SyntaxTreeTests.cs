@@ -677,5 +677,46 @@ namespace ProtobufCompiler.Tests
 
             AssertSyntax(tokenList, root, null);
         }
+
+        [Fact]
+        public void ShouldBurnEmptyNewlines()
+        {
+            #region Arrange Package Declaration Token Input
+
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Id, 0, 0, "package"),
+                new Token(TokenType.String, 0, 1, "foo.bar.baz"),
+                new Token(TokenType.Control, 0, 2, ";"),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+                new Token(TokenType.Id, 0, 0, "option"),
+                new Token(TokenType.String, 0, 1, "java_package"),
+                new Token(TokenType.Control, 0, 2, "="),
+                new Token(TokenType.String, 0, 3, "\"com.example.foo\""),
+                new Token(TokenType.Control, 0, 4, ";"),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+            };
+
+            #endregion Arrange Package Declaration Token Input
+
+            #region Arrange Expected NodeTree Output
+
+            var root = new RootNode();
+            var package = new Node(NodeType.Package, "package");
+            var packageName = new Node(NodeType.Identifier, "foo.bar.baz");
+            package.AddChild(packageName);
+            root.AddChild(package);
+            var option = new Node(NodeType.Option, "option");
+            var optionName = new Node(NodeType.Identifier, "java_package");
+            var optionValue = new Node(NodeType.StringLiteral, "com.example.foo");
+            option.AddChildren(optionName, optionValue);
+            root.AddChild(option);
+
+            #endregion Arrange Expected NodeTree Output
+
+            AssertSyntax(tokenList, root, null);
+        }
     }
 }

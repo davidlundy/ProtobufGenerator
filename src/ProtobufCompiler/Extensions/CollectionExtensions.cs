@@ -5,7 +5,7 @@ namespace ProtobufCompiler.Extensions
 {
     internal static class CollectionExtensions
     {
-        internal static void AddRange<T>(this IList<T> list, IEnumerable<T> items)
+        internal static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
         {
             if (list == null) throw new ArgumentNullException(nameof(list));
             if (items == null) throw new ArgumentNullException(nameof(items));
