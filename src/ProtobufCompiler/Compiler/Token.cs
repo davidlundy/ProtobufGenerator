@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtobufCompiler.Polyfill;
+using System;
 
 namespace ProtobufCompiler.Compiler
 {
@@ -13,6 +14,7 @@ namespace ProtobufCompiler.Compiler
         Comment
     }
 
+    [ExcludeFromCodeCoverage("Immutable data holder type.")]
     internal class Token : IEquatable<Token>
     {
         internal TokenType Type { get; }

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ProtobufCompiler.Polyfill;
+using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
+    [ExcludeFromCodeCoverage("Immutable data holder type.")]
     public class Option : IEquatable<Option>
     {
         public string Name { get; }

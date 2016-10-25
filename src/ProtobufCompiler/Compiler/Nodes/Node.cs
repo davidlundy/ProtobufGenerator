@@ -1,5 +1,6 @@
 ﻿using ProtobufCompiler.Compiler.Visitors;
 using ProtobufCompiler.Interfaces;
+using ProtobufCompiler.Polyfill;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,7 @@ namespace ProtobufCompiler.Compiler.Nodes
             visitor.Visit(this);
         }
 
+        [ExcludeFromCodeCoverage("Changes as debug needs, don't unit test.")]
         public override string ToString()
         {
             var debugVisitor = new DebugVisitor();
@@ -49,6 +51,7 @@ namespace ProtobufCompiler.Compiler.Nodes
             return debugVisitor.ToString();
         }
 
+        [ExcludeFromCodeCoverage("Infeasible to test Equals & Hashcode contract in good way.")]
         public bool Equals(Node other)
         {
             if (other == null) return false;
@@ -65,6 +68,7 @@ namespace ProtobufCompiler.Compiler.Nodes
             return false;
         }
 
+        [ExcludeFromCodeCoverage("Infeasible to test Equals & Hashcode contract in good way.")]
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -72,11 +76,13 @@ namespace ProtobufCompiler.Compiler.Nodes
             return obj.GetType() == GetType() && Equals(obj as Node);
         }
 
+        [ExcludeFromCodeCoverage("Infeasible to test Equals & Hashcode contract in good way.")]
         public override int GetHashCode()
         {
             var hash = 13;
             hash = (hash * 7) + NodeType.GetHashCode();
             hash = (hash * 7) + NodeValue.GetHashCode();
+            // Note that in .NET collections do not change hashcode when elements are added and removed. 
             hash = (hash * 7) + Children.GetHashCode();
             return hash;
         }

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ProtobufCompiler.Polyfill;
+using System;
 
 namespace ProtobufCompiler.Compiler.Errors
 {
+    [ExcludeFromCodeCoverage("Error classes are immutable data holders.")]
     public class SemanticError : CompilerError, IEquatable<SemanticError>
     {
         internal SemanticError(string message) : base(message)

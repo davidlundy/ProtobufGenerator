@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtobufCompiler.Polyfill;
+using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
@@ -9,6 +10,7 @@ namespace ProtobufCompiler.Compiler.Types
         Public
     }
 
+    [ExcludeFromCodeCoverage("Immutable data holder type.")]
     public class Import : IEquatable<Import>
     {
         public ImportType ImportType { get; }

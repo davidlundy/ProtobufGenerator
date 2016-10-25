@@ -1,8 +1,10 @@
 ﻿using ProtobufCompiler.Extensions;
+using ProtobufCompiler.Polyfill;
 using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
+    [ExcludeFromCodeCoverage("Immutable data holder type.")]
     public class ServiceMethod : IEquatable<ServiceMethod>
     {
         public string Name { get; }

@@ -6,8 +6,8 @@ nuget install coveralls.net -Version 0.7.0 -OutputDirectory .\tools
 nuget install ReportGenerator -Version 2.4.5 -OutputDirectory .\tools
 
 Write-Host "`nCleaning Output Directory`n" -foregroundcolor red
-If (Test-Path opencover.xml){
-	Remove-Item opencover.xml -Confirm:$false
+If (Test-Path opencover_results.xml){
+	Remove-Item opencover_results.xml -Confirm:$false
 }
 
 If (Test-Path reports){
@@ -24,8 +24,12 @@ Get-ChildItem -Path src -Recurse -Filter project.json | % {
 }
 
 Write-Host "`nCalculating Code Coverage" -foregroundcolor green
-Get-ChildItem -Path test -Recurse -Filter project.json | % { Write-Host $_.FullName; .\tools\OpenCover.4.6.519\tools\OpenCover.Console.exe -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:" test ""$($_.FullName)"" " -register:user -filter:"+[*]* -[xunit*]* -[FluentAssertions*]* -[*.Tests]*" -returntargetcode -mergeoutput -output:opencover_results.xml -oldstyle } 
+Get-ChildItem -Path test -Recurse -Filter project.json | % { Write-Host $_.FullName; .\tools\OpenCover.4.6.519\tools\OpenCover.Console.exe -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:" test ""$($_.FullName)"" " -register:user -skipautoprops -excludebyattribute:*.ExcludeFromCodeCoverageAttribute -hideskipped:All -filter:"+[*]* -[xunit*]* -[FluentAssertions*]* -[*.Tests]*" -returntargetcode -mergeoutput -output:opencover_results.xml -oldstyle } 
 
-.\tools\ReportGenerator.2.4.5.0\tools\ReportGenerator.exe -reports:"opencover.xml" -targetdir:".\reports"
+.\tools\ReportGenerator.2.4.5.0\tools\ReportGenerator.exe -reports:"opencover_results.xml" -targetdir:".\reports"
 
 .\tools\coveralls.net.0.7.0\tools\csmacnz.Coveralls.exe --opencover -i .\opencover_results.xml
+
+Get-ChildItem -Path src -Recurse -Filter project.json.bak | % {
+	$_.CopyTo("$($_.BaseName)", $true);
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProtobufCompiler.Polyfill;
+using System;
 
 namespace ProtobufCompiler.Compiler.Types
 {
@@ -8,6 +9,7 @@ namespace ProtobufCompiler.Compiler.Types
         Proto3
     }
 
+    [ExcludeFromCodeCoverage("Immutable data holder type.")]
     public class Syntax : IEquatable<Syntax>
     {
         public SyntaxType Name { get; }
