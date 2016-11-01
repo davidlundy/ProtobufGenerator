@@ -82,7 +82,10 @@ namespace ProtobufCompiler.Compiler
 
             if (_parser.IsMessage(lexeme)) return ParseMessage();
 
-            _errors.Add(new ParseError("Found an invalid top level statement at token ", token));
+            // In the case that we can't find a valid top level statement burn the line and log the error.
+            _errors.Add(new ParseError($"Found an invalid top level statement", token));
+            BurnLine();
+
             return null;
         }
 
@@ -113,6 +116,7 @@ namespace ProtobufCompiler.Compiler
             if (!_parser.IsAssignment(assignment.Lexeme))
             {
                 _errors.Add(new ParseError("Expected an assignment after syntax token, found ", assignment));
+                BurnLine();
                 return null;
             }
             var proto3 = ParseStringLiteral();
@@ -120,10 +124,15 @@ namespace ProtobufCompiler.Compiler
             if (ReferenceEquals(proto3, null))
             {
                 _errors.Add(new ParseError("Expected a string literal after syntax assignment, found token ", _tokens.Peek()));
+                BurnLine();
                 return null;
             }
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
 
             var syntaxNode = new Node(NodeType.Syntax, syntax.Lexeme);
             syntaxNode.AddChild(proto3);
@@ -145,10 +154,15 @@ namespace ProtobufCompiler.Compiler
             if (ReferenceEquals(importValue, null))
             {
                 _errors.Add(new ParseError("Could not find import location for import at line starting with token ", importTag));
+                BurnLine();
                 return null;
             }
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
 
             var importNode = new Node(NodeType.Import, importTag.Lexeme);
             importNode.AddChild(modifier);
@@ -160,13 +174,16 @@ namespace ProtobufCompiler.Compiler
             return importNode;
         }
 
-        private void TerminateSingleLineStatement()
+        private bool TerminateSingleLineStatement()
         {
             var terminator = _tokens.Dequeue();
             if (!_parser.IsEmptyStatement(terminator.Lexeme))
             {
-                _errors.Add(new ParseError("Expected terminating `;` after syntax declaration, found token ", terminator));
+                _errors.Add(new ParseError("Expected terminating `;` after top level statement, found token ", terminator));
+                BurnLine();
+                return false;
             }
+            return true;
         }
 
         private void ScoopComment(Node parent)
@@ -228,7 +245,11 @@ namespace ProtobufCompiler.Compiler
                 return null;
             }
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
 
             var packageNode = new Node(NodeType.Package, packageTag.Lexeme);
             packageNode.AddChild(packageName);
@@ -269,7 +290,11 @@ namespace ProtobufCompiler.Compiler
                 return null;
             }
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
 
             var optionNode = new Node(NodeType.Option, optionTag.Lexeme);
             optionNode.AddChild(optionName);
@@ -352,7 +377,11 @@ namespace ProtobufCompiler.Compiler
             }
             fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
             ScoopComment(fieldNode);
             DumpEndline();
 
@@ -436,7 +465,11 @@ namespace ProtobufCompiler.Compiler
                 if (nameRange.Any())
                 {
                     reservedNode.AddChildren(nameRange);
-                    TerminateSingleLineStatement();
+                    var isTerminated = TerminateSingleLineStatement();
+                    if (!isTerminated)
+                    {
+                        return null;
+                    }
                     ScoopComment(reservedNode);
                     DumpEndline();
                     return reservedNode;
@@ -450,7 +483,11 @@ namespace ProtobufCompiler.Compiler
                 if (intRange.Any())
                 {
                     reservedNode.AddChildren(intRange);
-                    TerminateSingleLineStatement();
+                    var isTerminated = TerminateSingleLineStatement();
+                    if (!isTerminated)
+                    {
+                        return null;
+                    }
                     ScoopComment(reservedNode);
                     DumpEndline();
                     return reservedNode;
@@ -710,7 +747,11 @@ namespace ProtobufCompiler.Compiler
 
             mapNode.AddChildren(msgName, mapKey, value, fieldNumber);
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
             ScoopComment(mapNode);
             DumpEndline();
 
@@ -790,7 +831,11 @@ namespace ProtobufCompiler.Compiler
             }
             fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
 
-            TerminateSingleLineStatement();
+            var isTerminated = TerminateSingleLineStatement();
+            if (!isTerminated)
+            {
+                return null;
+            }
             ScoopComment(fieldNode);
             DumpEndline();
 

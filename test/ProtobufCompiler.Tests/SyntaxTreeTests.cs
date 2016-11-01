@@ -9,12 +9,12 @@ using Xunit;
 
 namespace ProtobufCompiler.Tests
 {
-    public class SyntaxTreeTests
+    public partial class SyntaxTreeTests
     {
         private const string BecauseObjectGraphsEqual = "because Node class implements IComparable<Node> and the object graphs should be equal.";
         private ISyntaxAnalyzer _sys;
 
-        private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root, IList<ParseError> errors)
+        private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root)
         {
             // Act
             _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
@@ -24,8 +24,39 @@ namespace ProtobufCompiler.Tests
             result.Should().Be(root, BecauseObjectGraphsEqual);
 
             // Assert Any Expected Errors
-            if (ReferenceEquals(null, errors)) errors = new List<ParseError>(); // We don't have null collections.
-            result.Errors.ShouldAllBeEquivalentTo(errors);
+            result.Errors.ShouldAllBeEquivalentTo(root.Errors);
+        }
+
+        [Fact]
+        public void ShouldBuildInlineComment()
+        {
+            #region Arrange Multiline Comment Token Input
+
+            var tokenList = new List<Token>
+            {
+                new Token(TokenType.Comment, 0, 0, "\\\\"),
+                new Token(TokenType.String, 0, 5, "This"),
+                new Token(TokenType.String, 0, 6, "is"),
+                new Token(TokenType.String, 0, 7, "a"),
+                new Token(TokenType.String, 0, 8, "comment."),
+                new Token(TokenType.EndLine, 0, 9, Environment.NewLine)
+            };
+
+            #endregion Arrange Multiline Comment Token Input
+
+            #region Arrange Expected NodeTree Output
+
+            var root = new RootNode();
+            var comment = new Node(NodeType.Comment, "\\\\");
+            // Bit of an issue here, notice the spaces around the NewLine, we'd like to make that go away.
+            var text = "This is a comment.";
+            var commentText = new Node(NodeType.CommentText, text);
+            comment.AddChild(commentText);
+            root.AddChild(comment);
+
+            #endregion Arrange Expected NodeTree Output
+
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -64,7 +95,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -93,39 +124,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
-        }
-
-        [Fact]
-        public void ShouldErrorInvalidTopLevelStatementAndKeepParsing()
-        {
-            #region Arrange Invalid Token Input
-
-            var badToken = new Token(TokenType.String, 5, 5, "for");
-            var tokenList = new List<Token>
-            {
-                badToken,
-                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
-                new Token(TokenType.Id, 0, 0, "syntax"),
-                new Token(TokenType.Control, 0, 1, "="),
-                new Token(TokenType.String, 0, 2, "\"proto3\""),
-                new Token(TokenType.Control, 0, 3, ";"),
-                new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
-            };
-
-            #endregion Arrange Invalid Token Input
-
-            #region Arrange Expected NodeTree Output
-
-            var root = new RootNode();
-            var syntax = new Node(NodeType.Syntax, "syntax");
-            var proto3 = new Node(NodeType.StringLiteral, "proto3");
-            syntax.AddChild(proto3);
-            root.AddChild(syntax);
-
-            #endregion Arrange Expected NodeTree Output
-
-            AssertSyntax(tokenList, root, new[] { new ParseError("Found an invalid top level statement at token ", badToken) });
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -153,7 +152,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -181,7 +180,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -212,7 +211,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -259,7 +258,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -381,7 +380,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -421,7 +420,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -463,7 +462,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -526,7 +525,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -573,7 +572,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -638,7 +637,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -675,7 +674,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
 
         [Fact]
@@ -716,7 +715,7 @@ namespace ProtobufCompiler.Tests
 
             #endregion Arrange Expected NodeTree Output
 
-            AssertSyntax(tokenList, root, null);
+            AssertSyntax(tokenList, root);
         }
     }
 }
