@@ -15,7 +15,7 @@ namespace ProtobufCompiler
 
             lexicalAnalyzer.Tokenize();
 
-            var syntaxAnalyzer = new SyntaxAnalyzer(lexicalAnalyzer.TokenStream);
+            var syntaxAnalyzer = new RootSyntaxAnalyzer(lexicalAnalyzer.TokenStream);
 
             var rootNode = syntaxAnalyzer.Analyze();
 

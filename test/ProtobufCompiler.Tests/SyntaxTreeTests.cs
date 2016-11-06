@@ -12,12 +12,12 @@ namespace ProtobufCompiler.Tests
     public partial class SyntaxTreeTests
     {
         private const string BecauseObjectGraphsEqual = "because Node class implements IComparable<Node> and the object graphs should be equal.";
-        private ISyntaxAnalyzer _sys;
+        private ISyntaxAnalyzer<RootNode> _sys;
 
         private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root)
         {
             // Act
-            _sys = new SyntaxAnalyzer(new Queue<Token>(tokenList));
+            _sys = new RootSyntaxAnalyzer(new Queue<Token>(tokenList));
             var result = _sys.Analyze();
 
             // Assert Result
@@ -695,7 +695,7 @@ namespace ProtobufCompiler.Tests
                 new Token(TokenType.Control, 0, 2, "="),
                 new Token(TokenType.String, 0, 3, "\"com.example.foo\""),
                 new Token(TokenType.Control, 0, 4, ";"),
-                new Token(TokenType.EndLine, 0, 4, Environment.NewLine),
+                new Token(TokenType.EndLine, 0, 4, Environment.NewLine)
             };
 
             #endregion Arrange Package Declaration Token Input

@@ -8,13 +8,13 @@ using System.Linq;
 
 namespace ProtobufCompiler.Compiler
 {
-    internal class SyntaxAnalyzer : ISyntaxAnalyzer
+    internal class RootSyntaxAnalyzer : ISyntaxAnalyzer<RootNode>
     {
         private readonly Queue<Token> _tokens;
         private readonly Parser _parser;
         private readonly ICollection<ParseError> _errors;
 
-        internal SyntaxAnalyzer(Queue<Token> tokens)
+        internal RootSyntaxAnalyzer(Queue<Token> tokens)
         {
             _tokens = tokens;
             _parser = new Parser();

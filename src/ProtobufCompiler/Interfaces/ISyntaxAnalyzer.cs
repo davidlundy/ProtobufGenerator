@@ -2,8 +2,8 @@
 
 namespace ProtobufCompiler.Interfaces
 {
-    internal interface ISyntaxAnalyzer
+    internal interface ISyntaxAnalyzer<T> where T: Node
     {
-        RootNode Analyze();
+        T Analyze();
     }
 }
