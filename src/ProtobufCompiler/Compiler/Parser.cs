@@ -293,5 +293,29 @@ namespace ProtobufCompiler.Compiler
                    (IsBasicType(input) || IsFullIdentifier(input) || IsRepeated(input))
                    && !IsReservedWord(input);
         }
+
+        internal StatementType ParseStatementType(string lexeme)
+        {
+            if (IsInlineComment(lexeme)) return StatementType.InlineComment;
+
+
+            if (IsMultiLineCommentOpen(lexeme)) return StatementType.MultilineComment;
+
+            if (IsSyntax(lexeme)) return StatementType.Syntax;
+
+            if (IsImport(lexeme)) return StatementType.Import;
+
+            if (IsPackage(lexeme)) return StatementType.Package;
+
+            if (IsOption(lexeme)) return StatementType.Option;
+
+            if (IsEnum(lexeme)) return StatementType.Enumeration;
+
+            if (IsService(lexeme)) return StatementType.Service;
+
+            if (IsMessage(lexeme)) return StatementType.Message;
+
+            return StatementType.NotFound;
+        }
     }
 }

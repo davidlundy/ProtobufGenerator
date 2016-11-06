@@ -17,14 +17,20 @@ namespace ProtobufCompiler.Tests
         private void AssertSyntax(IEnumerable<Token> tokenList, RootNode root)
         {
             // Act
-            _sys = new RootSyntaxAnalyzer(new Queue<Token>(tokenList));
-            var result = _sys.Analyze();
+            _sys = new RootSyntaxAnalyzer();
+            var result = _sys.Analyze(new Queue<Token>(tokenList));
 
             // Assert Result
-            result.Should().Be(root, BecauseObjectGraphsEqual);
+            result.Node.Should().Be(root, BecauseObjectGraphsEqual);
 
             // Assert Any Expected Errors
             result.Errors.ShouldAllBeEquivalentTo(root.Errors);
+        }
+
+        [Fact]
+        public void TestLinqPerformance()
+        {
+
         }
 
         [Fact]

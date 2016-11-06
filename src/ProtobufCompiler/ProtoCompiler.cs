@@ -15,17 +15,17 @@ namespace ProtobufCompiler
 
             lexicalAnalyzer.Tokenize();
 
-            var syntaxAnalyzer = new RootSyntaxAnalyzer(lexicalAnalyzer.TokenStream);
+            var syntaxAnalyzer = new RootSyntaxAnalyzer();
 
-            var rootNode = syntaxAnalyzer.Analyze();
+            var nodeResult = syntaxAnalyzer.Analyze(lexicalAnalyzer.TokenStream);
 
             var builderVisitor = new BuilderVisitor();
-            builderVisitor.Visit(rootNode);
+            builderVisitor.Visit(nodeResult.Node);
 
             return new Compilation
             {
                 FileDescriptor = builderVisitor.FileDescriptor,
-                Errors = rootNode.Errors
+                Errors = (System.Collections.Generic.ICollection<Compiler.Errors.CompilerError>)nodeResult.Errors
             };
         }
     }

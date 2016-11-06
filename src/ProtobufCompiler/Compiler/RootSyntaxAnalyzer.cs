@@ -1,5 +1,7 @@
 ﻿using ProtobufCompiler.Compiler.Errors;
+using ProtobufCompiler.Compiler.Extensions;
 using ProtobufCompiler.Compiler.Nodes;
+using ProtobufCompiler.Compiler.SyntaxAnalysis;
 using ProtobufCompiler.Extensions;
 using ProtobufCompiler.Interfaces;
 using System;
@@ -13,165 +15,67 @@ namespace ProtobufCompiler.Compiler
         private readonly Queue<Token> _tokens;
         private readonly Parser _parser;
         private readonly ICollection<ParseError> _errors;
+        private readonly IDictionary<StatementType, ISyntaxAnalyzer<Node>> _analyzers;
 
-        internal RootSyntaxAnalyzer(Queue<Token> tokens)
+        internal RootSyntaxAnalyzer(IDictionary<StatementType, ISyntaxAnalyzer<Node>> analyzers = null)
         {
-            _tokens = tokens;
             _parser = new Parser();
             _errors = new List<ParseError>();
+            _analyzers = analyzers ?? new Dictionary<StatementType, ISyntaxAnalyzer<Node>>
+            {
+                { StatementType.InlineComment, new InlineCommentAnalyzer() },
+                { StatementType.MultilineComment, new MultilineCommentAnalyzer() },
+                { StatementType.Syntax, new SyntaxStatementAnalyzer() },
+                { StatementType.Import, new ImportStatementAnalyzer() },
+                { StatementType.Enumeration, new EnumStatementAnalyzer() },
+                { StatementType.Message, new MessageStatementAnalyzer() },
+                { StatementType.Option, new OptionStatementAnalyzer() },
+                { StatementType.Package, new PackageStatementAnalyzer() },
+                { StatementType.Service, new ServiceStatementAnalyzer() }
+            };
         }
 
-        public RootNode Analyze()
+        public NodeResult<RootNode> Analyze(Queue<Token> tokens)
         {
             var root = new RootNode();
-            while (_tokens.Any())
+            while (tokens.Any())
             {
-                var topLevelStatement = ParseTopLevelStatement(root);
-                if (topLevelStatement != null) root.AddChild(topLevelStatement);
+                tokens.SkipEmptyLines();
+                var token = tokens.Peek();
+
+                if (!(token.Type.Equals(TokenType.Comment) || token.Type.Equals(TokenType.Id)))
+                {
+                    _errors.Add(new ParseError("Found an invalid top level statement at token ", token));
+                    tokens.BurnLine();
+                    token = tokens.Peek();
+                }
+
+                var statementType = _parser.ParseStatementType(token.Lexeme);
+
+                if(statementType == StatementType.NotFound)
+                {
+                    // In the case that we can't find a valid top level statement burn the line and log the error.
+                    _errors.Add(new ParseError($"Found an invalid top level statement", token));
+                    tokens.BurnLine();
+                }
+
+                var nodeResult = _analyzers[statementType].Analyze(tokens);
+
+                if (nodeResult.Errors.Any())
+                {
+                    _errors.AddRange(nodeResult.Errors);
+                    continue;
+                }
+
+                root.AddChild(nodeResult.Node);
             }
-            root.AddErrors(_errors);
-            return root;
+
+            return new NodeResult<RootNode>(root, _errors);
         }
 
-        private void BurnLine()
+        private void ScoopComment(Node syntaxNode)
         {
-            Token token;
-            do
-            {
-                if (!_tokens.Any()) return;
-                token = _tokens.Dequeue();
-            } while (!token.Type.Equals(TokenType.EndLine));
-        }
-
-        internal Node ParseTopLevelStatement(Node root)
-        {
-            Token token;
-
-            // Handle empty lines.
-            while (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
-            {
-                token = _tokens.Dequeue();
-            }
-
-            token = _tokens.Peek();
-
-            if (!(token.Type.Equals(TokenType.Comment) || token.Type.Equals(TokenType.Id)))
-            {
-                _errors.Add(new ParseError("Found an invalid top level statement at token ", token));
-                BurnLine();
-                token = _tokens.Peek();
-            }
-
-            var lexeme = token.Lexeme;
-
-            if (_parser.IsInlineComment(lexeme)) return ParseInlineComment();
-
-            if (_parser.IsMultiLineCommentOpen(lexeme)) return ParseMultiLineComment();
-
-            if (_parser.IsSyntax(lexeme)) return ParseSyntax();
-
-            if (_parser.IsImport(lexeme)) return ParseImport();
-
-            if (_parser.IsPackage(lexeme)) return ParsePackage();
-
-            if (_parser.IsOption(lexeme)) return ParseOption();
-
-            if (_parser.IsEnum(lexeme)) return ParseEnum();
-
-            if (_parser.IsService(lexeme)) return ParseService();
-
-            if (_parser.IsMessage(lexeme)) return ParseMessage();
-
-            // In the case that we can't find a valid top level statement burn the line and log the error.
-            _errors.Add(new ParseError($"Found an invalid top level statement", token));
-            BurnLine();
-
-            return null;
-        }
-
-        private Node ParseInlineComment()
-        {
-            var token = _tokens.Dequeue(); // Remove the line comment token
-
-            var commentNode = new Node(NodeType.Comment, token.Lexeme);
-            var commentText = new Node(NodeType.CommentText, DumpStringToEndLine());
-            commentNode.AddChild(commentText);
-            return commentNode;
-        }
-
-        private Node ParseMultiLineComment()
-        {
-            var token = _tokens.Dequeue(); // Remove the open block comment token
-            var commentNode = new Node(NodeType.Comment, token.Lexeme);
-            var commentText = new Node(NodeType.CommentText, CollectBlockComment());
-            commentNode.AddChild(commentText);
-            return commentNode;
-        }
-
-        private Node ParseSyntax()
-        {
-            var syntax = _tokens.Dequeue(); // Pop off syntax token.
-
-            var assignment = _tokens.Dequeue();
-            if (!_parser.IsAssignment(assignment.Lexeme))
-            {
-                _errors.Add(new ParseError("Expected an assignment after syntax token, found ", assignment));
-                BurnLine();
-                return null;
-            }
-            var proto3 = ParseStringLiteral();
-
-            if (ReferenceEquals(proto3, null))
-            {
-                _errors.Add(new ParseError("Expected a string literal after syntax assignment, found token ", _tokens.Peek()));
-                BurnLine();
-                return null;
-            }
-
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
-            {
-                return null;
-            }
-
-            var syntaxNode = new Node(NodeType.Syntax, syntax.Lexeme);
-            syntaxNode.AddChild(proto3);
-
-            ScoopComment(syntaxNode);
-            DumpEndline();
-
-            return syntaxNode;
-        }
-
-        private Node ParseImport()
-        {
-            var importTag = _tokens.Dequeue();
-
-            var modifier = ParseImportModifier();
-
-            var importValue = ParseStringLiteral();
-
-            if (ReferenceEquals(importValue, null))
-            {
-                _errors.Add(new ParseError("Could not find import location for import at line starting with token ", importTag));
-                BurnLine();
-                return null;
-            }
-
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
-            {
-                return null;
-            }
-
-            var importNode = new Node(NodeType.Import, importTag.Lexeme);
-            importNode.AddChild(modifier);
-            importNode.AddChild(importValue);
-
-            ScoopComment(importNode);
-            DumpEndline();
-
-            return importNode;
+            throw new NotImplementedException();
         }
 
         private bool TerminateSingleLineStatement()
@@ -180,33 +84,10 @@ namespace ProtobufCompiler.Compiler
             if (!_parser.IsEmptyStatement(terminator.Lexeme))
             {
                 _errors.Add(new ParseError("Expected terminating `;` after top level statement, found token ", terminator));
-                BurnLine();
+                _tokens.BurnLine();
                 return false;
             }
             return true;
-        }
-
-        private void ScoopComment(Node parent)
-        {
-            var trailing = _tokens.Peek();
-            if (!_parser.IsInlineComment(trailing.Lexeme)) return;
-            var commentNode = ParseInlineComment();
-            parent.AddChild(commentNode);
-        }
-
-        private void DumpEndline()
-        {
-            if (!_tokens.Any()) return;
-            var trailing = _tokens.Peek();
-            if (trailing.Type.Equals(TokenType.EndLine)) _tokens.Dequeue(); // Dump the endline
-        }
-
-        private Node ParseImportModifier()
-        {
-            var mod = _tokens.Peek();
-            if (!_parser.IsImportModifier(mod.Lexeme)) return null;
-            _tokens.Dequeue();
-            return new Node(NodeType.ImportModifier, mod.Lexeme);
         }
 
         private Node ParseStringLiteral()
@@ -225,86 +106,6 @@ namespace ProtobufCompiler.Compiler
             return new Node(NodeType.Identifier, ident.Lexeme);
         }
 
-        private Node ParseFullIdentifier()
-        {
-            var ident = _tokens.Peek();
-            if (!_parser.IsFullIdentifier(ident.Lexeme)) return null;
-            _tokens.Dequeue();
-            return new Node(NodeType.Identifier, ident.Lexeme);
-        }
-
-        private Node ParsePackage()
-        {
-            var packageTag = _tokens.Dequeue();
-
-            var packageName = ParseFullIdentifier();
-
-            if (ReferenceEquals(packageName, null))
-            {
-                _errors.Add(new ParseError($"Could not find a package name for package starting at line {packageTag.Line} Found token ", _tokens.Peek()));
-                return null;
-            }
-
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
-            {
-                return null;
-            }
-
-            var packageNode = new Node(NodeType.Package, packageTag.Lexeme);
-            packageNode.AddChild(packageName);
-
-            ScoopComment(packageNode);
-            DumpEndline();
-
-            return packageNode;
-        }
-
-        private Node ParseOption()
-        {
-            var optionTag = _tokens.Dequeue();
-
-            var optionName = ParseFullIdentifier();
-            if (ReferenceEquals(optionName, null))
-            {
-                _errors.Add(
-                    new ParseError(
-                        $"Could not find an option name for option starting at line {optionTag.Line} Found token ",
-                        _tokens.Peek()));
-            }
-
-            var assignment = _tokens.Dequeue();
-            if (!_parser.IsAssignment(assignment.Lexeme))
-            {
-                _errors.Add(new ParseError($"Expected an assignment after option name token on line {optionTag.Line}, found ", assignment));
-                return null;
-            }
-
-            var optionValue = ParseStringLiteral();
-            if (ReferenceEquals(optionValue, null))
-            {
-                _errors.Add(
-                    new ParseError(
-                        $"Could not find an option value for option starting at line {optionTag.Line} Found token ",
-                        _tokens.Peek()));
-                return null;
-            }
-
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
-            {
-                return null;
-            }
-
-            var optionNode = new Node(NodeType.Option, optionTag.Lexeme);
-            optionNode.AddChild(optionName);
-            optionNode.AddChild(optionValue);
-
-            ScoopComment(optionNode);
-            DumpEndline();
-
-            return optionNode;
-        }
 
         private Node ParseEnum()
         {
@@ -337,7 +138,7 @@ namespace ProtobufCompiler.Compiler
             }
 
             ScoopComment(enumNode);
-            DumpEndline();
+            _tokens.DumpEndline();
 
             var next = _tokens.Peek();
             while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
@@ -348,7 +149,7 @@ namespace ProtobufCompiler.Compiler
             }
 
             _tokens.Dequeue();
-            DumpEndline();
+            _tokens.DumpEndline();
 
             return enumNode;
         }
@@ -383,122 +184,13 @@ namespace ProtobufCompiler.Compiler
                 return null;
             }
             ScoopComment(fieldNode);
-            DumpEndline();
+            _tokens.DumpEndline();
 
             return fieldNode;
         }
 
         private Node ParseService()
         {
-            return null;
-        }
-
-        private Node ParseMessage()
-        {
-            if (!_tokens.Any()) return null;
-            var msgTag = _tokens.Peek();
-            if (!msgTag.Lexeme.Equals("message")) return null;
-            _tokens.Dequeue();
-
-            var msgNode = new Node(NodeType.Message, msgTag.Lexeme);
-
-            var msgName = ParseIdentifier();
-            if (ReferenceEquals(msgName, null))
-            {
-                _errors.Add(
-                    new ParseError(
-                        $"Could not find a message name on line {msgTag.Line} for message token ",
-                        msgTag));
-                return null;
-            }
-
-            msgNode.AddChild(msgName);
-
-            var openBrack = _tokens.Dequeue();
-            if (!openBrack.Type.Equals(TokenType.Control) || !openBrack.Lexeme[0].Equals('{'))
-            {
-                _errors.Add(
-                    new ParseError(
-                        $"Expected to find open bracket on line {msgTag.Line} for message token ",
-                        msgTag));
-                return null;
-            }
-
-            ScoopComment(msgNode);
-            DumpEndline();
-
-            var next = _tokens.Peek();
-            while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
-            {
-                // Some of these may be null returns. That's ok. AddChildren will ignore.
-                var reservation = ParseReservation();
-                var fieldNode = ParseMessageField();
-                var nestedMessage = ParseMessage();
-                var nestedEnum = ParseEnum();
-                var oneOf = ParseOneOfField();
-                var map = ParseMapField();
-
-                msgNode.AddChildren(reservation, fieldNode, nestedMessage, nestedEnum, oneOf, map);
-
-                if (_tokens.Any()) next = _tokens.Peek();
-            }
-
-            _tokens.Dequeue(); // Dump the }
-            DumpEndline();
-
-            return msgNode;
-        }
-
-        private Node ParseReservation()
-        {
-            var reserveTag = _tokens.Peek();
-            if (!reserveTag.Lexeme.Equals("reserved")) return null;
-            _tokens.Dequeue();
-
-            var reservedNode = new Node(NodeType.Reserved, reserveTag.Lexeme);
-
-            var next = _tokens.Peek();
-            if (_parser.IsStringLiteral(next.Lexeme))
-            {
-                var nameRange = ParseStringRange().ToArray();
-
-                if (nameRange.Any())
-                {
-                    reservedNode.AddChildren(nameRange);
-                    var isTerminated = TerminateSingleLineStatement();
-                    if (!isTerminated)
-                    {
-                        return null;
-                    }
-                    ScoopComment(reservedNode);
-                    DumpEndline();
-                    return reservedNode;
-                }
-            }
-
-            if (_parser.IsDecimalLiteral(next.Lexeme))
-            {
-                var intRange = ParseIntegerRange().ToArray();
-
-                if (intRange.Any())
-                {
-                    reservedNode.AddChildren(intRange);
-                    var isTerminated = TerminateSingleLineStatement();
-                    if (!isTerminated)
-                    {
-                        return null;
-                    }
-                    ScoopComment(reservedNode);
-                    DumpEndline();
-                    return reservedNode;
-                }
-            }
-
-            var existingString = DumpStringToEndLine();
-            _errors.Add(
-                    new ParseError(
-                        $"Could not find a valid reservation on line {reserveTag.Line}. Found: {existingString}",
-                        reserveTag));
             return null;
         }
 
@@ -640,7 +332,7 @@ namespace ProtobufCompiler.Compiler
             msgNode.AddChild(msgName);
 
             ScoopComment(msgNode);
-            DumpEndline();
+            _tokens.DumpEndline();
 
             var next = _tokens.Peek();
             while (!next.Type.Equals(TokenType.Control) && !next.Lexeme[0].Equals('}'))
@@ -655,7 +347,7 @@ namespace ProtobufCompiler.Compiler
             }
 
             _tokens.Dequeue(); // Dump the }
-            DumpEndline();
+            _tokens.DumpEndline();
 
             return msgNode;
         }
@@ -753,7 +445,7 @@ namespace ProtobufCompiler.Compiler
                 return null;
             }
             ScoopComment(mapNode);
-            DumpEndline();
+            _tokens.DumpEndline();
 
             return mapNode;
         }
@@ -837,53 +529,11 @@ namespace ProtobufCompiler.Compiler
                 return null;
             }
             ScoopComment(fieldNode);
-            DumpEndline();
+            _tokens.DumpEndline();
 
             return fieldNode;
         }
 
-        private string DumpStringToEndLine()
-        {
-            Token token;
-            var buffer = new List<Token>();
-            do
-            {
-                token = _tokens.Dequeue();
-                buffer.Add(token);
-                token = _tokens.Peek();
-            } while (!token.Type.Equals(TokenType.EndLine));
-
-            if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
-                _tokens.Dequeue(); // Dump the trailing EOL
-
-            return string.Join(" ", buffer.Select(l => l.Lexeme));
-        }
-
-        private string CollectBlockComment()
-        {
-            var foundClosing = false;
-            var buffer = new List<Token>();
-            do
-            {
-                var token = _tokens.Dequeue();
-                if (_parser.IsMultiLineCommentClose(token.Lexeme))
-                {
-                    foundClosing = true;
-                }
-                else
-                {
-                    buffer.Add(token);
-                }
-            } while (!foundClosing);
-
-            if (_tokens.Any() && _tokens.Peek().Type.Equals(TokenType.EndLine))
-                _tokens.Dequeue(); // Dump the trailing EOL
-
-            return string.Join(" ", buffer.Select(token =>
-            {
-                if (token.Type.Equals(TokenType.String)) return token.Lexeme;
-                return token.Type.Equals(TokenType.EndLine) ? Environment.NewLine : string.Empty;
-            }));
-        }
+        
     }
 }

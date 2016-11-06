@@ -118,7 +118,7 @@ namespace ProtobufCompiler.Tests
             #region Arrange Expected NodeTree Output
 
             var root = new RootNode();
-            root.AddErrors(new[] { new ParseError("Expected terminating `;` after top level statement, found token ", errorToken) });
+            root.AddErrors(new[] { new ParseError("Required terminator is missing for statement. Found token ", errorToken) });
 
             #endregion Arrange Expected NodeTree Output
 
@@ -143,7 +143,7 @@ namespace ProtobufCompiler.Tests
             #region Arrange Expected NodeTree Output
 
             var root = new RootNode();
-            root.AddErrors(new[] { new ParseError("Could not find import location for import at line starting with token ", errorToken) });
+            root.AddErrors(new[] { new ParseError("Could not find a string literal for syntax analyzer ImportStatementAnalyzer on token ", errorToken) });
 
             #endregion Arrange Expected NodeTree Output
 
