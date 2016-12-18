@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using ProtobufCompiler.Compiler;
-using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Interfaces;
 using System;
@@ -274,7 +273,7 @@ namespace ProtobufCompiler.Tests
 
             var tokenList = new List<Token>
             {
-                // Outer Message Start
+                // Outer NestedMessage Start
                 new Token(TokenType.Id, 0, 0, "message"),
                 new Token(TokenType.String, 0, 1, "Outer"),
                 new Token(TokenType.Control, 0, 2, "{"),
@@ -337,7 +336,7 @@ namespace ProtobufCompiler.Tests
             #region Arrange Expected NodeTree Output
 
             var root = new RootNode();
-            //  Define base Message with One Field
+            //  Define base NestedMessage with One Field
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
 

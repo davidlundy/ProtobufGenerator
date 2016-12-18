@@ -96,6 +96,7 @@ namespace ProtobufCompiler.Compiler.Nodes
         Identifier,
         Assignment,
         StringLiteral,
+        IntegerRange,
         IntegerLiteral,
         FloatLiteral,
         BooleanLiteral,
@@ -121,6 +122,7 @@ namespace ProtobufCompiler.Compiler.Nodes
         Streaming,
         ServiceReturnType,
         ServiceInputType,
-        Reserved
+        Reserved,
+        Terminator
     }
 }

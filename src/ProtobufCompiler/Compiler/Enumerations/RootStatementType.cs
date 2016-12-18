@@ -1,6 +1,6 @@
-﻿namespace ProtobufCompiler.Compiler
+﻿namespace ProtobufCompiler.Compiler.Enumerations
 {
-    internal enum StatementType
+    internal enum RootStatementType
     {
         InlineComment,
         MultilineComment,

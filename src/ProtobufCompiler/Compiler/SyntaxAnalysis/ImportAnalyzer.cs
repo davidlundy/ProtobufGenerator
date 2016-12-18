@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ProtobufCompiler.Compiler.SyntaxAnalysis
 {
-    internal class ImportStatementAnalyzer : SyntaxAnalyzerBase
+    internal class ImportAnalyzer : SyntaxAnalyzerBase
     {
         public override NodeResult<Node> Analyze(Queue<Token> tokens)
         {
@@ -23,7 +23,7 @@ namespace ProtobufCompiler.Compiler.SyntaxAnalysis
                 importNode.AddChild(modifier);
             }
 
-            var importValue = ParseStringLiteral(tokens, nameof(ImportStatementAnalyzer));
+            var importValue = ParseStringLiteral(tokens, nameof(ImportAnalyzer));
 
             if (importValue.Errors.Any())
             {

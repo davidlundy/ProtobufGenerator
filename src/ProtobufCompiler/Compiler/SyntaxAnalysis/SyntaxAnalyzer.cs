@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ProtobufCompiler.Compiler.SyntaxAnalysis
 {
-    internal class SyntaxStatementAnalyzer : SyntaxAnalyzerBase
+    internal class SyntaxAnalyzer : SyntaxAnalyzerBase
     {
         public override NodeResult<Node> Analyze(Queue<Token> tokens)
         {
@@ -19,7 +19,7 @@ namespace ProtobufCompiler.Compiler.SyntaxAnalysis
                 return new NodeResult<Node>(null, new[] { new ParseError("Expected an assignment after syntax token, found ", assignment) });
             }
 
-            var proto3 = ParseStringLiteral(tokens, nameof(SyntaxStatementAnalyzer));
+            var proto3 = ParseStringLiteral(tokens, nameof(SyntaxAnalyzer));
 
             if (proto3.Errors.Any())
             {

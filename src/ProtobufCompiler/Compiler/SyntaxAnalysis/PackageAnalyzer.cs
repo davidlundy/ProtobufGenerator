@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ProtobufCompiler.Compiler.SyntaxAnalysis
 {
-    internal class PackageStatementAnalyzer : SyntaxAnalyzerBase
+    internal class PackageAnalyzer : SyntaxAnalyzerBase
     {
         public override NodeResult<Node> Analyze(Queue<Token> tokens)
         {
@@ -15,7 +15,7 @@ namespace ProtobufCompiler.Compiler.SyntaxAnalysis
             var packageTag = tokens.Dequeue();
             var packageNode = new Node(NodeType.Package, packageTag.Lexeme);
 
-            var packageName = ParseFullIdentifier(tokens, nameof(PackageStatementAnalyzer));
+            var packageName = ParseFullIdentifier(tokens, nameof(PackageAnalyzer));
 
             if (packageName.Errors.Any()) return packageName;
 

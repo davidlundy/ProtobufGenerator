@@ -188,7 +188,7 @@ namespace ProtobufCompiler.Tests
             #region Arrange Expected NodeTree Input
 
             var root = new RootNode();
-            //  Define base Message with One Field
+            //  Define base NestedMessage with One Field
             var message = new Node(NodeType.Message, "message");
             var msgName = new Node(NodeType.Identifier, "Outer");
 

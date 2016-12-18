@@ -1,4 +1,5 @@
-﻿using ProtobufCompiler.Extensions;
+﻿using ProtobufCompiler.Compiler.Enumerations;
+using ProtobufCompiler.Extensions;
 using System.Linq;
 
 namespace ProtobufCompiler.Compiler
@@ -294,28 +295,45 @@ namespace ProtobufCompiler.Compiler
                    && !IsReservedWord(input);
         }
 
-        internal StatementType ParseStatementType(string lexeme)
+        internal RootStatementType ParseStatementType(string lexeme)
         {
-            if (IsInlineComment(lexeme)) return StatementType.InlineComment;
+            if (IsInlineComment(lexeme)) return RootStatementType.InlineComment;
 
 
-            if (IsMultiLineCommentOpen(lexeme)) return StatementType.MultilineComment;
+            if (IsMultiLineCommentOpen(lexeme)) return RootStatementType.MultilineComment;
 
-            if (IsSyntax(lexeme)) return StatementType.Syntax;
+            if (IsSyntax(lexeme)) return RootStatementType.Syntax;
 
-            if (IsImport(lexeme)) return StatementType.Import;
+            if (IsImport(lexeme)) return RootStatementType.Import;
 
-            if (IsPackage(lexeme)) return StatementType.Package;
+            if (IsPackage(lexeme)) return RootStatementType.Package;
 
-            if (IsOption(lexeme)) return StatementType.Option;
+            if (IsOption(lexeme)) return RootStatementType.Option;
 
-            if (IsEnum(lexeme)) return StatementType.Enumeration;
+            if (IsEnum(lexeme)) return RootStatementType.Enumeration;
 
-            if (IsService(lexeme)) return StatementType.Service;
+            if (IsService(lexeme)) return RootStatementType.Service;
 
-            if (IsMessage(lexeme)) return StatementType.Message;
+            if (IsMessage(lexeme)) return RootStatementType.Message;
 
-            return StatementType.NotFound;
+            return RootStatementType.NotFound;
+        }
+
+        internal MessageStatementType ParseMessageStatementType(string lexeme)
+        {
+            if (IsFieldStart(lexeme)) return MessageStatementType.Field;
+
+            if (IsMessage(lexeme)) return MessageStatementType.NestedMessage;
+
+            if (IsMap(lexeme)) return MessageStatementType.Map;
+
+            if (IsEnum(lexeme)) return MessageStatementType.Enum;
+
+            if (IsReservation(lexeme)) return MessageStatementType.Reservation;
+
+            if (IsOneOf(lexeme)) return MessageStatementType.OneOf;
+
+            return MessageStatementType.NotFound;
         }
     }
 }

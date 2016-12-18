@@ -1,4 +1,5 @@
-﻿using ProtobufCompiler.Compiler.Errors;
+﻿using ProtobufCompiler.Compiler.Enumerations;
+using ProtobufCompiler.Compiler.Errors;
 using ProtobufCompiler.Compiler.Extensions;
 using ProtobufCompiler.Compiler.Nodes;
 using ProtobufCompiler.Compiler.SyntaxAnalysis;
@@ -15,23 +16,23 @@ namespace ProtobufCompiler.Compiler
         private readonly Queue<Token> _tokens;
         private readonly Parser _parser;
         private readonly ICollection<ParseError> _errors;
-        private readonly IDictionary<StatementType, ISyntaxAnalyzer<Node>> _analyzers;
+        private readonly IDictionary<RootStatementType, ISyntaxAnalyzer<Node>> _analyzers;
 
-        internal RootSyntaxAnalyzer(IDictionary<StatementType, ISyntaxAnalyzer<Node>> analyzers = null)
+        internal RootSyntaxAnalyzer(IDictionary<RootStatementType, ISyntaxAnalyzer<Node>> analyzers = null)
         {
             _parser = new Parser();
             _errors = new List<ParseError>();
-            _analyzers = analyzers ?? new Dictionary<StatementType, ISyntaxAnalyzer<Node>>
+            _analyzers = analyzers ?? new Dictionary<RootStatementType, ISyntaxAnalyzer<Node>>
             {
-                { StatementType.InlineComment, new InlineCommentAnalyzer() },
-                { StatementType.MultilineComment, new MultilineCommentAnalyzer() },
-                { StatementType.Syntax, new SyntaxStatementAnalyzer() },
-                { StatementType.Import, new ImportStatementAnalyzer() },
-                { StatementType.Enumeration, new EnumStatementAnalyzer() },
-                { StatementType.Message, new MessageStatementAnalyzer() },
-                { StatementType.Option, new OptionStatementAnalyzer() },
-                { StatementType.Package, new PackageStatementAnalyzer() },
-                { StatementType.Service, new ServiceStatementAnalyzer() }
+                { RootStatementType.InlineComment, new InlineCommentAnalyzer() },
+                { RootStatementType.MultilineComment, new MultilineCommentAnalyzer() },
+                { RootStatementType.Syntax, new SyntaxAnalyzer() },
+                { RootStatementType.Import, new ImportAnalyzer() },
+                { RootStatementType.Enumeration, new EnumAnalyzer() },
+                { RootStatementType.Message, new MessageAnalyzer() },
+                { RootStatementType.Option, new OptionAnalyzer() },
+                { RootStatementType.Package, new PackageAnalyzer() },
+                { RootStatementType.Service, new ServiceAnalyzer() }
             };
         }
 
@@ -52,7 +53,7 @@ namespace ProtobufCompiler.Compiler
 
                 var statementType = _parser.ParseStatementType(token.Lexeme);
 
-                if(statementType == StatementType.NotFound)
+                if(statementType == RootStatementType.NotFound)
                 {
                     // In the case that we can't find a valid top level statement burn the line and log the error.
                     _errors.Add(new ParseError($"Found an invalid top level statement", token));
@@ -76,18 +77,6 @@ namespace ProtobufCompiler.Compiler
         private void ScoopComment(Node syntaxNode)
         {
             throw new NotImplementedException();
-        }
-
-        private bool TerminateSingleLineStatement()
-        {
-            var terminator = _tokens.Dequeue();
-            if (!_parser.IsEmptyStatement(terminator.Lexeme))
-            {
-                _errors.Add(new ParseError("Expected terminating `;` after top level statement, found token ", terminator));
-                _tokens.BurnLine();
-                return false;
-            }
-            return true;
         }
 
         private Node ParseStringLiteral()
@@ -178,8 +167,8 @@ namespace ProtobufCompiler.Compiler
             }
             fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
 
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
+
+            if (!HasTerminator(_tokens))
             {
                 return null;
             }
@@ -194,80 +183,12 @@ namespace ProtobufCompiler.Compiler
             return null;
         }
 
-        private IEnumerable<Node> ParseIntegerRange()
+        private bool HasTerminator(Queue<Token> tokens)
         {
-            var intRes = new Stack<int>();
-            var token = _tokens.Peek();
-            while (!token.Lexeme.Equals(";"))
-            {
-                token = _tokens.Dequeue();
-                var lexeme = token.Lexeme;
-                if (",".Equals(lexeme))
-                {
-                    if (!intRes.Any())
-                    {
-                        _errors.Add(
-                            new ParseError(
-                                "Expected integer literal before ',' in reserved range ",
-                                token));
-                        return new List<Node>();
-                    }
-                    token = _tokens.Peek();
-                    continue;
-                }
-
-                if (_parser.IsDecimalLiteral(lexeme))
-                {
-                    intRes.Push(int.Parse(lexeme));
-                    token = _tokens.Peek();
-                    continue;
-                }
-
-                if (!"to".Equals(lexeme))
-                {
-                    token = _tokens.Peek();
-                    continue;
-                }
-
-                // So now we are looking ahead at the token after 'to', so we have something like '9 to 11'
-                if (!intRes.Any()) // In the case that we found a 'to' but haven't yet found an integer
-                {
-                    _errors.Add(
-                       new ParseError(
-                           "Expected integer literal before 'to' in reserved range ",
-                           token));
-                    return new List<Node>();
-                }
-
-                var startRangeAt = intRes.Pop(); // Go get the last integer read, e.g. 9
-                var nextToken = _tokens.Peek(); // Look ahead for the next integer, e.g. 11
-                if (!_parser.IsDecimalLiteral(nextToken.Lexeme)) // If the next token isn't an integer create Error
-                {
-                    _errors.Add(
-                        new ParseError(
-                            "Expected integer literal after 'to' in reserved range ",
-                            nextToken));
-                    return new List<Node>();
-                }
-
-                // If we don't have an error go ahead and remove the token and use it to find the end range.
-                nextToken = _tokens.Dequeue();
-                var endRangeAt = int.Parse(nextToken.Lexeme);
-
-                // Now push all the integers in the range onto the stack.
-                var rangeLength = endRangeAt - startRangeAt + 1;
-                foreach (var elem in Enumerable.Range(startRangeAt, rangeLength))
-                {
-                    intRes.Push(elem);
-                }
-
-                // If we've got this far, set the token for the While comparison to the next.
-                token = _tokens.Peek();
-            }
-
-            // Now that we've hit an Endline or ';' terminator, return.
-            return intRes.Select(t => new Node(NodeType.IntegerLiteral, t.ToString())).Reverse();
+            if (!tokens.Any()) return false;
+            return _parser.IsEmptyStatement(tokens.Peek().Lexeme);
         }
+
 
         private IEnumerable<Node> ParseStringRange()
         {
@@ -439,8 +360,7 @@ namespace ProtobufCompiler.Compiler
 
             mapNode.AddChildren(msgName, mapKey, value, fieldNumber);
 
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
+            if (!HasTerminator(_tokens))
             {
                 return null;
             }
@@ -523,11 +443,12 @@ namespace ProtobufCompiler.Compiler
             }
             fieldNode.AddChild(new Node(NodeType.FieldNumber, fieldValue.Lexeme));
 
-            var isTerminated = TerminateSingleLineStatement();
-            if (!isTerminated)
+            
+            if (!HasTerminator(_tokens))
             {
                 return null;
             }
+
             ScoopComment(fieldNode);
             _tokens.DumpEndline();
 

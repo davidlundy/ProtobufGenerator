@@ -8,14 +8,14 @@ using System.Linq;
 
 namespace ProtobufCompiler.Compiler.SyntaxAnalysis
 {
-    internal class OptionStatementAnalyzer : SyntaxAnalyzerBase
+    internal class OptionAnalyzer : SyntaxAnalyzerBase
     {
         public override NodeResult<Node> Analyze(Queue<Token> tokens)
         {
             var optionTag = tokens.Dequeue();
             var optionNode = new Node(NodeType.Option, optionTag.Lexeme);
 
-            var optionName = ParseFullIdentifier(tokens, nameof(OptionStatementAnalyzer));
+            var optionName = ParseFullIdentifier(tokens, nameof(OptionAnalyzer));
 
             if (optionName.Errors.Any())
             {
@@ -32,7 +32,7 @@ namespace ProtobufCompiler.Compiler.SyntaxAnalysis
                 return new NodeResult<Node>(null, new[] { new ParseError($"Expected an assignment after option name token on line {optionTag.Line}, found ", assignment) });
             }
 
-            var optionValue = ParseStringLiteral(tokens, nameof(OptionStatementAnalyzer));
+            var optionValue = ParseStringLiteral(tokens, nameof(OptionAnalyzer));
             if (optionValue.Errors.Any())
             {
                 tokens.BurnLine();
